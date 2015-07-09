@@ -34,8 +34,12 @@ public class UnitsRelationsDefault implements UnitsRelations {
 
     protected AnnotationMirror m, km, mm, m2, km2, mm2, s, h, mPERs, mPERs2, kmPERh;
 
+    ProcessingEnvironment processingEnv;
+    
     @Override
     public UnitsRelations init(ProcessingEnvironment env) {
+        processingEnv = env;
+        
         AnnotationBuilder builder = new AnnotationBuilder(env, m.class);
         Elements elements = env.getElementUtils();
 

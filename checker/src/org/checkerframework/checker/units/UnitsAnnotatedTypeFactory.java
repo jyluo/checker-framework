@@ -50,11 +50,13 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // We use the string to prevent instantiating the UnitsRelations multiple times.
     private Map<String, UnitsRelations> unitsRel;
 
+    // Map from canonical annotation names to their aliases
+    // The string is the alias annotation's name, where as the AnnotationMirror stored is the canonical annotation
     private final Map<String, AnnotationMirror> aliasMap = new HashMap<String, AnnotationMirror>();
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         // use true to enable flow inference, false to disable it
-        super(checker, false);
+        super(checker, true);
 
         BOTTOM = AnnotationUtils.fromClass(elements, UnitsBottom.class);
         this.postInit();
@@ -69,23 +71,32 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return unitsRel;
     }
 
+    // returns the canonical annotation if an alias annotation was used
     @Override
     public AnnotationMirror aliasedAnnotation(AnnotationMirror a) {
         String aname = a.getAnnotationType().toString();
+        // if the alias map has the alias mapped to its canonical form, return the canonical right away
         if (aliasMap.containsKey(aname)) {
             return aliasMap.get(aname);
         }
         for (AnnotationMirror aa : a.getAnnotationType().asElement().getAnnotationMirrors() ) {
             // TODO: Is using toString the best way to go?
+
+            // If the annotation is of the class UnitsMultiple, then
             if (aa.getAnnotationType().toString().equals(UnitsMultiple.class.getCanonicalName())) {
                 @SuppressWarnings("unchecked")
-                Class<? extends Annotation> theclass = (Class<? extends Annotation>)
-                                                    AnnotationUtils.getElementValueClass(aa, "quantity", true);
+                // retrieve the quantity, which is the base annotation class of the SI Unit
+                Class<? extends Annotation> theclass = (Class<? extends Annotation>) AnnotationUtils
+                        .getElementValueClass(aa, "quantity", true);
+                // and retrieve the SI Prefix
                 Prefix prefix = AnnotationUtils.getElementValueEnum(aa, "prefix", Prefix.class, true);
+                // build the canonical annotation
                 AnnotationBuilder builder = new AnnotationBuilder(processingEnv, theclass);
                 builder.setValue("value", prefix);
                 AnnotationMirror res = builder.build();
+                // insert the alias class name and the canonical annotation into the map
                 aliasMap.put(aname, res);
+                // return the canonical annotation
                 return res;
             }
         }
@@ -98,6 +109,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         Set<Class<? extends Annotation>> qualSet =
                 new HashSet<Class<? extends Annotation>>();
 
+        // try adding all the qualifiers from the checker's run time command line options
         String qualNames = checker.getOption("units");
         if (qualNames == null) {
         } else {
@@ -107,6 +119,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                             (Class<? extends Annotation>) Class.forName(qualName);
 
                     qualSet.add(q);
+
+                    // if a particular class was annotated with @UnitsRelations, then add that class to the list of UnitsRelations handlers
                     addUnitsRelations(q);
                 } catch (ClassNotFoundException e) {
                     checker.message(javax.tools.Diagnostic.Kind.WARNING,
@@ -121,62 +135,72 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         getUnitsRel().put("org.checkerframework.checker.units.UnitsRelationsDefault",
                 new UnitsRelationsDefault().init(processingEnv));
 
-        // Explicitly add the top type.
-        qualSet.add(UnknownUnits.class);
-        qualSet.add(PolyUnit.class);
+        // Load qual set via reflection
+        UnitsAnnotatedQualifierLoader loader = new UnitsAnnotatedQualifierLoader(processingEnv);
+        for(Class<? extends Annotation> qualClass : loader.getAnnotatedQualSet()) {
+            //processingEnv.getMessager().printMessage(Kind.NOTE, qualClass.getCanonicalName());
+            qualSet.add(qualClass);
+        }
+
+        // Support PolyAll by default (this isn't in the qual directory of units checker)
         qualSet.add(PolyAll.class);
 
-        // Only add the directly supported units. Shorthands like kg are
-        // handled automatically by aliases.
-
-        qualSet.add(Length.class);
-        // qualSet.add(mm.class);
-        // qualSet.add(Meter.class);
-        qualSet.add(m.class);
-        // qualSet.add(km.class);
-
-        qualSet.add(Time.class);
-        // qualSet.add(Second.class);
-        qualSet.add(s.class);
-        qualSet.add(min.class);
-        qualSet.add(h.class);
-
-        qualSet.add(Speed.class);
-        qualSet.add(mPERs.class);
-        qualSet.add(kmPERh.class);
-
-        qualSet.add(Area.class);
-        qualSet.add(mm2.class);
-        qualSet.add(m2.class);
-        qualSet.add(km2.class);
-
-        qualSet.add(Current.class);
-        qualSet.add(A.class);
-
-        qualSet.add(Mass.class);
-        qualSet.add(g.class);
-        // qualSet.add(kg.class);
-
-        qualSet.add(Substance.class);
-        qualSet.add(mol.class);
-
-        qualSet.add(Luminance.class);
-        qualSet.add(cd.class);
-
-        qualSet.add(Temperature.class);
-        qualSet.add(C.class);
-        qualSet.add(K.class);
-
-        qualSet.add(Acceleration.class);
-        qualSet.add(mPERs2.class);
-
-        qualSet.add(Angle.class);
-        qualSet.add(degrees.class);
-        qualSet.add(radians.class);
-
-        // Use the framework-provided bottom qualifier. It will automatically be
-        // at the bottom of the qualifier hierarchy.
-        qualSet.add(UnitsBottom.class);
+        //        // Explicitly add the top type.
+        //        qualSet.add(UnknownUnits.class);
+        //        qualSet.add(PolyUnit.class);
+        //        qualSet.add(PolyAll.class);
+        //
+        //        // Only add the directly supported units. Shorthands like kg are
+        //        // handled automatically by aliases.
+        //
+        //        qualSet.add(Length.class);
+        //        // qualSet.add(mm.class);
+        //        // qualSet.add(Meter.class);
+        //        qualSet.add(m.class);
+        //        // qualSet.add(km.class);
+        //
+        //        qualSet.add(Time.class);
+        //        // qualSet.add(Second.class);
+        //        qualSet.add(s.class);
+        //        qualSet.add(min.class);
+        //        qualSet.add(h.class);
+        //
+        //        qualSet.add(Speed.class);
+        //        qualSet.add(mPERs.class);
+        //        qualSet.add(kmPERh.class);
+        //
+        //        qualSet.add(Area.class);
+        //        qualSet.add(mm2.class);
+        //        qualSet.add(m2.class);
+        //        qualSet.add(km2.class);
+        //
+        //        qualSet.add(Current.class);
+        //        qualSet.add(A.class);
+        //
+        //        qualSet.add(Mass.class);
+        //        qualSet.add(g.class);
+        //        // qualSet.add(kg.class);
+        //
+        //        qualSet.add(Substance.class);
+        //        qualSet.add(mol.class);
+        //
+        //        qualSet.add(Luminance.class);
+        //        qualSet.add(cd.class);
+        //
+        //        qualSet.add(Temperature.class);
+        //        qualSet.add(C.class);
+        //        qualSet.add(K.class);
+        //
+        //        qualSet.add(Acceleration.class);
+        //        qualSet.add(mPERs2.class);
+        //
+        //        qualSet.add(Angle.class);
+        //        qualSet.add(degrees.class);
+        //        qualSet.add(radians.class);
+        //
+        //        // Use the framework-provided bottom qualifier. It will automatically be
+        //        // at the bottom of the qualifier hierarchy.
+        //        qualSet.add(UnitsBottom.class);
 
         return Collections.unmodifiableSet(qualSet);
     }
@@ -189,13 +213,15 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
      * @param qual The qualifier to investigate.
      */
     private void addUnitsRelations(Class<? extends Annotation> qual) {
+        // get the annotation mirror
         AnnotationMirror am = AnnotationUtils.fromClass(elements, qual);
 
+        // get every annotation of that mirror??
         for (AnnotationMirror ama : am.getAnnotationType().asElement().getAnnotationMirrors() ) {
-            if (ama.getAnnotationType().toString().equals(UnitsRelations.class.getCanonicalName())) {
+            if (ama.getAnnotationType().toString().equals(UnitsRelations.class.getCanonicalName())) {   // TODO: is this a bug? should it be qual.UnitsRelations instead??
                 @SuppressWarnings("unchecked")
                 Class<? extends UnitsRelations> theclass = (Class<? extends UnitsRelations>)
-                    AnnotationUtils.getElementValueClass(ama, "value", true);
+                AnnotationUtils.getElementValueClass(ama, "value", true);
                 String classname = theclass.getCanonicalName();
 
                 if (!getUnitsRel().containsKey(classname)) {
@@ -215,13 +241,17 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     @Override
     public TreeAnnotator createTreeAnnotator() {
+        // the tree annotator has 3 parts
+        // propagation tree annotator
+        // implicits tree annotator, and 
+        // units tree annotator
         ImplicitsTreeAnnotator implicitsTreeAnnotator = new ImplicitsTreeAnnotator(this);
-        implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM);
+        implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM); // the implicits tree annotator will by default annotate any null literal as BOTTOM
         return new ListTreeAnnotator(
                 new UnitsPropagationTreeAnnotator(this),
                 implicitsTreeAnnotator,
                 new UnitsTreeAnnotator(this)
-        );
+                );
     }
 
     private static class UnitsPropagationTreeAnnotator extends PropagationTreeAnnotator {
@@ -244,6 +274,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
     }
 
+    // add our typing rules for Units, it will annotate a node in the tree depending on what is happening in that node
     /**
      * A class for adding annotations based on tree
      */
@@ -329,6 +360,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             return null; // super.visitBinary(node, type);
         }
 
+        // returns true if the type mirror either has no annotations or has only 1 annotation and it is UnknownUnits
         private boolean noUnits(AnnotatedTypeMirror t) {
             Set<AnnotationMirror> annos = t.getAnnotations();
             return annos.isEmpty() ||
@@ -336,6 +368,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     AnnotationUtils.areSameByClass(annos.iterator().next(), UnknownUnits.class));
         }
 
+        // will always replace the entire expression with the type of the left hand side variable
         @Override
         public Void visitCompoundAssignment(CompoundAssignmentTree node, AnnotatedTypeMirror type) {
             ExpressionTree var = node.getVariable();
@@ -345,6 +378,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             return null;
         }
 
+        // can also use unit relations to resolve
         private AnnotationMirror useUnitsRelation(Tree.Kind kind, UnitsRelations ur,
                 AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
 

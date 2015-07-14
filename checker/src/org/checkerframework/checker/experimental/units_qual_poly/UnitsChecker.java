@@ -28,7 +28,7 @@ public class UnitsChecker extends CheckerAdapter<QualParams<Units>> {
         
         // default qualifiers for different kinds of code elements
         
-        // TODO: verify correctness
+        // TODO: verify correctness of the default locations as well as the qualifiers to apply
         
         defaults.addAbsoluteDefault(
                 getTypeMirrorConverter().getAnnotation(

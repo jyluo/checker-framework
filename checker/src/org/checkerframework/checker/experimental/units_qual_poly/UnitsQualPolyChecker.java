@@ -1,8 +1,5 @@
 package org.checkerframework.checker.experimental.units_qual_poly;
 
-import org.checkerframework.checker.experimental.Units_qual.Units;
-import org.checkerframework.checker.experimental.Units_qual.Units.PartialUnits;
-import org.checkerframework.checker.experimental.Units_qual.Units.UnitsVal;
 import org.checkerframework.qualframework.base.Checker;
 import org.checkerframework.qualframework.poly.QualifierParameterChecker;
 import org.checkerframework.qualframework.poly.format.SurfaceSyntaxFormatterConfiguration;
@@ -27,7 +24,7 @@ public class UnitsQualPolyChecker extends QualifierParameterChecker<Units> {
                 Arrays.asList(
                         this.getTypeFactory().getQualifierHierarchy().getBottom(),
                         this.getTypeFactory().getQualifierHierarchy().getTop(),
-                        Units.BOTTOM, Units.TOP));
+                        Units.BOTTOM, Units.UnitsUnknown));
     }
 
     @Override
@@ -37,34 +34,47 @@ public class UnitsQualPolyChecker extends QualifierParameterChecker<Units> {
 
     private class UnitsSurfaceSyntaxConfiguration extends SurfaceSyntaxFormatterConfiguration<Units> {
 
+        // stores the set of annotation names for which we won't print out the annotation
         private final Set<String> SUPPRESS_NAMES = new HashSet<>(
-                Arrays.asList("UnitsTop", "UnitsBot", "PartialUnits"));
+                Arrays.asList("UnitsUnknown", "UnitsBot", "PartialUnits"));
+        //TODO: change this to soft-coded annotation names
+        //TODO: remove partialunits? --> partialregex??
 
         public UnitsSurfaceSyntaxConfiguration() {
-            super(Units.TOP, Units.BOTTOM,
+            super(Units.UnitsUnknown, Units.BOTTOM,
                     UnitsQualPolyChecker.this.getContext().getTypeFactory().getQualifierHierarchy().getTop(),
                     UnitsQualPolyChecker.this.getContext().getTypeFactory().getQualifierHierarchy().getBottom());
         }
 
+        // decides where to print annotations or not
         @Override
         protected boolean shouldPrintAnnotation(AnnotationParts anno, boolean printInvisibleQualifiers) {
             return printInvisibleQualifiers || !(SUPPRESS_NAMES.contains(anno.getName()));
         }
 
+        // generates annotation printouts for qualifiers that don't actually exist as an annotation
+        // using AnnotationBuilder to create the annotation would have required an actual annotation to begin with
         @Override
         protected AnnotationParts getTargetTypeSystemAnnotation(Units qual) {
 
-            if (qual instanceof UnitsVal) {
+            // construct an annotation for a normal regex value
+            if (qual instanceof Units) {
                 AnnotationParts anno = new AnnotationParts("Units");
-                anno.put("value", String.valueOf(((UnitsVal) qual).getCount()));
+                // TODO: change to prefix
+                anno.put("value", String.valueOf(qual.getPrefix()));
+                // TODO: type conversion of Regex to RegexVal???
+                //anno.put("value", String.valueOf(((UnitsVal) qual).getCount()));
                 return anno;
 
-            } else if (qual instanceof PartialUnits) {
-                AnnotationParts anno = new AnnotationParts("PartialUnits");
-                anno.putQuoted("value", ((PartialUnits) qual).getPartialValue());
-                return anno;
-
+                // construct an annotation for partial regex values
+                /*
+                } else if (qual instanceof PartialUnits) {
+                    AnnotationParts anno = new AnnotationParts("PartialUnits");
+                    anno.putQuoted("value", ((PartialUnits) qual).getPartialValue());
+                    return anno;
+                 */
             } else {
+                // the annotation is the same as the name of the qualifier
                 return new AnnotationParts(qual.toString());
             }
         }

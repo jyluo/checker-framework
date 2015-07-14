@@ -1,15 +1,12 @@
 package org.checkerframework.checker.experimental.units_qual_poly;
 
-import org.checkerframework.checker.experimental.Units_qual.Units;
-import org.checkerframework.checker.experimental.Units_qual.UnitsQualifierHierarchy;
+import org.checkerframework.checker.experimental.regex_qual.Regex;
+import org.checkerframework.checker.experimental.regex_qual.RegexQualifierHierarchy;
 import org.checkerframework.checker.units.qual.PolyUnit;
-import org.checkerframework.checker.Units.qual.ClassUnitsParam;
-import org.checkerframework.checker.Units.qual.MethodUnitsParam;
-import org.checkerframework.checker.Units.qual.MultiUnits;
-import org.checkerframework.checker.Units.qual.Var;
-import org.checkerframework.checker.Units.qual.Wild;
+import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.qualframework.base.Checker;
 import org.checkerframework.qualframework.poly.AnnotationConverterConfiguration;
 import org.checkerframework.qualframework.poly.CombiningOperation.Lub;
 import org.checkerframework.qualframework.poly.PolyQual.GroundQual;
@@ -18,7 +15,9 @@ import org.checkerframework.qualframework.poly.QualParams;
 import org.checkerframework.qualframework.poly.SimpleQualifierParameterAnnotationConverter;
 import org.checkerframework.qualframework.util.ExtendedTypeMirror;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+import javax.tools.Diagnostic.Kind;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,26 +28,54 @@ import java.util.HashSet;
  * PolyUnits, Var, Wild annotations.
  *
  */
-public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotationConverter<Units> {
 
+// TODO: support adding custom unit annotations not defined by default
+
+public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotationConverter<Units> {
+    
+    private static final Units DEFAULT = Units.UnitsUnknown;
+
+    private final ProcessingEnvironment processingEnv;
+    
     public UnitsAnnotationConverter() {
         
         // TODO: figure out what to change here
         
-        super(new AnnotationConverterConfiguration<Units>(
+        super(new AnnotationConverterConfiguration<>(
                 new Lub<>(new UnitsQualifierHierarchy()),
                 new Lub<>(new UnitsQualifierHierarchy()),
-                MultiUnits.class.getPackage().getName() + ".Multi",
-                new HashSet<>(Arrays.asList(org.checkerframework.checker.units.qual.Units.class.getName())),
+                null, //MultiUnits.class.getPackage().getName() + ".Multi",
+                new HashSet<>(Arrays.asList(org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())),
                 null,
-                ClassUnitsParam.class,
-                MethodUnitsParam.class,
+                null, //ClassUnitsParam.class,
+                null, //MethodUnitsParam.class,
                 PolyUnit.class,
-                Var.class,
-                Wild.class,
+                null, //Var.class,
+                null, //Wild.class,
                 Units.UnitsUnknown,
                 Units.BOTTOM,
                 Units.UnitsUnknown));
+        
+        processingEnv = null;
+    }
+
+    public UnitsAnnotationConverter(ProcessingEnvironment pe)
+    {
+        super(new AnnotationConverterConfiguration<>(
+                new Lub<>(new UnitsQualifierHierarchy()),
+                new Lub<>(new UnitsQualifierHierarchy()),
+                null, //MultiUnits.class.getPackage().getName() + ".Multi",
+                new HashSet<>(Arrays.asList(org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())),
+                null,
+                null, //ClassUnitsParam.class,
+                null, //MethodUnitsParam.class,
+                PolyUnit.class,
+                null, //Var.class,
+                null, //Wild.class,
+                Units.UnitsUnknown,
+                Units.BOTTOM,
+                Units.UnitsUnknown));
+        processingEnv = pe;
     }
 
     /**
@@ -67,12 +94,20 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
         // - checking to see if annotation is supported
         // - constructing a Units qualifier (nicer to pass in class name and prefix)
         
+        // debug use
+        if(processingEnv != null)
+            processingEnv.getMessager().printMessage(Kind.NOTE, "annotation name: " + AnnotationUtils.annotationName(anno));
+        
+        // TODO: design decision: should find the matching Units qualifier, or just construct a brand new qualifier...
+        
+        // current method is to pre-store a mapping of the annotation's system name to the relevant qualifier, and retrieve it from the mappings
         
         if (AnnotationUtils.annotationName(anno).equals(
-                org.checkerframework.checker.units.qual.Units.class.getName())) {
-
-            Integer value = AnnotationUtils.getElementValue(anno, "value", Integer.class, true);
-            return new Units.UnitsVal(value);
+                org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())) {
+            
+            
+            Prefix prefix = AnnotationUtils.getElementValue(anno, "value", Prefix.class, true);
+            // return new Units(prefix);
         }
         return null;
     }
@@ -105,8 +140,9 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
     }
 
     /**
-     * This override sets up a polymorphic qualifier when the old PolyUnits annotation is used.
+     * This override sets up a polymorphic qualifier when the PolyUnits annotation is used.
      */
+    // TODO: see if there's any code changes needed
     @Override
     protected boolean hasPolyAnnotationCheck(ExtendedTypeMirror type) {
         if (type == null) {

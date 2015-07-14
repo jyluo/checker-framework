@@ -7,8 +7,7 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
-import org.checkerframework.checker.experimental.Units_qual.Units;
-import org.checkerframework.checker.experimental.Units_qual.UnitsQualifierHierarchy;
+
 import org.checkerframework.javacutil.Pair;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.qualframework.base.QualifiedTypeMirror;
@@ -60,10 +59,12 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
     public UnitsQualifiedTypeFactory(QualifierContext<QualParams<Units>> checker) {
         super(checker);
 
+        // get a copy of the pattern compile method so the Regex checker can compile regex strings
         patternCompile = TreeUtils.getMethod("java.util.Units.Pattern", "compile",
                 1, getContext().getProcessingEnvironment());
     }
 
+    // Ground Qualifier Hierarchy is the default type qualifier hierarchy that does not involve polymorphism
     @Override
     protected QualifierHierarchy<Units> createGroundQualifierHierarchy() {
         return new UnitsQualifierHierarchy();
@@ -251,7 +252,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
                 return null;
             }
 
-        };
+        }; // End of return new QualifierParameterTreeAnnotator<Units>(this)
     }
 
     /**
@@ -271,8 +272,12 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
         }
     }
 
+    // checks to see if the qualifier is a polymorphic qualifier
     private boolean isPolyUnits(PolyQual<Units> possiblePoly) {
-        return possiblePoly instanceof QualVar
+        // it is a poly qualifier if it is a qual variable and
+        
+        return (possiblePoly instanceof QualVar)
+        // it's name is the same as "_poly", or whichever is hard coded into the simple qual param annotation converter
                 && ((QualVar<?>) possiblePoly).getName().equals(SimpleQualifierParameterAnnotationConverter.POLY_NAME);
     }
 
@@ -281,7 +286,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
      */
     public static int getGroupCount(/*@org.checkerframework.checker.Units.qual.Units*/ String Units) {
 
-        return Pattern.compile(Units).matcher("").groupCount();
+        return java.util.regex.Pattern.compile(Units).matcher("").groupCount();
     }
 
     /** This method is a copy of UnitsUtil.isValidUnits.
@@ -299,6 +304,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
         return true;
     }
 
+    // add flow analysis
     @Override
     public QualAnalysis<QualParams<Units>> createFlowAnalysis(List<Pair<VariableElement, QualValue<QualParams<Units>>>> fieldValues) {
         return new QualAnalysis<QualParams<Units>>(this.getContext()) {
@@ -309,6 +315,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
         };
     }
 
+    // type substitution??
     @Override
     public TypeVariableSubstitutor<QualParams<Units>> createTypeVariableSubstitutor() {
         return new QualifiedParameterTypeVariableSubstitutor<Units>() {
@@ -324,6 +331,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
         };
     }
 
+    // 
     public QualParams<Units> getEffectiveQualifier(QualifiedTypeMirror<QualParams<Units>> mirror) {
         switch (mirror.getKind()) {
             case TYPEVAR:

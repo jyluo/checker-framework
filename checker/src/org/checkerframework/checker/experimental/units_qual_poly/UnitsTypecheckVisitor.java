@@ -23,6 +23,7 @@ import javax.lang.model.element.VariableElement;
  */
 public class UnitsTypecheckVisitor extends TypecheckVisitorAdapter<QualParams<Units>> {
 
+    // get the Regex executable elements
     private final ExecutableElement matchResultEnd;
     private final ExecutableElement matchResultGroup;
     private final ExecutableElement matchResultStart;
@@ -38,6 +39,8 @@ public class UnitsTypecheckVisitor extends TypecheckVisitorAdapter<QualParams<Un
         this.patternCompile = TreeUtils.getMethod("java.util.Units.Pattern", "compile", 2, env);
         this.patternLiteral = TreeUtils.getField("java.util.Units.Pattern", "LITERAL", env);
     }
+    
+    // class is responsible for checking all calls to regex matchresult or regexpattern methods, and to produce the errors if it doesn't have the correct number of group counts
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree node, Void p) {

@@ -20,7 +20,7 @@ public class UnitsChecker extends CheckerAdapter<QualParams<Units>> {
 
     @Override
     protected BaseTypeVisitor<?> createSourceVisitor() {
-        return new UnitsTypecheckVisitor(this);
+        return new UnitsTypecheckVisitor((CheckerAdapter<QualParams<Units>>) this);
     }
 
     @Override

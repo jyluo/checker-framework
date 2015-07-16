@@ -1,8 +1,12 @@
 package org.checkerframework.checker.experimental.units_qual_poly;
 
-import org.checkerframework.checker.experimental.regex_qual.Regex;
-import org.checkerframework.checker.experimental.regex_qual.RegexQualifierHierarchy;
-import org.checkerframework.checker.units.qual.PolyUnit;
+import org.checkerframework.checker.experimental.units_qual_poly.Units.UnitsBuilder;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.ClassUnitParam;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.MethodUnitParam;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.MultiUnit;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.PolyUnit;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.Var;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.Wild;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
@@ -19,8 +23,11 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.tools.Diagnostic.Kind;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Convert {@link org.checkerframework.checker.Units.qual.Units}
@@ -32,30 +39,34 @@ import java.util.HashSet;
 // TODO: support adding custom unit annotations not defined by default
 
 public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotationConverter<Units> {
-    
+
     private static final Units DEFAULT = Units.UnitsUnknown;
 
     private final ProcessingEnvironment processingEnv;
-    
+
     public UnitsAnnotationConverter() {
-        
+
         // TODO: figure out what to change here
-        
+
+        // needs to have all of the parts, not sure why yet
+
         super(new AnnotationConverterConfiguration<>(
                 new Lub<>(new UnitsQualifierHierarchy()),
                 new Lub<>(new UnitsQualifierHierarchy()),
-                null, //MultiUnits.class.getPackage().getName() + ".Multi",
+                //TODO: bug report: if a checker has no multi annotation name prefixes, it should still handle null string
+                //null, //MultiUnits.class.getPackage().getName() + ".Multi",
+                MultiUnit.class.getPackage().getName() + ".Multi",
                 new HashSet<>(Arrays.asList(org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())),
                 null,
-                null, //ClassUnitsParam.class,
-                null, //MethodUnitsParam.class,
+                ClassUnitParam.class, //ClassUnitParam.class,
+                MethodUnitParam.class, //MethodUnitParam.class,
                 PolyUnit.class,
-                null, //Var.class,
-                null, //Wild.class,
+                Var.class, //Var.class,
+                Wild.class, //Wild.class,
                 Units.UnitsUnknown,
                 Units.BOTTOM,
                 Units.UnitsUnknown));
-        
+
         processingEnv = null;
     }
 
@@ -64,17 +75,20 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
         super(new AnnotationConverterConfiguration<>(
                 new Lub<>(new UnitsQualifierHierarchy()),
                 new Lub<>(new UnitsQualifierHierarchy()),
-                null, //MultiUnits.class.getPackage().getName() + ".Multi",
+                //TODO: bug report: if a checker has no multi annotation name prefixes, it should still handle null string
+                //null, //MultiUnits.class.getPackage().getName() + ".Multi",
+                MultiUnit.class.getPackage().getName() + ".Multi",
                 new HashSet<>(Arrays.asList(org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())),
                 null,
-                null, //ClassUnitsParam.class,
-                null, //MethodUnitsParam.class,
+                ClassUnitParam.class, //ClassUnitParam.class,
+                MethodUnitParam.class, //MethodUnitParam.class,
                 PolyUnit.class,
-                null, //Var.class,
-                null, //Wild.class,
+                Var.class, //Var.class,
+                Wild.class, //Wild.class,
                 Units.UnitsUnknown,
                 Units.BOTTOM,
                 Units.UnitsUnknown));
+
         processingEnv = pe;
     }
 
@@ -83,29 +97,29 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
      */
     @Override
     public Units getQualifier(AnnotationMirror anno) {
-        
-        // if annotation is one of the supported Units annotations, then
-        
-        // get the Prefix value
-        
-        // construct and return a Units qualifier
-        
-        // Support methods needed:
-        // - checking to see if annotation is supported
-        // - constructing a Units qualifier (nicer to pass in class name and prefix)
-        
         // debug use
         if(processingEnv != null)
             processingEnv.getMessager().printMessage(Kind.NOTE, "annotation name: " + AnnotationUtils.annotationName(anno));
-        
-        // TODO: design decision: should find the matching Units qualifier, or just construct a brand new qualifier...
-        
-        // current method is to pre-store a mapping of the annotation's system name to the relevant qualifier, and retrieve it from the mappings
-        
+
+        // first check through the list of supported annotations and see if the annotation is there
+        for(Units u : Units.UnitsBuilder.getSupportedUnitsWithAnnotations()) {
+            if(processingEnv != null)
+                processingEnv.getMessager().printMessage(Kind.NOTE, "anno canon name: " + u.getAnnotation().getCanonicalName());
+
+            if(u.getAnnotation().getCanonicalName().equals(AnnotationUtils.annotationName(anno))) {
+                return u;
+            }
+        }
+
+        // if annotation is not in the existing list, then 
+
+        // TODO: get the Prefix value
+        // TODO: construct and return a Units qualifier
+
         if (AnnotationUtils.annotationName(anno).equals(
                 org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())) {
-            
-            
+
+            // TODO: does this work??
             Prefix prefix = AnnotationUtils.getElementValue(anno, "value", Prefix.class, true);
             // return new Units(prefix);
         }
@@ -119,10 +133,10 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
     protected QualParams<Units> specialCaseHandle(AnnotationMirror anno) {
 
         // if it is not a poly unit, then construct it as a ground qual and return it
-        
+
         // else if it is a poly unit, then construct it as a qual variable
-        
-        
+
+        /*
         if (AnnotationUtils.annotationName(anno).equals(
                 org.checkerframework.checker.Units.qual.Units.class.getName())) {
 
@@ -136,6 +150,8 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
         }
 
         ErrorReporter.errorAbort("Unexpected AnnotationMirror found in special case handling: " + anno);
+
+         */
         return null;
     }
 
@@ -156,4 +172,6 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
         }
         return super.hasPolyAnnotationCheck(type);
     }
+
+
 }

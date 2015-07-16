@@ -36,9 +36,9 @@ public class UnitsQualPolyChecker extends QualifierParameterChecker<Units> {
 
         // stores the set of annotation names for which we won't print out the annotation
         private final Set<String> SUPPRESS_NAMES = new HashSet<>(
-                Arrays.asList("UnitsUnknown", "UnitsBot", "PartialUnits"));
+                Arrays.asList("UnknownUnits", "UnitsBottom", "UnitsMultiple"));
         //TODO: change this to soft-coded annotation names
-        //TODO: remove partialunits? --> partialregex??
+        //TODO: remove unitsmultiple?
 
         public UnitsSurfaceSyntaxConfiguration() {
             super(Units.UnitsUnknown, Units.BOTTOM,

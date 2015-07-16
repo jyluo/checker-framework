@@ -821,7 +821,14 @@
             <param name="param" value="tests.UnitsQualTest"/>
         </antcall>
     </target>
-
+	
+	<target name="units_qual_poly-tests" depends="jar,build-tests"
+            description="Run tests for the qualifier API Polymorphic Units Checker">
+        <antcall target="-run-tests">
+            <param name="param" value="tests.UnitsQualPolyTest"/>
+        </antcall>
+    </target>
+	
     <target name="guieffect-tests" depends="jar,build-tests"
             description="Run tests for the GUI Effect Checker">
         <antcall target="-run-tests">

@@ -1,4 +1,4 @@
-package org.checkerframework.checker.experimental.units_qual_poly.qual;
+package org.checkerframework.checker.experimental.units_qual_poly.qualAPI_qual;
 
 import org.checkerframework.qualframework.poly.SimpleQualifierParameterAnnotationConverter;
 import org.checkerframework.qualframework.poly.qual.Wildcard;

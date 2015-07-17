@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Stack;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.tools.Diagnostic;
 
 import org.checkerframework.qualframework.base.QualifierHierarchy;
 
@@ -26,6 +27,7 @@ public class UnitsQualifierHierarchy implements QualifierHierarchy<Units>{
 
     public UnitsQualifierHierarchy(ProcessingEnvironment pe){
         processingEnv = pe;
+        //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Qual Hierarchy created");
     }
     
     public UnitsQualifierHierarchy(){
@@ -129,7 +131,7 @@ public class UnitsQualifierHierarchy implements QualifierHierarchy<Units>{
 
     @Override
     public Units getTop() {
-        return Units.UnitsUnknown;
+        return Units.UNITSUNKNOWN;
     }
 
     @Override

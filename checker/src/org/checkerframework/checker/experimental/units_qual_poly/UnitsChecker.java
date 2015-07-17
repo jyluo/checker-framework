@@ -37,7 +37,7 @@ public class UnitsChecker extends CheckerAdapter<QualParams<Units>> {
 
         defaults.addAbsoluteDefault(
                 getTypeMirrorConverter().getAnnotation(
-                        new QualParams<>(new GroundQual<>(Units.UnitsUnknown))),
+                        new QualParams<>(new GroundQual<>(Units.UNITSUNKNOWN))),
                 DefaultLocation.LOCAL_VARIABLE);
     }
 

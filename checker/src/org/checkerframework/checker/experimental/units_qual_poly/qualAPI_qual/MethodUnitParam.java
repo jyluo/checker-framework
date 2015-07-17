@@ -1,6 +1,6 @@
-package org.checkerframework.checker.experimental.units_qual_poly.qual;
+package org.checkerframework.checker.experimental.units_qual_poly.qualAPI_qual;
 
-import org.checkerframework.checker.tainting.qual.ClassTaintingParam;
+import org.checkerframework.checker.tainting.qual.MethodTaintingParam;
 import org.checkerframework.qualframework.poly.SimpleQualifierParameterAnnotationConverter;
 
 import java.lang.annotation.ElementType;
@@ -9,14 +9,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 /**
- * ClassRegexParam declares a regex qualifier parameter on a class.
+ * MethodRegexParam declares a qualifier parameter on a method.
  *
- * @see ClassTaintingParam
+ * @see MethodTaintingParam
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-@Repeatable(MultiClassUnitParam.class)
-public @interface ClassUnitParam {
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Repeatable(MultiMethodUnitParam.class)
+public @interface MethodUnitParam {
     /**
      * The name of the qualifier parameter to declare.
      */

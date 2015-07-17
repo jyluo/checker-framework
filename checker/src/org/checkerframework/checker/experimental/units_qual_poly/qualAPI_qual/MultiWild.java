@@ -1,4 +1,4 @@
-package org.checkerframework.checker.experimental.units_qual_poly.qual;
+package org.checkerframework.checker.experimental.units_qual_poly.qualAPI_qual;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-public @interface MultiVar {
-    Var[] value();
+public @interface MultiWild {
+    Wild[] value();
 }

@@ -1,4 +1,4 @@
-package org.checkerframework.checker.experimental.units_qual_poly.qual;
+package org.checkerframework.checker.experimental.units_qual_poly.qualAPI_qual;
 
 import org.checkerframework.checker.regex.classic.qual.UnknownRegex;
 import org.checkerframework.checker.tainting.qual.Tainted;

@@ -19,12 +19,13 @@ public class UnitsQualPolyChecker extends QualifierParameterChecker<Units> {
         return new UnitsQualifiedTypeFactory(this);
     }
 
+    @Override
     protected Set<?> getInvisibleQualifiers() {
         return new HashSet<>(
                 Arrays.asList(
                         this.getTypeFactory().getQualifierHierarchy().getBottom(),
                         this.getTypeFactory().getQualifierHierarchy().getTop(),
-                        Units.BOTTOM, Units.UnitsUnknown));
+                        Units.BOTTOM, Units.UNITSUNKNOWN));
     }
 
     @Override
@@ -41,7 +42,7 @@ public class UnitsQualPolyChecker extends QualifierParameterChecker<Units> {
         //TODO: remove unitsmultiple?
 
         public UnitsSurfaceSyntaxConfiguration() {
-            super(Units.UnitsUnknown, Units.BOTTOM,
+            super(Units.UNITSUNKNOWN, Units.BOTTOM,
                     UnitsQualPolyChecker.this.getContext().getTypeFactory().getQualifierHierarchy().getTop(),
                     UnitsQualPolyChecker.this.getContext().getTypeFactory().getQualifierHierarchy().getBottom());
         }

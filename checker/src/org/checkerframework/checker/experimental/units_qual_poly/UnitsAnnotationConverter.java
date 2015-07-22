@@ -46,9 +46,10 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
 
     public UnitsAnnotationConverter() {
 
-        // TODO: figure out what to change here
-
-        // needs to have all of the parts, not sure why yet
+        // Load all annotation names by reflection
+        // process the annotations and construct a bunch of qualifiers reflecting each annotation's name, base unit, prefix.
+        
+        
 
         super(new AnnotationConverterConfiguration<>(
                 new Lub<>(new UnitsQualifierHierarchy()),
@@ -58,7 +59,7 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
                 MultiUnit.class.getPackage().getName() + ".Multi",
                 // Supported Annotation Names
                 //new HashSet<>(Arrays.asList(org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())),
-                UnitsQualPool.getInstance(null).getSupportedAnnotationNames(),
+                UnitsQualReflectionLoader.getInstance(null).getSupportedAnnotationNames(),
                 // Special Case Annotation Names
                 null,
                 ClassUnitParam.class, //ClassUnitParam.class,
@@ -83,7 +84,7 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
                 MultiUnit.class.getPackage().getName() + ".Multi",
                 // Supported Annotation Names
                 //new HashSet<>(Arrays.asList(org.checkerframework.checker.experimental.units_qual_poly.Units.class.getName())),
-                UnitsQualPool.getInstance(pe).getSupportedAnnotationNames(),
+                UnitsQualReflectionLoader.getInstance(pe).getSupportedAnnotationNames(),
                 // Special Case Annotation Names
                 null,
                 ClassUnitParam.class, //ClassUnitParam.class,
@@ -161,7 +162,7 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
         }
 
         // check through the list of supported annotations and see if the annotation is there
-        for(Units u : UnitsQualPool.getInstance(processingEnv).getSupportedUnits()) {
+        for(Units u : UnitsQualReflectionLoader.getInstance(processingEnv).getSupportedUnits()) {
 
             //processingEnv.getMessager().printMessage(Kind.NOTE, u.getAnnotation().getTypeName());
 
@@ -178,7 +179,7 @@ public class UnitsAnnotationConverter extends SimpleQualifierParameterAnnotation
             //            }
 
             if(u.getAnnotation().getCanonicalName().equals(annoName)) {
-                Units qual = UnitsQualPool.getInstance(processingEnv).getQualifier(u.getUnitName(), prefix);
+                Units qual = UnitsQualReflectionLoader.getInstance(processingEnv).getQualifier(u.getUnitName(), prefix);
                 //processingEnv.getMessager().printMessage(Kind.NOTE, "Units Qual: " + qual.toString() + " super " + qual.getSuperType());
                 return qual;
             }

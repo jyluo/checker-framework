@@ -196,9 +196,9 @@ public class Units {
 
     // Area
     public static final Units Area = new Units("Area", UNITSUNKNOWN, Area.class) {};
-    public static final Units km2 = new Units("m2", Prefix.kilo, Area, km2.class) {};
-    public static final Units m2 = new Units("m2", Area, m2.class) {};
-    public static final Units mm2 = new Units("m2", Prefix.milli, Area, mm2.class) {};
+    public static final Units km2 = new Units("km^2", Area, km2.class) {};
+    public static final Units m2 = new Units("m^2", Area, m2.class) {};
+    public static final Units mm2 = new Units("mm^2", Area, mm2.class) {};
 
     // Current
     public static final Units Current = new Units("Current", UNITSUNKNOWN, Current.class) {};
@@ -233,8 +233,8 @@ public class Units {
 
     // Speed
     public static final Units Speed = new Units("Speed", UNITSUNKNOWN, Speed.class) {};
-    public static final Units mPERs = new Units("mPERs", Speed, mPERs.class) {};
-    public static final Units kmPERh = new Units("kmPERh", Speed, kmPERh.class) {};
+    public static final Units mPERs = new Units("m/s", Speed, mPERs.class) {};
+    public static final Units kmPERh = new Units("km/h", Speed, kmPERh.class) {};
 
     // Substance
     public static final Units Substance = new Units("Substance", UNITSUNKNOWN, Substance.class) {};

@@ -1,6 +1,11 @@
 package org.checkerframework.checker.experimental.units_qual_poly;
 
 
+import java.lang.annotation.Annotation;
+import java.util.Set;
+
+import javax.tools.Diagnostic;
+
 import org.checkerframework.checker.experimental.units_qual_poly.Units;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.qual.DefaultLocation;
@@ -16,6 +21,22 @@ public class UnitsChecker extends CheckerAdapter<QualParams<Units>> {
 
     public UnitsChecker() {
         super(new UnitsQualPolyChecker());
+        
+        //this.getTypeMirrorConverter().getQualifier(anno);
+        
+        //getTypeMirrorConverter().getAnnotation(
+        //        underlying.getTypeFactory().getQualifierHierarchy().getBottom())
+    }
+    
+    public Set<Class <? extends Annotation>> getAnnos() {
+        Set<Class <? extends Annotation>> qualAnos = super.getTypeFactory().getSupportedTypeQualifiers();
+        // this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Supported Annos: ");
+        
+        for(Class <? extends Annotation> anno : qualAnos) {
+            this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Anno: " + anno);
+        }
+        
+        return qualAnos;
     }
 
     @Override

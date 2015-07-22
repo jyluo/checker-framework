@@ -8,10 +8,12 @@ import com.sun.source.tree.Tree.Kind;
 
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.Pair;
+import org.checkerframework.qualframework.base.DefaultQualifiedTypeFactory;
 import org.checkerframework.qualframework.base.QualifiedTypeMirror;
 import org.checkerframework.qualframework.base.QualifiedTypeMirror.QualifiedDeclaredType;
 import org.checkerframework.qualframework.base.QualifiedTypeMirror.QualifiedTypeVariable;
 import org.checkerframework.qualframework.base.QualifiedTypeMirror.QualifiedWildcardType;
+import org.checkerframework.qualframework.base.QualifiedTypes;
 import org.checkerframework.qualframework.base.QualifierHierarchy;
 import org.checkerframework.qualframework.base.SetQualifierVisitor;
 import org.checkerframework.qualframework.base.TypeVariableSubstitutor;
@@ -74,6 +76,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
         processingEnv = unitsChecker.getProcessingEnvironment();
         elements = processingEnv.getElementUtils();
 
+
         // get a copy of the pattern compile method so the Regex checker can compile regex strings
         //        patternCompile = TreeUtils.getMethod("java.util.regex.Pattern", "compile",
         //                1, getContext().getProcessingEnvironment());
@@ -89,7 +92,12 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
 
         // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "TOP qual: " + TOP.toString());
         // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Units Qual Factory Created");
+
+
     }
+
+
+
 
     protected Map<String, UnitsQualifiedRelations> getUnitsRels()
     {
@@ -126,50 +134,18 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
                 return result;
             }
 
-
-
-            /**
-             * Create a Units qualifier based on the contents of string and char literals.
-             * Null literals are Units.BOTTOM.
-             */
-            //            @Override
-            //            public QualifiedTypeMirror<QualParams<Units>> visitLiteral(LiteralTree tree, ExtendedTypeMirror type) {
-            //                QualifiedTypeMirror<QualParams<Units>> result = super.visitLiteral(tree, type);
-            //
-            //                if (tree.getKind() == Kind.NULL_LITERAL) {
-            //                    return SetQualifierVisitor.apply(result, UnitsQualifiedTypeFactory.this.getQualifierHierarchy().getBottom());
-            //                }
-            //
-            //                String UnitsStr = null;
-            //                if (tree.getKind() == Kind.STRING_LITERAL) {
-            //                    UnitsStr = (String) tree.getValue();
-            //                } else if (tree.getKind() == Kind.CHAR_LITERAL) {
-            //                    UnitsStr = Character.toString((Character) tree.getValue());
-            //                }
-            //
-            //                if (UnitsStr != null) {
-            //                    Units UnitsQual;
-            //                    if (isUnits(UnitsStr)) {
-            //                        int groupCount = getGroupCount(UnitsStr);
-            //                        UnitsQual = new Units.UnitsVal(groupCount);
-            //                    } else {
-            //                        UnitsQual = new Units.PartialUnits(UnitsStr);
-            //                    }
-            //                    QualParams<Units> clone = result.getQualifier().clone();
-            //                    clone.setPrimary(new GroundQual<>(UnitsQual));
-            //                    result = SetQualifierVisitor.apply(result, clone);
-            //                }
-            //
-            //                return result;
-            //            }
-
             // Binary Operation
 
             @Override
             public QualifiedTypeMirror<QualParams<Units>> visitBinary(BinaryTree tree, ExtendedTypeMirror type) {
                 QualifiedTypeMirror<QualParams<Units>> result = super.visitBinary(tree, type);
 
-                // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "visiting binary tree Class: " + tree.getClass() + " Kind: " + tree.getKind());
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "visiting binary tree Class: " + tree.getClass() + " Kind: " + tree.getKind());
+
+                if(tree instanceof CompoundAssignmentTree)
+                {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "binary tree is actually compound assignment");
+                }
 
                 //                if (TreeUtils.isStringConcatenation(tree)
                 //                        || (tree instanceof CompoundAssignmentTree
@@ -184,13 +160,9 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
 
                 Units bestUnit = null;
                 Units leftUnit = leftPrimary.getMaximum();
-                //                Units leftUnit = getQualifierHierarchy().getBottom() == leftUnits ?
-                //                        new UnitsQualPool.getQualifier(String name, Prefix p, Units superUnit) : leftPrimary.getMaximum();
-                //                
                 Units rightUnit = rightPrimary.getMaximum();
-                //              Units rightUnit = getQualifierHierarchy().getBottom() == rightUnits ?
-                //                      new UnitsQualPool.getQualifier(String name, Prefix p, Units superUnit) : rightPrimary.getMaximum();
-                //              
+
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "left unit: " + leftUnit + " right unit: " + rightUnit);
 
                 if(leftUnit == null || rightUnit == null) {
                     // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, " left Unit null: " + (leftUnit==null) + " right Unit null: " + (rightUnit ==null) );
@@ -223,7 +195,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
                     }
 
                     if(unitRelResult != null) {
-                        // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "best unit found via unit relations");
+                        //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "best unit found via unit relations");
                         bestUnit = unitRelResult;
                     }
                 }
@@ -280,18 +252,10 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
                     clone.setPrimary(new GroundQual<>(bestUnit));
                     result = SetQualifierVisitor.apply(result, clone);
                     return result;
-
-                    //                    // version 2:
-                    //                    resultQual = new GroundQual<Units>(bestUnit);
-                    //
-                    //                    if (resultQual != null) {
-                    //                        return new QualifiedDeclaredType<>(
-                    //                                type, new QualParams<>(resultQual),
-                    //                                new ArrayList<QualifiedTypeMirror<QualParams<Units>>>()
-                    //                                );
-                    //                    }
                 }
 
+                //                // version 2:
+                //                resultQual = new GroundQual<Units>(bestUnit);
                 if (resultQual != null) {
                     // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "returning poly unit: " + resultQual.toString());
                     return new QualifiedDeclaredType<>(
@@ -307,7 +271,7 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
             public QualifiedTypeMirror<QualParams<Units>> visitCompoundAssignment(CompoundAssignmentTree tree, ExtendedTypeMirror type) {
                 QualifiedTypeMirror<QualParams<Units>> result = super.visitCompoundAssignment(tree, type);
 
-                //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "visiting compound assign tree Class: " + tree.getClass() + " Kind: " + tree.getKind());
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "visiting compound assign tree Class: " + tree.getClass() + " Kind: " + tree.getKind());
 
                 QualParams<Units> leftUnits = getEffectiveQualifier(getQualifiedType(tree.getVariable()));
                 QualParams<Units> rightUnits = getEffectiveQualifier(getQualifiedType(tree.getExpression()));
@@ -408,18 +372,10 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
                     clone.setPrimary(new GroundQual<>(bestUnit));
                     result = SetQualifierVisitor.apply(result, clone);
                     return result;
-
-                    //                    // version 2:
-                    //                    resultQual = new GroundQual<Units>(bestUnit);
-                    //
-                    //                    if (resultQual != null) {
-                    //                        return new QualifiedDeclaredType<>(
-                    //                                type, new QualParams<>(resultQual),
-                    //                                new ArrayList<QualifiedTypeMirror<QualParams<Units>>>()
-                    //                                );
-                    //                    }
                 }
 
+                //                // version 2:
+                //                resultQual = new GroundQual<Units>(bestUnit);
                 if (resultQual != null) {
                     // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "returning poly unit: " + resultQual.toString());
                     return new QualifiedDeclaredType<>(
@@ -432,6 +388,43 @@ public class UnitsQualifiedTypeFactory extends QualifierParameterTypeFactory<Uni
             }
 
 
+
+
+
+            /**
+             * Create a Units qualifier based on the contents of string and char literals.
+             * Null literals are Units.BOTTOM.
+             */
+            //            @Override
+            //            public QualifiedTypeMirror<QualParams<Units>> visitLiteral(LiteralTree tree, ExtendedTypeMirror type) {
+            //                QualifiedTypeMirror<QualParams<Units>> result = super.visitLiteral(tree, type);
+            //
+            //                if (tree.getKind() == Kind.NULL_LITERAL) {
+            //                    return SetQualifierVisitor.apply(result, UnitsQualifiedTypeFactory.this.getQualifierHierarchy().getBottom());
+            //                }
+            //
+            //                String UnitsStr = null;
+            //                if (tree.getKind() == Kind.STRING_LITERAL) {
+            //                    UnitsStr = (String) tree.getValue();
+            //                } else if (tree.getKind() == Kind.CHAR_LITERAL) {
+            //                    UnitsStr = Character.toString((Character) tree.getValue());
+            //                }
+            //
+            //                if (UnitsStr != null) {
+            //                    Units UnitsQual;
+            //                    if (isUnits(UnitsStr)) {
+            //                        int groupCount = getGroupCount(UnitsStr);
+            //                        UnitsQual = new Units.UnitsVal(groupCount);
+            //                    } else {
+            //                        UnitsQual = new Units.PartialUnits(UnitsStr);
+            //                    }
+            //                    QualParams<Units> clone = result.getQualifier().clone();
+            //                    clone.setPrimary(new GroundQual<>(UnitsQual));
+            //                    result = SetQualifierVisitor.apply(result, clone);
+            //                }
+            //
+            //                return result;
+            //            }
 
 
             /**

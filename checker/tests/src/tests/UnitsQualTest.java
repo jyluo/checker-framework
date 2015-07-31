@@ -11,7 +11,7 @@ public class UnitsQualTest extends ParameterizedCheckerTest {
     public UnitsQualTest(File testFile) {
         super(testFile,
                 org.checkerframework.checker.experimental.units_qual.UnitsCheckerAdapter.class,
-                "units",
+                "src",
                 "-Anomsgtext");
     }
 

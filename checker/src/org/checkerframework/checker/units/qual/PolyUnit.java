@@ -8,9 +8,8 @@ import org.checkerframework.framework.qual.*;
  * A polymorphic qualifier for the Rawness type system.
  *
  * <p>
- * Any method written using @PolyRaw conceptually has two versions:  one
- * in which every instance of @PolyRaw has been replaced by @Raw, and
- * one in which every instance of @PolyRaw has been replaced by @NonRaw.
+ * Any method written using @PolyUnit conceptually has
+ * every instance of @PolyUnit replaced by a Units annotation.
  *
  * @checker_framework.manual #nullness-checker Nullness Checker
  */

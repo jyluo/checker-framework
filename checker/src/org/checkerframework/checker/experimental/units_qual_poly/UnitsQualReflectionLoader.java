@@ -1,19 +1,14 @@
 package org.checkerframework.checker.experimental.units_qual_poly;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,18 +21,10 @@ import java.util.jar.JarFile;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.tools.Diagnostic;
-import javax.tools.Diagnostic.Kind;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 
-import org.checkerframework.checker.experimental.units_qual_poly.qual.Area;
 import org.checkerframework.checker.experimental.units_qual_poly.qual.Prefix;
-import org.checkerframework.checker.units.qual.UnitsMultiple;
+import org.checkerframework.checker.experimental.units_qual_poly.qual.UnitsMultiple;
 import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
-import org.checkerframework.framework.qual.TypeQualifier;
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 
@@ -63,7 +50,7 @@ public final class UnitsQualReflectionLoader{
     private static final String checkerDir = dotToSlash("org.checkerframework.checker.experimental.units_qual_poly.qual.");
     private static String packageName;
     private static final String qualSubpackage = ".qual.";
-    
+
     // private constructors for creating a Units qualifier
     // we expose two getQualifier methods for instantiating a new qualifier instead, so that we can maintain a lean memory
     // footprint for the total number of qualifier objects in memory
@@ -115,16 +102,16 @@ public final class UnitsQualReflectionLoader{
 
         // =======================================
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Loading annos...");
-        Map<String, AnnotationMirror> loadedAnnos = loadAnnotations();
-        for(String annoName : loadedAnnos.keySet()) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "loaded anno: " + annoName);
-        }
+        Map<Class<? extends Annotation>, AnnotationMirror> loadedAnnos = loadAnnotations();
+//        for(String annoName : loadedAnnos.keySet()) {
+//            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "loaded anno: " + annoName);
+//        }
     }
 
     // loads annotations via reflection
     @SuppressWarnings("resource")
-    public Map<String, AnnotationMirror> loadAnnotations() {
-        Map<String, AnnotationMirror> annos = new HashMap<String, AnnotationMirror>();
+    public Map<Class<? extends Annotation>, AnnotationMirror> loadAnnotations() {
+        Map<Class<? extends Annotation>, AnnotationMirror> annos = new HashMap<Class<? extends Annotation>, AnnotationMirror>();
 
         Set<String> annoFiles = getAnnotationFileNames();
 
@@ -147,11 +134,16 @@ public final class UnitsQualReflectionLoader{
                 //                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "loading: " + anno);
 
                 // Load in the class files
-                @SuppressWarnings("unchecked")
-                Class<? extends Annotation> cls = (Class<? extends Annotation>) cl.loadClass(anno);
+                Class<?> cls = cl.loadClass(anno);
 
-                // convert the annotation class into an annotation mirror
-                annos.put(anno, createAnnotationMirrorFromClass(cls));
+                // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, anno);
+                // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, cls.getCanonicalName());
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, cls + " is annotation = " + (cls.isAnnotation()));
+
+                if(cls.isAnnotation()) {
+                    // convert the annotation class into an annotation mirror
+                    annos.put(cls.asSubclass(Annotation.class), createAnnotationMirrorFromClass(cls.asSubclass(Annotation.class)));
+                }
 
             } catch (ClassNotFoundException e) {
                 //TODO: give better feedback
@@ -212,54 +204,41 @@ public final class UnitsQualReflectionLoader{
     // takes a class representing a compiled java file and filters out non-type qualifier annotations, then converts it to an annotation mirror using the AnnotationBuilder
     public AnnotationMirror createAnnotationMirrorFromClass(Class<? extends Annotation> annoClass) {
 
-        boolean isTypeQual = false;
-        for(Annotation metaAnnotation : annoClass.getAnnotations()) {
-            // see if it is a type qualifier
-            if( metaAnnotation.annotationType().getCanonicalName().equals(TypeQualifier.class.getCanonicalName()) ) {
-                // processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Anno is a type qualifier");
-                isTypeQual = true;
-                break;
+        // build the initial annotation mirror (missing prefix)
+        AnnotationBuilder builder = new AnnotationBuilder(processingEnv, annoClass);
+        AnnotationMirror initialResult = builder.build();
+
+        // further refine 
+        for(AnnotationMirror metaAnno : initialResult.getAnnotationType().asElement().getAnnotationMirrors() ) {
+            //                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Meta Anno: " + metaAnno);
+
+            // default in hierarchy
+            if( metaAnno.getAnnotationType().toString().equals(DefaultQualifierInHierarchy.class.getCanonicalName())) {
+                // TODO : setup qual hierarchy
+            }
+
+            // TODO : special treatment of invisible qualifiers?
+
+            // annotations which are a SI prefix multiple of some base unit 
+            if( metaAnno.getAnnotationType().toString().equals(UnitsMultiple.class.getCanonicalName())) {
+                @SuppressWarnings("unchecked")
+                // retrieve the quantity, which is the base annotation class of the SI Unit
+                Class<? extends Annotation> baseUnitAnnoClass = (Class<? extends Annotation>) AnnotationUtils.getElementValueClass(metaAnno, "quantity", true);
+                // and retrieve the SI Prefix
+                Prefix prefix = AnnotationUtils.getElementValueEnum(metaAnno, "prefix", Prefix.class, true);
+                // build the canonical annotation
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "trying to build unit: " + baseUnitAnnoClass.getSimpleName() + " prefix: " + prefix);
+                AnnotationBuilder baseBuilder = new AnnotationBuilder(processingEnv, baseUnitAnnoClass);
+                baseBuilder.setValue("value", prefix);
+                AnnotationMirror res = baseBuilder.build();
+                // insert the alias class name and the canonical annotation into the map
+                // TODO: qual version of this
+                // aliasMap.put(aname, res);
+                // return the canonical annotation
+                return res;
             }
         }
-
-        // filter out non-type qualifiers
-        // TODO: Future Improvement to Annotation Builder -> while it attempts to build a new annotation, it will reject anything that isn't actually an annotation class
-        if(isTypeQual) {
-            // build the initial annotation mirror (missing prefix)
-            AnnotationBuilder builder = new AnnotationBuilder(processingEnv, annoClass);
-            AnnotationMirror initialResult = builder.build();
-
-            // further refine 
-            for(AnnotationMirror metaAnno : initialResult.getAnnotationType().asElement().getAnnotationMirrors() ) {
-                //                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Meta Anno: " + metaAnno);
-
-                // default in hierarchy
-                if( metaAnno.getAnnotationType().toString().equals(DefaultQualifierInHierarchy.class.getCanonicalName())) {
-                    // TODO : setup qual hierarchy
-                }
-
-                // TODO : special treatment of invisible qualifiers?
-
-                // annotations which are a SI prefix multiple of some base unit 
-                if( metaAnno.getAnnotationType().toString().equals(UnitsMultiple.class.getCanonicalName())) {
-                    @SuppressWarnings("unchecked")
-                    // retrieve the quantity, which is the base annotation class of the SI Unit
-                    Class<? extends Annotation> baseUnitAnnoClass = (Class<? extends Annotation>) AnnotationUtils.getElementValueClass(metaAnno, "quantity", true);
-                    // and retrieve the SI Prefix
-                    Prefix prefix = AnnotationUtils.getElementValueEnum(metaAnno, "prefix", Prefix.class, true);
-                    // build the canonical annotation
-                    AnnotationBuilder baseBuilder = new AnnotationBuilder(processingEnv, baseUnitAnnoClass);
-                    baseBuilder.setValue("value", prefix);
-                    AnnotationMirror res = builder.build();
-                    // insert the alias class name and the canonical annotation into the map
-                    // TODO: qual version of this
-                    // aliasMap.put(aname, res);
-                    // return the canonical annotation
-                    return res;
-                }
-            }
-        }
-        return null;
+        return initialResult;
     }
 
     //    private boolean loadAndCompileAnnos() {

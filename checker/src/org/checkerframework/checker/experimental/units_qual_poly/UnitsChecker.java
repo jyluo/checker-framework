@@ -29,14 +29,15 @@ public class UnitsChecker extends CheckerAdapter<QualParams<Units>> {
     }
     
     public Set<Class <? extends Annotation>> getAnnos() {
-        Set<Class <? extends Annotation>> qualAnos = super.getTypeFactory().getSupportedTypeQualifiers();
-        // this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Supported Annos: ");
-        
-        for(Class <? extends Annotation> anno : qualAnos) {
-            this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Anno: " + anno);
-        }
-        
-        return qualAnos;
+//        Set<Class <? extends Annotation>> qualAnos = super.getTypeFactory().getSupportedTypeQualifiers();
+//        // this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Supported Annos: ");
+//        
+//        for(Class <? extends Annotation> anno : qualAnos) {
+//            this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Anno: " + anno);
+//        }
+//        
+//        return qualAnos;
+        return null;
     }
 
     @Override

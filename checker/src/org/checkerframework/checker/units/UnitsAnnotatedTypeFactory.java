@@ -47,8 +47,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     protected AnnotationMirror BOTTOM;
 
     // Map from canonical class name to the corresponding UnitsRelations instance.
-    // We use the string to prevent instantiating the UnitsRelations multiple times.
-    private Map<String, UnitsRelations> unitsRel;
+    // We use the string to prevent instantiating the UnitsRelations classes multiple times.
+    private static Map<String, UnitsRelations> unitsRel;
 
     // Map from canonical annotation names to their aliases
     // The string is the alias annotation's name, where as the AnnotationMirror stored is the canonical annotation
@@ -64,7 +64,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         addTypeNameImplicit(java.lang.Void.class, BOTTOM);
     }
 
-    protected Map<String, UnitsRelations> getUnitsRel() {
+    private static Map<String, UnitsRelations> getUnitsRel() {
         if (unitsRel == null) {
             unitsRel = new HashMap<String, UnitsRelations>();
         }
@@ -86,8 +86,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             if (aa.getAnnotationType().toString().equals(UnitsMultiple.class.getCanonicalName())) {
                 @SuppressWarnings("unchecked")
                 // retrieve the quantity, which is the base annotation class of the SI Unit
-                Class<? extends Annotation> theclass = (Class<? extends Annotation>) AnnotationUtils
-                        .getElementValueClass(aa, "quantity", true);
+                Class<? extends Annotation> theclass = (Class<? extends Annotation>) AnnotationUtils.getElementValueClass(aa, "quantity", true);
                 // and retrieve the SI Prefix
                 Prefix prefix = AnnotationUtils.getElementValueEnum(aa, "prefix", Prefix.class, true);
                 // build the canonical annotation
@@ -106,6 +105,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     @SuppressWarnings("unchecked")
     protected Set<Class<? extends Annotation>> createSupportedTypeQualifiers() {
+
+        // make sure we have a copy of unitsRelations
+        getUnitsRel();
+
         Set<Class<? extends Annotation>> qualSet =
                 new HashSet<Class<? extends Annotation>>();
 
@@ -121,7 +124,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     qualSet.add(q);
 
                     // if a particular class was annotated with @UnitsRelations, then add that class to the list of UnitsRelations handlers
-                    addUnitsRelations(q);
+                    this.addUnitsRelations(q);
                 } catch (ClassNotFoundException e) {
                     checker.message(javax.tools.Diagnostic.Kind.WARNING,
                             "Could not find class for unit: " + qualName + ". Ignoring unit.");
@@ -132,7 +135,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // Always add the default units relations.
         // TODO: we assume that all the standard units only use this. For absolute correctness,
         // go through each and look for a UnitsRelations annotation.
-        getUnitsRel().put("org.checkerframework.checker.units.UnitsRelationsDefault",
+        getUnitsRel().put(UnitsRelationsDefault.class.getCanonicalName(),
                 new UnitsRelationsDefault().init(processingEnv));
 
         // Load qual set via reflection
@@ -216,17 +219,26 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // get the annotation mirror
         AnnotationMirror am = AnnotationUtils.fromClass(elements, qual);
 
-        // get every annotation of that mirror??
+        //processingEnv.getMessager().printMessage(Kind.NOTE, "loading: " + qual.getCanonicalName());
+
+        // get all the meta annotations of the class
         for (AnnotationMirror ama : am.getAnnotationType().asElement().getAnnotationMirrors() ) {
-            if (ama.getAnnotationType().toString().equals(UnitsRelations.class.getCanonicalName())) {   // TODO: is this a bug? should it be qual.UnitsRelations instead??
+
+            //processingEnv.getMessager().printMessage(Kind.NOTE, ama.toString());
+            //processingEnv.getMessager().printMessage(Kind.NOTE, ama.getAnnotationType().toString() + " matching " + org.checkerframework.checker.units.qual.UnitsRelations.class.getCanonicalName());
+
+            // if there's a UnitsRelations meta annotation
+            if (ama.getAnnotationType().toString().equals(org.checkerframework.checker.units.qual.UnitsRelations.class.getCanonicalName())) {
                 @SuppressWarnings("unchecked")
-                Class<? extends UnitsRelations> theclass = (Class<? extends UnitsRelations>)
-                AnnotationUtils.getElementValueClass(ama, "value", true);
+                Class<? extends UnitsRelations> theclass = (Class<? extends UnitsRelations>) AnnotationUtils.getElementValueClass(ama, "value", true);
                 String classname = theclass.getCanonicalName();
+
+                //processingEnv.getMessager().printMessage(Kind.NOTE, classname);
 
                 if (!getUnitsRel().containsKey(classname)) {
                     try {
-                        unitsRel.put(classname, ((UnitsRelations) theclass.newInstance()).init(processingEnv));
+                        //processingEnv.getMessager().printMessage(Kind.NOTE, "Adding " + classname + " to UnitRels");
+                        getUnitsRel().put(classname, ((UnitsRelations) theclass.newInstance()).init(processingEnv));
                     } catch (InstantiationException e) {
                         // TODO
                         e.printStackTrace();
@@ -291,7 +303,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             Tree.Kind kind = node.getKind();
 
             AnnotationMirror bestres = null;
-            for (UnitsRelations ur : unitsRel.values()) {
+            for (UnitsRelations ur : getUnitsRel().values()) {
                 AnnotationMirror res = useUnitsRelation(kind, ur, lht, rht);
 
                 if (bestres != null && res != null && !bestres.equals(res)) {
@@ -310,6 +322,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 type.addAnnotation(bestres);
             } else {
                 // Handle the binary operations that do not produce a UnitsRelation.
+
+                //processingEnv.getMessager().printMessage(Kind.NOTE, "Unit Rels couldn't find an annotation");
 
                 switch (kind) {
                 case MINUS:

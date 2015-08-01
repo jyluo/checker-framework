@@ -2,7 +2,7 @@ package org.checkerframework.checker.units;
 
 /*>>>
 import org.checkerframework.checker.nullness.qual.Nullable;
-*/
+ */
 
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.h;
@@ -25,6 +25,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 
 /**
  * Default relations between SI units.
@@ -34,12 +35,12 @@ public class UnitsRelationsDefault implements UnitsRelations {
 
     protected AnnotationMirror m, km, mm, m2, km2, mm2, s, h, mPERs, mPERs2, kmPERh;
 
-    ProcessingEnvironment processingEnv;
-    
+    private ProcessingEnvironment processingEnv;
+
     @Override
     public UnitsRelations init(ProcessingEnvironment env) {
         processingEnv = env;
-        
+
         AnnotationBuilder builder = new AnnotationBuilder(env, m.class);
         Elements elements = env.getElementUtils();
 
@@ -124,6 +125,8 @@ public class UnitsRelationsDefault implements UnitsRelations {
 
     @Override
     public /*@Nullable*/ AnnotationMirror division(AnnotatedTypeMirror p1, AnnotatedTypeMirror p2) {
+        // TODO: does this handle scaling correctly?
+
         if (AnnotationUtils.containsSame(p1.getAnnotations(), m) &&
                 AnnotationUtils.containsSame(p2.getAnnotations(), s)) {
             // m / s => mPERs

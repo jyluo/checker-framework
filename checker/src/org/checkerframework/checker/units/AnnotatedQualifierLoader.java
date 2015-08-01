@@ -17,6 +17,8 @@ import java.util.jar.JarFile;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+import javax.tools.Diagnostic.Kind;
+
 import org.checkerframework.common.basetype.BaseTypeChecker;
 
 public abstract class AnnotatedQualifierLoader {
@@ -46,8 +48,10 @@ public abstract class AnnotatedQualifierLoader {
     public AnnotatedQualifierLoader(ProcessingEnvironment pe, Class<? extends BaseTypeChecker> checker) {
         processingEnv = pe;
         packageName = checker.getPackage().getName().replace(SLASH, DOT) + QUAL_PACKAGE_SUFFIX;
-        resourceURL = Thread.currentThread().getContextClassLoader().getResource(packageName.replace(DOT, SLASH));
-        //resourceURL = this.getClass().getClassLoader().getResource(packageName.replace(DOT, SLASH));
+        //resourceURL = Thread.currentThread().getContextClassLoader().getResource(packageName.replace(DOT, SLASH));
+        // TODO: add debug crash output if resourceURL == null
+
+        resourceURL = this.getClass().getClassLoader().getResource(packageName.replace(DOT, SLASH));
         loadedAnnotations = loadAnnotations();
     }
 
@@ -131,8 +135,8 @@ public abstract class AnnotatedQualifierLoader {
         Set<String> results = null;
 
         // debug output
-        //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Getting annotation names for " + packageName);
-        //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, 
+        //processingEnv.getMessager().printMessage(Kind.NOTE, "Getting annotation names for " + packageName);
+        //processingEnv.getMessager().printMessage(Kind.NOTE, 
         //        "\n URL: " + resourceURL.toString() +
         //        "\n File: " + resourceURL.getFile() +
         //        "\n Package: " + packageName);

@@ -1,3 +1,4 @@
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
 public class Demo {
@@ -21,6 +22,9 @@ public class Demo {
 
     void good() {
         frq = toHz(9);
+
+        @s double time = 5 * UnitsTools.s;
+        @Hz double freq2 = 20 / time;
     }
 
     void auto(@s int time) {

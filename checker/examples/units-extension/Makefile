@@ -10,5 +10,5 @@ compile: $(FILES)
 	$(JAVAC) $(FILES)
 
 check: compile $(FILES)
-	@echo "***** This command is expected to produce errors on lines 8 and 29:"
+	@echo "***** This command is expected to produce errors on line 9:"
 	$(JAVAC) -Xbootclasspath/p:. -AprintErrorStack -processor org.checkerframework.checker.units.UnitsChecker -Aunits=Hz,Frequency Demo.java

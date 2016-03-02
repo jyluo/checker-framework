@@ -139,9 +139,10 @@ public class StubGenerator {
      */
     public void skeletonFromType(TypeElement typeElement) {
 
-        // only output skeleton for classes or interfaces.  not enums
+        // only output skeleton for classes, interfaces, and enums
         if (typeElement.getKind() != ElementKind.CLASS
-                && typeElement.getKind() != ElementKind.INTERFACE)
+                && typeElement.getKind() != ElementKind.INTERFACE
+                && typeElement.getKind() != ElementKind.ENUM)
             return;
 
         String newPackageName = ElementUtils.getVerboseName(ElementUtils
@@ -192,6 +193,8 @@ public class StubGenerator {
             out.print("interface");
         else if (typeElement.getKind() == ElementKind.CLASS)
             out.print("class");
+        else if (typeElement.getKind() == ElementKind.ENUM)
+            out.print("// enum" + System.lineSeparator() + "class");
         else
             return;
 
@@ -234,7 +237,7 @@ public class StubGenerator {
         out.println("}");
 
         for (TypeElement element: innerClass) {
-            printClass(element, typeElement.getSimpleName().toString());
+            printClass(element,typeElement.getSimpleName().toString());
         }
 
     }
@@ -248,7 +251,7 @@ public class StubGenerator {
     private void printTypeMembers(List<? extends Element> members, List<TypeElement> innerClass) {
         for (Element element : members) {
             if (isPublicOrProtected(element))
-                printMember(element, innerClass);
+                printMember(element,innerClass);
         }
     }
 

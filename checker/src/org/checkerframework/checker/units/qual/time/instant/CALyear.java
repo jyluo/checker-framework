@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 /**
  * A Calendar Year. The variables with this unit has its values bounded between
- * {@link java.time.Year#MIN_VALUE} and {@link java.time.Year#MAX_VALUE} by the Java 8 Time API. A
- * value of 0 represents 0 CE in the ISO calendar.
+ * {@literal java.time.Year.MIN_VALUE} and {@literal java.time.Year.MAX_VALUE}
+ * by the Java 8 Time API. A value of 0 represents 0 CE in the ISO calendar.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

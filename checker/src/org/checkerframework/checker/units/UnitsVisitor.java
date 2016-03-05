@@ -164,6 +164,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             for (int i = 0; i < requiredArgs.size(); ++i) {
                 visitorState.setAssignmentContext(Pair.<Tree, AnnotatedTypeMirror>of((Tree) null, (AnnotatedTypeMirror) requiredArgs.get(i)));
 
+                // Units Checker Code =======================
                 AnnotatedTypeMirror requiredArg = requiredArgs.get(i);
                 AnnotatedTypeMirror passedArg = atypeFactory.getAnnotatedType(passedArgs.get(i));
 
@@ -178,6 +179,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                     commonAssignmentCheck(requiredArg, passedArgs.get(i),
                             "argument.type.incompatible", false);
                 }
+                // End Units Checker Code ===================
 
                 // Also descend into the argument within the correct assignment
                 // context.
@@ -215,10 +217,12 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             return;
         }
 
+        // Units Checker Code =======================
         // if the method receiver is Scalar and the receiving object is UnknownUnits, pass
         if (UnitsRelationsTools.hasSpecificUnit(methodReceiver, scalar) && UnitsRelationsTools.hasSpecificUnit(treeReceiver, TOP)) {
             return;
         }
+        // End Units Checker Code ===================
 
         if (!atypeFactory.getTypeHierarchy().isSubtype(treeReceiver, methodReceiver)) {
             checker.report(Result.failure("method.invocation.invalid",

@@ -1,0 +1,2246 @@
+package java.util;
+
+class AbstractCollection<E> implements Collection<E> {
+    protected AbstractCollection();
+    Iterator<E> iterator();
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    boolean containsAll(Collection<?> arg0);
+    boolean addAll(Collection<? extends E> arg0);
+    boolean removeAll(Collection<?> arg0);
+    boolean retainAll(Collection<?> arg0);
+    void clear();
+    String toString();
+}
+
+class AbstractList<E> extends AbstractCollection<E> implements List<E> {
+    protected int modCount;
+    protected AbstractList();
+    boolean add(E arg0);
+    E get(int arg0);
+    E set(int arg0, E arg1);
+    void add(int arg0, E arg1);
+    E remove(int arg0);
+    int indexOf(Object arg0);
+    int lastIndexOf(Object arg0);
+    void clear();
+    boolean addAll(int arg0, Collection<? extends E> arg1);
+    Iterator<E> iterator();
+    ListIterator<E> listIterator();
+    ListIterator<E> listIterator(int arg0);
+    List<E> subList(int arg0, int arg1);
+    boolean equals(Object arg0);
+    int hashCode();
+    protected void removeRange(int arg0, int arg1);
+}
+
+class AbstractMap<K, V> implements Map<K,V> {
+    protected AbstractMap();
+    int size();
+    boolean isEmpty();
+    boolean containsValue(Object arg0);
+    boolean containsKey(Object arg0);
+    V get(Object arg0);
+    V put(K arg0, V arg1);
+    V remove(Object arg0);
+    void putAll(Map<? extends K,? extends V> arg0);
+    void clear();
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+    protected Object clone() throws CloneNotSupportedException;
+}
+class AbstractMap$SimpleEntry<K, V> implements Entry<K,V>, Serializable {
+    SimpleEntry(K arg0, V arg1);
+    SimpleEntry(Entry<? extends K,? extends V> arg0);
+    K getKey();
+    V getValue();
+    V setValue(V arg0);
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+}
+class AbstractMap$SimpleImmutableEntry<K, V> implements Entry<K,V>, Serializable {
+    SimpleImmutableEntry(K arg0, V arg1);
+    SimpleImmutableEntry(Entry<? extends K,? extends V> arg0);
+    K getKey();
+    V getValue();
+    V setValue(V arg0);
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+}
+
+class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
+    protected AbstractQueue();
+    boolean add(E arg0);
+    E remove();
+    E element();
+    void clear();
+    boolean addAll(Collection<? extends E> arg0);
+}
+
+class AbstractSequentialList<E> extends AbstractList<E> {
+    protected AbstractSequentialList();
+    E get(int arg0);
+    E set(int arg0, E arg1);
+    void add(int arg0, E arg1);
+    E remove(int arg0);
+    boolean addAll(int arg0, Collection<? extends E> arg1);
+    Iterator<E> iterator();
+    ListIterator<E> listIterator(int arg0);
+}
+
+class AbstractSet<E> extends AbstractCollection<E> implements Set<E> {
+    protected AbstractSet();
+    boolean equals(Object arg0);
+    int hashCode();
+    boolean removeAll(Collection<?> arg0);
+}
+
+class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cloneable, Serializable {
+    ArrayDeque();
+    ArrayDeque(int arg0);
+    ArrayDeque(Collection<? extends E> arg0);
+    void addFirst(E arg0);
+    void addLast(E arg0);
+    boolean offerFirst(E arg0);
+    boolean offerLast(E arg0);
+    E removeFirst();
+    E removeLast();
+    E pollFirst();
+    E pollLast();
+    E getFirst();
+    E getLast();
+    E peekFirst();
+    E peekLast();
+    boolean removeFirstOccurrence(Object arg0);
+    boolean removeLastOccurrence(Object arg0);
+    boolean add(E arg0);
+    boolean offer(E arg0);
+    E remove();
+    E poll();
+    E element();
+    E peek();
+    void push(E arg0);
+    E pop();
+    int size();
+    boolean isEmpty();
+    Iterator<E> iterator();
+    Iterator<E> descendingIterator();
+    boolean contains(Object arg0);
+    boolean remove(Object arg0);
+    void clear();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    ArrayDeque<E> clone();
+    Spliterator<E> spliterator();
+}
+
+class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+    ArrayList(int arg0);
+    ArrayList();
+    ArrayList(Collection<? extends E> arg0);
+    void trimToSize();
+    void ensureCapacity(int arg0);
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    int indexOf(Object arg0);
+    int lastIndexOf(Object arg0);
+    Object clone();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    E get(int arg0);
+    E set(int arg0, E arg1);
+    boolean add(E arg0);
+    void add(int arg0, E arg1);
+    E remove(int arg0);
+    boolean remove(Object arg0);
+    void clear();
+    boolean addAll(Collection<? extends E> arg0);
+    boolean addAll(int arg0, Collection<? extends E> arg1);
+    protected void removeRange(int arg0, int arg1);
+    boolean removeAll(Collection<?> arg0);
+    boolean retainAll(Collection<?> arg0);
+    ListIterator<E> listIterator(int arg0);
+    ListIterator<E> listIterator();
+    Iterator<E> iterator();
+    List<E> subList(int arg0, int arg1);
+    void forEach(Consumer<? super E> arg0);
+    Spliterator<E> spliterator();
+    boolean removeIf(Predicate<? super E> arg0);
+    void replaceAll(UnaryOperator<E> arg0);
+    void sort(Comparator<? super E> arg0);
+}
+
+class Arrays {
+    static void sort(int[] arg0);
+    static void sort(int[] arg0, int arg1, int arg2);
+    static void sort(long[] arg0);
+    static void sort(long[] arg0, int arg1, int arg2);
+    static void sort(short[] arg0);
+    static void sort(short[] arg0, int arg1, int arg2);
+    static void sort(char[] arg0);
+    static void sort(char[] arg0, int arg1, int arg2);
+    static void sort(byte[] arg0);
+    static void sort(byte[] arg0, int arg1, int arg2);
+    static void sort(float[] arg0);
+    static void sort(float[] arg0, int arg1, int arg2);
+    static void sort(double[] arg0);
+    static void sort(double[] arg0, int arg1, int arg2);
+    static void parallelSort(byte[] arg0);
+    static void parallelSort(byte[] arg0, int arg1, int arg2);
+    static void parallelSort(char[] arg0);
+    static void parallelSort(char[] arg0, int arg1, int arg2);
+    static void parallelSort(short[] arg0);
+    static void parallelSort(short[] arg0, int arg1, int arg2);
+    static void parallelSort(int[] arg0);
+    static void parallelSort(int[] arg0, int arg1, int arg2);
+    static void parallelSort(long[] arg0);
+    static void parallelSort(long[] arg0, int arg1, int arg2);
+    static void parallelSort(float[] arg0);
+    static void parallelSort(float[] arg0, int arg1, int arg2);
+    static void parallelSort(double[] arg0);
+    static void parallelSort(double[] arg0, int arg1, int arg2);
+    static <T> void parallelSort(T[] arg0);
+    static <T> void parallelSort(T[] arg0, int arg1, int arg2);
+    static <T> void parallelSort(T[] arg0, Comparator<? super T> arg1);
+    static <T> void parallelSort(T[] arg0, int arg1, int arg2, Comparator<? super T> arg3);
+    static void sort(Object[] arg0);
+    static void sort(Object[] arg0, int arg1, int arg2);
+    static <T> void sort(T[] arg0, Comparator<? super T> arg1);
+    static <T> void sort(T[] arg0, int arg1, int arg2, Comparator<? super T> arg3);
+    static <T> void parallelPrefix(T[] arg0, BinaryOperator<T> arg1);
+    static <T> void parallelPrefix(T[] arg0, int arg1, int arg2, BinaryOperator<T> arg3);
+    static void parallelPrefix(long[] arg0, LongBinaryOperator arg1);
+    static void parallelPrefix(long[] arg0, int arg1, int arg2, LongBinaryOperator arg3);
+    static void parallelPrefix(double[] arg0, DoubleBinaryOperator arg1);
+    static void parallelPrefix(double[] arg0, int arg1, int arg2, DoubleBinaryOperator arg3);
+    static void parallelPrefix(int[] arg0, IntBinaryOperator arg1);
+    static void parallelPrefix(int[] arg0, int arg1, int arg2, IntBinaryOperator arg3);
+    static int binarySearch(long[] arg0, long arg1);
+    static int binarySearch(long[] arg0, int arg1, int arg2, long arg3);
+    static int binarySearch(int[] arg0, int arg1);
+    static int binarySearch(int[] arg0, int arg1, int arg2, int arg3);
+    static int binarySearch(short[] arg0, short arg1);
+    static int binarySearch(short[] arg0, int arg1, int arg2, short arg3);
+    static int binarySearch(char[] arg0, char arg1);
+    static int binarySearch(char[] arg0, int arg1, int arg2, char arg3);
+    static int binarySearch(byte[] arg0, byte arg1);
+    static int binarySearch(byte[] arg0, int arg1, int arg2, byte arg3);
+    static int binarySearch(double[] arg0, double arg1);
+    static int binarySearch(double[] arg0, int arg1, int arg2, double arg3);
+    static int binarySearch(float[] arg0, float arg1);
+    static int binarySearch(float[] arg0, int arg1, int arg2, float arg3);
+    static int binarySearch(Object[] arg0, Object arg1);
+    static int binarySearch(Object[] arg0, int arg1, int arg2, Object arg3);
+    static <T> int binarySearch(T[] arg0, T arg1, Comparator<? super T> arg2);
+    static <T> int binarySearch(T[] arg0, int arg1, int arg2, T arg3, Comparator<? super T> arg4);
+    static boolean equals(long[] arg0, long[] arg1);
+    static boolean equals(int[] arg0, int[] arg1);
+    static boolean equals(short[] arg0, short[] arg1);
+    static boolean equals(char[] arg0, char[] arg1);
+    static boolean equals(byte[] arg0, byte[] arg1);
+    static boolean equals(boolean[] arg0, boolean[] arg1);
+    static boolean equals(double[] arg0, double[] arg1);
+    static boolean equals(float[] arg0, float[] arg1);
+    static boolean equals(Object[] arg0, Object[] arg1);
+    static void fill(long[] arg0, long arg1);
+    static void fill(long[] arg0, int arg1, int arg2, long arg3);
+    static void fill(int[] arg0, int arg1);
+    static void fill(int[] arg0, int arg1, int arg2, int arg3);
+    static void fill(short[] arg0, short arg1);
+    static void fill(short[] arg0, int arg1, int arg2, short arg3);
+    static void fill(char[] arg0, char arg1);
+    static void fill(char[] arg0, int arg1, int arg2, char arg3);
+    static void fill(byte[] arg0, byte arg1);
+    static void fill(byte[] arg0, int arg1, int arg2, byte arg3);
+    static void fill(boolean[] arg0, boolean arg1);
+    static void fill(boolean[] arg0, int arg1, int arg2, boolean arg3);
+    static void fill(double[] arg0, double arg1);
+    static void fill(double[] arg0, int arg1, int arg2, double arg3);
+    static void fill(float[] arg0, float arg1);
+    static void fill(float[] arg0, int arg1, int arg2, float arg3);
+    static void fill(Object[] arg0, Object arg1);
+    static void fill(Object[] arg0, int arg1, int arg2, Object arg3);
+    static <T> T[] copyOf(T[] arg0, int arg1);
+    static <T, U> T[] copyOf(U[] arg0, int arg1, Class<? extends T[]> arg2);
+    static byte[] copyOf(byte[] arg0, int arg1);
+    static short[] copyOf(short[] arg0, int arg1);
+    static int[] copyOf(int[] arg0, int arg1);
+    static long[] copyOf(long[] arg0, int arg1);
+    static char[] copyOf(char[] arg0, int arg1);
+    static float[] copyOf(float[] arg0, int arg1);
+    static double[] copyOf(double[] arg0, int arg1);
+    static boolean[] copyOf(boolean[] arg0, int arg1);
+    static <T> T[] copyOfRange(T[] arg0, int arg1, int arg2);
+    static <T, U> T[] copyOfRange(U[] arg0, int arg1, int arg2, Class<? extends T[]> arg3);
+    static byte[] copyOfRange(byte[] arg0, int arg1, int arg2);
+    static short[] copyOfRange(short[] arg0, int arg1, int arg2);
+    static int[] copyOfRange(int[] arg0, int arg1, int arg2);
+    static long[] copyOfRange(long[] arg0, int arg1, int arg2);
+    static char[] copyOfRange(char[] arg0, int arg1, int arg2);
+    static float[] copyOfRange(float[] arg0, int arg1, int arg2);
+    static double[] copyOfRange(double[] arg0, int arg1, int arg2);
+    static boolean[] copyOfRange(boolean[] arg0, int arg1, int arg2);
+    static <T> List<T> asList(T[] arg0);
+    static int hashCode(long[] arg0);
+    static int hashCode(int[] arg0);
+    static int hashCode(short[] arg0);
+    static int hashCode(char[] arg0);
+    static int hashCode(byte[] arg0);
+    static int hashCode(boolean[] arg0);
+    static int hashCode(float[] arg0);
+    static int hashCode(double[] arg0);
+    static int hashCode(Object[] arg0);
+    static int deepHashCode(Object[] arg0);
+    static boolean deepEquals(Object[] arg0, Object[] arg1);
+    static String toString(long[] arg0);
+    static String toString(int[] arg0);
+    static String toString(short[] arg0);
+    static String toString(char[] arg0);
+    static String toString(byte[] arg0);
+    static String toString(boolean[] arg0);
+    static String toString(float[] arg0);
+    static String toString(double[] arg0);
+    static String toString(Object[] arg0);
+    static String deepToString(Object[] arg0);
+    static <T> void setAll(T[] arg0, IntFunction<? extends T> arg1);
+    static <T> void parallelSetAll(T[] arg0, IntFunction<? extends T> arg1);
+    static void setAll(int[] arg0, IntUnaryOperator arg1);
+    static void parallelSetAll(int[] arg0, IntUnaryOperator arg1);
+    static void setAll(long[] arg0, IntToLongFunction arg1);
+    static void parallelSetAll(long[] arg0, IntToLongFunction arg1);
+    static void setAll(double[] arg0, IntToDoubleFunction arg1);
+    static void parallelSetAll(double[] arg0, IntToDoubleFunction arg1);
+    static <T> Spliterator<T> spliterator(T[] arg0);
+    static <T> Spliterator<T> spliterator(T[] arg0, int arg1, int arg2);
+    static OfInt spliterator(int[] arg0);
+    static OfInt spliterator(int[] arg0, int arg1, int arg2);
+    static OfLong spliterator(long[] arg0);
+    static OfLong spliterator(long[] arg0, int arg1, int arg2);
+    static OfDouble spliterator(double[] arg0);
+    static OfDouble spliterator(double[] arg0, int arg1, int arg2);
+    static <T> Stream<T> stream(T[] arg0);
+    static <T> Stream<T> stream(T[] arg0, int arg1, int arg2);
+    static IntStream stream(int[] arg0);
+    static IntStream stream(int[] arg0, int arg1, int arg2);
+    static LongStream stream(long[] arg0);
+    static LongStream stream(long[] arg0, int arg1, int arg2);
+    static DoubleStream stream(double[] arg0);
+    static DoubleStream stream(double[] arg0, int arg1, int arg2);
+}
+
+class Base64 {
+    static Encoder getEncoder();
+    static Encoder getUrlEncoder();
+    static Encoder getMimeEncoder();
+    static Encoder getMimeEncoder(int arg0, byte[] arg1);
+    static Decoder getDecoder();
+    static Decoder getUrlDecoder();
+    static Decoder getMimeDecoder();
+}
+class Base64$Encoder {
+    byte[] encode(byte[] arg0);
+    int encode(byte[] arg0, byte[] arg1);
+    String encodeToString(byte[] arg0);
+    ByteBuffer encode(ByteBuffer arg0);
+    OutputStream wrap(OutputStream arg0);
+    Encoder withoutPadding();
+}
+class Base64$Decoder {
+    byte[] decode(byte[] arg0);
+    byte[] decode(String arg0);
+    int decode(byte[] arg0, byte[] arg1);
+    ByteBuffer decode(ByteBuffer arg0);
+    InputStream wrap(InputStream arg0);
+}
+
+class BitSet implements Cloneable, Serializable {
+    BitSet();
+    BitSet(int arg0);
+    static BitSet valueOf(long[] arg0);
+    static BitSet valueOf(LongBuffer arg0);
+    static BitSet valueOf(byte[] arg0);
+    static BitSet valueOf(ByteBuffer arg0);
+    byte[] toByteArray();
+    long[] toLongArray();
+    void flip(int arg0);
+    void flip(int arg0, int arg1);
+    void set(int arg0);
+    void set(int arg0, boolean arg1);
+    void set(int arg0, int arg1);
+    void set(int arg0, int arg1, boolean arg2);
+    void clear(int arg0);
+    void clear(int arg0, int arg1);
+    void clear();
+    boolean get(int arg0);
+    BitSet get(int arg0, int arg1);
+    int nextSetBit(int arg0);
+    int nextClearBit(int arg0);
+    int previousSetBit(int arg0);
+    int previousClearBit(int arg0);
+    int length();
+    boolean isEmpty();
+    boolean intersects(BitSet arg0);
+    int cardinality();
+    void and(BitSet arg0);
+    void or(BitSet arg0);
+    void xor(BitSet arg0);
+    void andNot(BitSet arg0);
+    int hashCode();
+    int size();
+    boolean equals(Object arg0);
+    Object clone();
+    String toString();
+    IntStream stream();
+}
+
+class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
+    static final int ERA;
+    static final int YEAR;
+    static final int MONTH;
+    static final int WEEK_OF_YEAR;
+    static final int WEEK_OF_MONTH;
+    static final int DATE;
+    static final int DAY_OF_MONTH;
+    static final int DAY_OF_YEAR;
+    static final int DAY_OF_WEEK;
+    static final int DAY_OF_WEEK_IN_MONTH;
+    static final int AM_PM;
+    static final int HOUR;
+    static final int HOUR_OF_DAY;
+    static final int MINUTE;
+    static final int SECOND;
+    static final int MILLISECOND;
+    static final int ZONE_OFFSET;
+    static final int DST_OFFSET;
+    static final int FIELD_COUNT;
+    static final int SUNDAY;
+    static final int MONDAY;
+    static final int TUESDAY;
+    static final int WEDNESDAY;
+    static final int THURSDAY;
+    static final int FRIDAY;
+    static final int SATURDAY;
+    static final int JANUARY;
+    static final int FEBRUARY;
+    static final int MARCH;
+    static final int APRIL;
+    static final int MAY;
+    static final int JUNE;
+    static final int JULY;
+    static final int AUGUST;
+    static final int SEPTEMBER;
+    static final int OCTOBER;
+    static final int NOVEMBER;
+    static final int DECEMBER;
+    static final int UNDECIMBER;
+    static final int AM;
+    static final int PM;
+    static final int ALL_STYLES;
+    static final int SHORT;
+    static final int LONG;
+    static final int NARROW_FORMAT;
+    static final int NARROW_STANDALONE;
+    static final int SHORT_FORMAT;
+    static final int LONG_FORMAT;
+    static final int SHORT_STANDALONE;
+    static final int LONG_STANDALONE;
+    protected int[] fields;
+    protected boolean[] isSet;
+    protected long time;
+    protected boolean isTimeSet;
+    protected boolean areFieldsSet;
+    protected Calendar();
+    protected Calendar(TimeZone arg0, Locale arg1);
+    static Calendar getInstance();
+    static Calendar getInstance(TimeZone arg0);
+    static Calendar getInstance(Locale arg0);
+    static Calendar getInstance(TimeZone arg0, Locale arg1);
+    static Locale[] getAvailableLocales();
+    protected void computeTime();
+    protected void computeFields();
+    Date getTime();
+    void setTime(Date arg0);
+    long getTimeInMillis();
+    void setTimeInMillis(long arg0);
+    int get(int arg0);
+    protected int internalGet(int arg0);
+    void set(int arg0, int arg1);
+    void set(int arg0, int arg1, int arg2);
+    void set(int arg0, int arg1, int arg2, int arg3, int arg4);
+    void set(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    void clear();
+    void clear(int arg0);
+    boolean isSet(int arg0);
+    String getDisplayName(int arg0, int arg1, Locale arg2);
+    Map<String,Integer> getDisplayNames(int arg0, int arg1, Locale arg2);
+    protected void complete();
+    static Set<String> getAvailableCalendarTypes();
+    String getCalendarType();
+    boolean equals(Object arg0);
+    int hashCode();
+    boolean before(Object arg0);
+    boolean after(Object arg0);
+    int compareTo(Calendar arg0);
+    void add(int arg0, int arg1);
+    void roll(int arg0, boolean arg1);
+    void roll(int arg0, int arg1);
+    void setTimeZone(TimeZone arg0);
+    TimeZone getTimeZone();
+    void setLenient(boolean arg0);
+    boolean isLenient();
+    void setFirstDayOfWeek(int arg0);
+    int getFirstDayOfWeek();
+    void setMinimalDaysInFirstWeek(int arg0);
+    int getMinimalDaysInFirstWeek();
+    boolean isWeekDateSupported();
+    int getWeekYear();
+    void setWeekDate(int arg0, int arg1, int arg2);
+    int getWeeksInWeekYear();
+    int getMinimum(int arg0);
+    int getMaximum(int arg0);
+    int getGreatestMinimum(int arg0);
+    int getLeastMaximum(int arg0);
+    int getActualMinimum(int arg0);
+    int getActualMaximum(int arg0);
+    Object clone();
+    String toString();
+    Instant toInstant();
+}
+class Calendar$Builder {
+    Builder();
+    Builder setInstant(long arg0);
+    Builder setInstant(Date arg0);
+    Builder set(int arg0, int arg1);
+    Builder setFields(int[] arg0);
+    Builder setDate(int arg0, int arg1, int arg2);
+    Builder setTimeOfDay(int arg0, int arg1, int arg2);
+    Builder setTimeOfDay(int arg0, int arg1, int arg2, int arg3);
+    Builder setWeekDate(int arg0, int arg1, int arg2);
+    Builder setTimeZone(TimeZone arg0);
+    Builder setLenient(boolean arg0);
+    Builder setCalendarType(String arg0);
+    Builder setLocale(Locale arg0);
+    Builder setWeekDefinition(int arg0, int arg1);
+    Calendar build();
+}
+
+interface Collection<E> extends Iterable<E> {
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    Iterator<E> iterator();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    boolean containsAll(Collection<?> arg0);
+    boolean addAll(Collection<? extends E> arg0);
+    boolean removeAll(Collection<?> arg0);
+    boolean removeIf(Predicate<? super E> arg0);
+    boolean retainAll(Collection<?> arg0);
+    void clear();
+    boolean equals(Object arg0);
+    int hashCode();
+    Spliterator<E> spliterator();
+    Stream<E> stream();
+    Stream<E> parallelStream();
+}
+
+class Collections {
+    static final Set EMPTY_SET;
+    static final List EMPTY_LIST;
+    static final Map EMPTY_MAP;
+    static <T> void sort(List<T> arg0);
+    static <T> void sort(List<T> arg0, Comparator<? super T> arg1);
+    static <T> int binarySearch(List<? extends Comparable<? super T>> arg0, T arg1);
+    static <T> int binarySearch(List<? extends T> arg0, T arg1, Comparator<? super T> arg2);
+    static void reverse(List<?> arg0);
+    static void shuffle(List<?> arg0);
+    static void shuffle(List<?> arg0, Random arg1);
+    static void swap(List<?> arg0, int arg1, int arg2);
+    static <T> void fill(List<? super T> arg0, T arg1);
+    static <T> void copy(List<? super T> arg0, List<? extends T> arg1);
+    static <T> T min(Collection<? extends T> arg0);
+    static <T> T min(Collection<? extends T> arg0, Comparator<? super T> arg1);
+    static <T> T max(Collection<? extends T> arg0);
+    static <T> T max(Collection<? extends T> arg0, Comparator<? super T> arg1);
+    static void rotate(List<?> arg0, int arg1);
+    static <T> boolean replaceAll(List<T> arg0, T arg1, T arg2);
+    static int indexOfSubList(List<?> arg0, List<?> arg1);
+    static int lastIndexOfSubList(List<?> arg0, List<?> arg1);
+    static <T> Collection<T> unmodifiableCollection(Collection<? extends T> arg0);
+    static <T> Set<T> unmodifiableSet(Set<? extends T> arg0);
+    static <T> SortedSet<T> unmodifiableSortedSet(SortedSet<T> arg0);
+    static <T> NavigableSet<T> unmodifiableNavigableSet(NavigableSet<T> arg0);
+    static <T> List<T> unmodifiableList(List<? extends T> arg0);
+    static <K, V> Map<K,V> unmodifiableMap(Map<? extends K,? extends V> arg0);
+    static <K, V> SortedMap<K,V> unmodifiableSortedMap(SortedMap<K,? extends V> arg0);
+    static <K, V> NavigableMap<K,V> unmodifiableNavigableMap(NavigableMap<K,? extends V> arg0);
+    static <T> Collection<T> synchronizedCollection(Collection<T> arg0);
+    static <T> Set<T> synchronizedSet(Set<T> arg0);
+    static <T> SortedSet<T> synchronizedSortedSet(SortedSet<T> arg0);
+    static <T> NavigableSet<T> synchronizedNavigableSet(NavigableSet<T> arg0);
+    static <T> List<T> synchronizedList(List<T> arg0);
+    static <K, V> Map<K,V> synchronizedMap(Map<K,V> arg0);
+    static <K, V> SortedMap<K,V> synchronizedSortedMap(SortedMap<K,V> arg0);
+    static <K, V> NavigableMap<K,V> synchronizedNavigableMap(NavigableMap<K,V> arg0);
+    static <E> Collection<E> checkedCollection(Collection<E> arg0, Class<E> arg1);
+    static <E> Queue<E> checkedQueue(Queue<E> arg0, Class<E> arg1);
+    static <E> Set<E> checkedSet(Set<E> arg0, Class<E> arg1);
+    static <E> SortedSet<E> checkedSortedSet(SortedSet<E> arg0, Class<E> arg1);
+    static <E> NavigableSet<E> checkedNavigableSet(NavigableSet<E> arg0, Class<E> arg1);
+    static <E> List<E> checkedList(List<E> arg0, Class<E> arg1);
+    static <K, V> Map<K,V> checkedMap(Map<K,V> arg0, Class<K> arg1, Class<V> arg2);
+    static <K, V> SortedMap<K,V> checkedSortedMap(SortedMap<K,V> arg0, Class<K> arg1, Class<V> arg2);
+    static <K, V> NavigableMap<K,V> checkedNavigableMap(NavigableMap<K,V> arg0, Class<K> arg1, Class<V> arg2);
+    static <T> Iterator<T> emptyIterator();
+    static <T> ListIterator<T> emptyListIterator();
+    static <T> Enumeration<T> emptyEnumeration();
+    static <T> Set<T> emptySet();
+    static <E> SortedSet<E> emptySortedSet();
+    static <E> NavigableSet<E> emptyNavigableSet();
+    static <T> List<T> emptyList();
+    static <K, V> Map<K,V> emptyMap();
+    static <K, V> SortedMap<K,V> emptySortedMap();
+    static <K, V> NavigableMap<K,V> emptyNavigableMap();
+    static <T> Set<T> singleton(T arg0);
+    static <T> List<T> singletonList(T arg0);
+    static <K, V> Map<K,V> singletonMap(K arg0, V arg1);
+    static <T> List<T> nCopies(int arg0, T arg1);
+    static <T> Comparator<T> reverseOrder();
+    static <T> Comparator<T> reverseOrder(Comparator<T> arg0);
+    static <T> Enumeration<T> enumeration(Collection<T> arg0);
+    static <T> ArrayList<T> list(Enumeration<T> arg0);
+    static int frequency(Collection<?> arg0, Object arg1);
+    static boolean disjoint(Collection<?> arg0, Collection<?> arg1);
+    static <T> boolean addAll(Collection<? super T> arg0, T[] arg1);
+    static <E> Set<E> newSetFromMap(Map<E,Boolean> arg0);
+    static <T> Queue<T> asLifoQueue(Deque<T> arg0);
+}
+
+interface Comparator<T> {
+    int compare(T arg0, T arg1);
+    boolean equals(Object arg0);
+    Comparator<T> reversed();
+    Comparator<T> thenComparing(Comparator<? super T> arg0);
+    <U> Comparator<T> thenComparing(Function<? super T,? extends U> arg0, Comparator<? super U> arg1);
+    <U> Comparator<T> thenComparing(Function<? super T,? extends U> arg0);
+    Comparator<T> thenComparingInt(ToIntFunction<? super T> arg0);
+    Comparator<T> thenComparingLong(ToLongFunction<? super T> arg0);
+    Comparator<T> thenComparingDouble(ToDoubleFunction<? super T> arg0);
+    static <T> Comparator<T> reverseOrder();
+    static <T> Comparator<T> naturalOrder();
+    static <T> Comparator<T> nullsFirst(Comparator<? super T> arg0);
+    static <T> Comparator<T> nullsLast(Comparator<? super T> arg0);
+    static <T, U> Comparator<T> comparing(Function<? super T,? extends U> arg0, Comparator<? super U> arg1);
+    static <T, U> Comparator<T> comparing(Function<? super T,? extends U> arg0);
+    static <T> Comparator<T> comparingInt(ToIntFunction<? super T> arg0);
+    static <T> Comparator<T> comparingLong(ToLongFunction<? super T> arg0);
+    static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> arg0);
+}
+
+class ConcurrentModificationException extends RuntimeException {
+    ConcurrentModificationException();
+    ConcurrentModificationException(String arg0);
+    ConcurrentModificationException(Throwable arg0);
+    ConcurrentModificationException(String arg0, Throwable arg1);
+}
+
+class Currency implements Serializable {
+    static Currency getInstance(String arg0);
+    static Currency getInstance(Locale arg0);
+    static Set<Currency> getAvailableCurrencies();
+    String getCurrencyCode();
+    String getSymbol();
+    String getSymbol(Locale arg0);
+    int getDefaultFractionDigits();
+    int getNumericCode();
+    String getDisplayName();
+    String getDisplayName(Locale arg0);
+    String toString();
+}
+
+class Date implements Serializable, Cloneable, Comparable<Date> {
+    Date();
+    Date(long arg0);
+    Date(int arg0, int arg1, int arg2);
+    Date(int arg0, int arg1, int arg2, int arg3, int arg4);
+    Date(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    Date(String arg0);
+    Object clone();
+    static long UTC(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    static long parse(String arg0);
+    int getYear();
+    void setYear(int arg0);
+    int getMonth();
+    void setMonth(int arg0);
+    int getDate();
+    void setDate(int arg0);
+    int getDay();
+    int getHours();
+    void setHours(int arg0);
+    int getMinutes();
+    void setMinutes(int arg0);
+    int getSeconds();
+    void setSeconds(int arg0);
+    long getTime();
+    void setTime(long arg0);
+    boolean before(Date arg0);
+    boolean after(Date arg0);
+    boolean equals(Object arg0);
+    int compareTo(Date arg0);
+    int hashCode();
+    String toString();
+    String toLocaleString();
+    String toGMTString();
+    int getTimezoneOffset();
+    static Date from(Instant arg0);
+    Instant toInstant();
+}
+
+interface Deque<E> extends Queue<E> {
+    void addFirst(E arg0);
+    void addLast(E arg0);
+    boolean offerFirst(E arg0);
+    boolean offerLast(E arg0);
+    E removeFirst();
+    E removeLast();
+    E pollFirst();
+    E pollLast();
+    E getFirst();
+    E getLast();
+    E peekFirst();
+    E peekLast();
+    boolean removeFirstOccurrence(Object arg0);
+    boolean removeLastOccurrence(Object arg0);
+    boolean add(E arg0);
+    boolean offer(E arg0);
+    E remove();
+    E poll();
+    E element();
+    E peek();
+    void push(E arg0);
+    E pop();
+    boolean remove(Object arg0);
+    boolean contains(Object arg0);
+    int size();
+    Iterator<E> iterator();
+    Iterator<E> descendingIterator();
+}
+
+class Dictionary<K, V> {
+    Dictionary();
+    int size();
+    boolean isEmpty();
+    Enumeration<K> keys();
+    Enumeration<V> elements();
+    V get(Object arg0);
+    V put(K arg0, V arg1);
+    V remove(Object arg0);
+}
+
+class DoubleSummaryStatistics implements DoubleConsumer {
+    DoubleSummaryStatistics();
+    void accept(double arg0);
+    void combine(DoubleSummaryStatistics arg0);
+    long getCount();
+    double getSum();
+    double getMin();
+    double getMax();
+    double getAverage();
+    String toString();
+}
+
+class DuplicateFormatFlagsException extends IllegalFormatException {
+    DuplicateFormatFlagsException(String arg0);
+    String getFlags();
+    String getMessage();
+}
+
+class EmptyStackException extends RuntimeException {
+    EmptyStackException();
+}
+
+class EnumMap<K, V> extends AbstractMap<K,V> implements Serializable, Cloneable {
+    EnumMap(Class<K> arg0);
+    EnumMap(EnumMap<K,? extends V> arg0);
+    EnumMap(Map<K,? extends V> arg0);
+    int size();
+    boolean containsValue(Object arg0);
+    boolean containsKey(Object arg0);
+    V get(Object arg0);
+    V put(K arg0, V arg1);
+    V remove(Object arg0);
+    void putAll(Map<? extends K,? extends V> arg0);
+    void clear();
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    boolean equals(Object arg0);
+    int hashCode();
+    EnumMap<K,V> clone();
+}
+
+class EnumSet<E> extends AbstractSet<E> implements Cloneable, Serializable {
+    static <E> EnumSet<E> noneOf(Class<E> arg0);
+    static <E> EnumSet<E> allOf(Class<E> arg0);
+    static <E> EnumSet<E> copyOf(EnumSet<E> arg0);
+    static <E> EnumSet<E> copyOf(Collection<E> arg0);
+    static <E> EnumSet<E> complementOf(EnumSet<E> arg0);
+    static <E> EnumSet<E> of(E arg0);
+    static <E> EnumSet<E> of(E arg0, E arg1);
+    static <E> EnumSet<E> of(E arg0, E arg1, E arg2);
+    static <E> EnumSet<E> of(E arg0, E arg1, E arg2, E arg3);
+    static <E> EnumSet<E> of(E arg0, E arg1, E arg2, E arg3, E arg4);
+    static <E> EnumSet<E> of(E arg0, E[] arg1);
+    static <E> EnumSet<E> range(E arg0, E arg1);
+    EnumSet<E> clone();
+}
+
+interface Enumeration<E> {
+    boolean hasMoreElements();
+    E nextElement();
+}
+
+interface EventListener {
+}
+
+class EventListenerProxy<T> implements EventListener {
+    EventListenerProxy(T arg0);
+    T getListener();
+}
+
+class EventObject implements Serializable {
+    protected Object source;
+    EventObject(Object arg0);
+    Object getSource();
+    String toString();
+}
+
+class FormatFlagsConversionMismatchException extends IllegalFormatException {
+    FormatFlagsConversionMismatchException(String arg0, char arg1);
+    String getFlags();
+    char getConversion();
+    String getMessage();
+}
+
+interface Formattable {
+    void formatTo(Formatter arg0, int arg1, int arg2, int arg3);
+}
+
+class FormattableFlags {
+    static final int LEFT_JUSTIFY;
+    static final int UPPERCASE;
+    static final int ALTERNATE;
+}
+
+class Formatter implements Closeable, Flushable {
+    Formatter();
+    Formatter(Appendable arg0);
+    Formatter(Locale arg0);
+    Formatter(Appendable arg0, Locale arg1);
+    Formatter(String arg0) throws FileNotFoundException;
+    Formatter(String arg0, String arg1) throws FileNotFoundException,UnsupportedEncodingException;
+    Formatter(String arg0, String arg1, Locale arg2) throws FileNotFoundException,UnsupportedEncodingException;
+    Formatter(File arg0) throws FileNotFoundException;
+    Formatter(File arg0, String arg1) throws FileNotFoundException,UnsupportedEncodingException;
+    Formatter(File arg0, String arg1, Locale arg2) throws FileNotFoundException,UnsupportedEncodingException;
+    Formatter(PrintStream arg0);
+    Formatter(OutputStream arg0);
+    Formatter(OutputStream arg0, String arg1) throws UnsupportedEncodingException;
+    Formatter(OutputStream arg0, String arg1, Locale arg2) throws UnsupportedEncodingException;
+    Locale locale();
+    Appendable out();
+    String toString();
+    void flush();
+    void close();
+    IOException ioException();
+    Formatter format(String arg0, Object[] arg1);
+    Formatter format(Locale arg0, String arg1, Object[] arg2);
+}
+
+class FormatterClosedException extends IllegalStateException {
+    FormatterClosedException();
+}
+
+class GregorianCalendar extends Calendar {
+    static final int BC;
+    static final int AD;
+    GregorianCalendar();
+    GregorianCalendar(TimeZone arg0);
+    GregorianCalendar(Locale arg0);
+    GregorianCalendar(TimeZone arg0, Locale arg1);
+    GregorianCalendar(int arg0, int arg1, int arg2);
+    GregorianCalendar(int arg0, int arg1, int arg2, int arg3, int arg4);
+    GregorianCalendar(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    void setGregorianChange(Date arg0);
+    Date getGregorianChange();
+    boolean isLeapYear(int arg0);
+    String getCalendarType();
+    boolean equals(Object arg0);
+    int hashCode();
+    void add(int arg0, int arg1);
+    void roll(int arg0, boolean arg1);
+    void roll(int arg0, int arg1);
+    int getMinimum(int arg0);
+    int getMaximum(int arg0);
+    int getGreatestMinimum(int arg0);
+    int getLeastMaximum(int arg0);
+    int getActualMinimum(int arg0);
+    int getActualMaximum(int arg0);
+    Object clone();
+    TimeZone getTimeZone();
+    void setTimeZone(TimeZone arg0);
+    boolean isWeekDateSupported();
+    int getWeekYear();
+    void setWeekDate(int arg0, int arg1, int arg2);
+    int getWeeksInWeekYear();
+    protected void computeFields();
+    protected void computeTime();
+    ZonedDateTime toZonedDateTime();
+    static GregorianCalendar from(ZonedDateTime arg0);
+}
+
+class HashMap<K, V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable, Serializable {
+    HashMap(int arg0, float arg1);
+    HashMap(int arg0);
+    HashMap();
+    HashMap(Map<? extends K,? extends V> arg0);
+    int size();
+    boolean isEmpty();
+    V get(Object arg0);
+    boolean containsKey(Object arg0);
+    V put(K arg0, V arg1);
+    void putAll(Map<? extends K,? extends V> arg0);
+    V remove(Object arg0);
+    void clear();
+    boolean containsValue(Object arg0);
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    V getOrDefault(Object arg0, V arg1);
+    V putIfAbsent(K arg0, V arg1);
+    boolean remove(Object arg0, Object arg1);
+    boolean replace(K arg0, V arg1, V arg2);
+    V replace(K arg0, V arg1);
+    V computeIfAbsent(K arg0, Function<? super K,? extends V> arg1);
+    V computeIfPresent(K arg0, BiFunction<? super K,? super V,? extends V> arg1);
+    V compute(K arg0, BiFunction<? super K,? super V,? extends V> arg1);
+    V merge(K arg0, V arg1, BiFunction<? super V,? super V,? extends V> arg2);
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+    Object clone();
+}
+
+class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, Serializable {
+    HashSet();
+    HashSet(Collection<? extends E> arg0);
+    HashSet(int arg0, float arg1);
+    HashSet(int arg0);
+    Iterator<E> iterator();
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    void clear();
+    Object clone();
+    Spliterator<E> spliterator();
+}
+
+class Hashtable<K, V> extends Dictionary<K,V> implements Map<K,V>, Cloneable, Serializable {
+    Hashtable(int arg0, float arg1);
+    Hashtable(int arg0);
+    Hashtable();
+    Hashtable(Map<? extends K,? extends V> arg0);
+    int size();
+    boolean isEmpty();
+    Enumeration<K> keys();
+    Enumeration<V> elements();
+    boolean contains(Object arg0);
+    boolean containsValue(Object arg0);
+    boolean containsKey(Object arg0);
+    V get(Object arg0);
+    protected void rehash();
+    V put(K arg0, V arg1);
+    V remove(Object arg0);
+    void putAll(Map<? extends K,? extends V> arg0);
+    void clear();
+    Object clone();
+    String toString();
+    Set<K> keySet();
+    Set<Entry<K,V>> entrySet();
+    Collection<V> values();
+    boolean equals(Object arg0);
+    int hashCode();
+    V getOrDefault(Object arg0, V arg1);
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+    V putIfAbsent(K arg0, V arg1);
+    boolean remove(Object arg0, Object arg1);
+    boolean replace(K arg0, V arg1, V arg2);
+    V replace(K arg0, V arg1);
+    V computeIfAbsent(K arg0, Function<? super K,? extends V> arg1);
+    V computeIfPresent(K arg0, BiFunction<? super K,? super V,? extends V> arg1);
+    V compute(K arg0, BiFunction<? super K,? super V,? extends V> arg1);
+    V merge(K arg0, V arg1, BiFunction<? super V,? super V,? extends V> arg2);
+}
+
+class IdentityHashMap<K, V> extends AbstractMap<K,V> implements Map<K,V>, Serializable, Cloneable {
+    IdentityHashMap();
+    IdentityHashMap(int arg0);
+    IdentityHashMap(Map<? extends K,? extends V> arg0);
+    int size();
+    boolean isEmpty();
+    V get(Object arg0);
+    boolean containsKey(Object arg0);
+    boolean containsValue(Object arg0);
+    V put(K arg0, V arg1);
+    void putAll(Map<? extends K,? extends V> arg0);
+    V remove(Object arg0);
+    void clear();
+    boolean equals(Object arg0);
+    int hashCode();
+    Object clone();
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+}
+
+class IllegalFormatCodePointException extends IllegalFormatException {
+    IllegalFormatCodePointException(int arg0);
+    int getCodePoint();
+    String getMessage();
+}
+
+class IllegalFormatConversionException extends IllegalFormatException {
+    IllegalFormatConversionException(char arg0, Class<?> arg1);
+    char getConversion();
+    Class<?> getArgumentClass();
+    String getMessage();
+}
+
+class IllegalFormatException extends IllegalArgumentException {
+}
+
+class IllegalFormatFlagsException extends IllegalFormatException {
+    IllegalFormatFlagsException(String arg0);
+    String getFlags();
+    String getMessage();
+}
+
+class IllegalFormatPrecisionException extends IllegalFormatException {
+    IllegalFormatPrecisionException(int arg0);
+    int getPrecision();
+    String getMessage();
+}
+
+class IllegalFormatWidthException extends IllegalFormatException {
+    IllegalFormatWidthException(int arg0);
+    int getWidth();
+    String getMessage();
+}
+
+class IllformedLocaleException extends RuntimeException {
+    IllformedLocaleException();
+    IllformedLocaleException(String arg0);
+    IllformedLocaleException(String arg0, int arg1);
+    int getErrorIndex();
+}
+
+class InputMismatchException extends NoSuchElementException {
+    InputMismatchException();
+    InputMismatchException(String arg0);
+}
+
+class IntSummaryStatistics implements IntConsumer {
+    IntSummaryStatistics();
+    void accept(int arg0);
+    void combine(IntSummaryStatistics arg0);
+    long getCount();
+    long getSum();
+    int getMin();
+    int getMax();
+    double getAverage();
+    String toString();
+}
+
+class InvalidPropertiesFormatException extends IOException {
+    InvalidPropertiesFormatException(Throwable arg0);
+    InvalidPropertiesFormatException(String arg0);
+}
+
+interface Iterator<E> {
+    boolean hasNext();
+    E next();
+    void remove();
+    void forEachRemaining(Consumer<? super E> arg0);
+}
+
+class LinkedHashMap<K, V> extends HashMap<K,V> implements Map<K,V> {
+    LinkedHashMap(int arg0, float arg1);
+    LinkedHashMap(int arg0);
+    LinkedHashMap();
+    LinkedHashMap(Map<? extends K,? extends V> arg0);
+    LinkedHashMap(int arg0, float arg1, boolean arg2);
+    boolean containsValue(Object arg0);
+    V get(Object arg0);
+    V getOrDefault(Object arg0, V arg1);
+    void clear();
+    protected boolean removeEldestEntry(Entry<K,V> arg0);
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+}
+
+class LinkedHashSet<E> extends HashSet<E> implements Set<E>, Cloneable, Serializable {
+    LinkedHashSet(int arg0, float arg1);
+    LinkedHashSet(int arg0);
+    LinkedHashSet();
+    LinkedHashSet(Collection<? extends E> arg0);
+    Spliterator<E> spliterator();
+}
+
+class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, Serializable {
+    LinkedList();
+    LinkedList(Collection<? extends E> arg0);
+    E getFirst();
+    E getLast();
+    E removeFirst();
+    E removeLast();
+    void addFirst(E arg0);
+    void addLast(E arg0);
+    boolean contains(Object arg0);
+    int size();
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    boolean addAll(Collection<? extends E> arg0);
+    boolean addAll(int arg0, Collection<? extends E> arg1);
+    void clear();
+    E get(int arg0);
+    E set(int arg0, E arg1);
+    void add(int arg0, E arg1);
+    E remove(int arg0);
+    int indexOf(Object arg0);
+    int lastIndexOf(Object arg0);
+    E peek();
+    E element();
+    E poll();
+    E remove();
+    boolean offer(E arg0);
+    boolean offerFirst(E arg0);
+    boolean offerLast(E arg0);
+    E peekFirst();
+    E peekLast();
+    E pollFirst();
+    E pollLast();
+    void push(E arg0);
+    E pop();
+    boolean removeFirstOccurrence(Object arg0);
+    boolean removeLastOccurrence(Object arg0);
+    ListIterator<E> listIterator(int arg0);
+    Iterator<E> descendingIterator();
+    Object clone();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    Spliterator<E> spliterator();
+}
+
+interface List<E> extends Collection<E> {
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    Iterator<E> iterator();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    boolean containsAll(Collection<?> arg0);
+    boolean addAll(Collection<? extends E> arg0);
+    boolean addAll(int arg0, Collection<? extends E> arg1);
+    boolean removeAll(Collection<?> arg0);
+    boolean retainAll(Collection<?> arg0);
+    void replaceAll(UnaryOperator<E> arg0);
+    void sort(Comparator<? super E> arg0);
+    void clear();
+    boolean equals(Object arg0);
+    int hashCode();
+    E get(int arg0);
+    E set(int arg0, E arg1);
+    void add(int arg0, E arg1);
+    E remove(int arg0);
+    int indexOf(Object arg0);
+    int lastIndexOf(Object arg0);
+    ListIterator<E> listIterator();
+    ListIterator<E> listIterator(int arg0);
+    List<E> subList(int arg0, int arg1);
+    Spliterator<E> spliterator();
+}
+
+interface ListIterator<E> extends Iterator<E> {
+    boolean hasNext();
+    E next();
+    boolean hasPrevious();
+    E previous();
+    int nextIndex();
+    int previousIndex();
+    void remove();
+    void set(E arg0);
+    void add(E arg0);
+}
+
+class ListResourceBundle extends ResourceBundle {
+    ListResourceBundle();
+    Object handleGetObject(String arg0);
+    Enumeration<String> getKeys();
+    protected Set<String> handleKeySet();
+    protected Object[][] getContents();
+}
+
+class Locale implements Cloneable, Serializable {
+    static final Locale ENGLISH;
+    static final Locale FRENCH;
+    static final Locale GERMAN;
+    static final Locale ITALIAN;
+    static final Locale JAPANESE;
+    static final Locale KOREAN;
+    static final Locale CHINESE;
+    static final Locale SIMPLIFIED_CHINESE;
+    static final Locale TRADITIONAL_CHINESE;
+    static final Locale FRANCE;
+    static final Locale GERMANY;
+    static final Locale ITALY;
+    static final Locale JAPAN;
+    static final Locale KOREA;
+    static final Locale CHINA;
+    static final Locale PRC;
+    static final Locale TAIWAN;
+    static final Locale UK;
+    static final Locale US;
+    static final Locale CANADA;
+    static final Locale CANADA_FRENCH;
+    static final Locale ROOT;
+    static final char PRIVATE_USE_EXTENSION;
+    static final char UNICODE_LOCALE_EXTENSION;
+    Locale(String arg0, String arg1, String arg2);
+    Locale(String arg0, String arg1);
+    Locale(String arg0);
+    static Locale getDefault();
+    static Locale getDefault(Category arg0);
+    static void setDefault(Locale arg0);
+    static void setDefault(Category arg0, Locale arg1);
+    static Locale[] getAvailableLocales();
+    static String[] getISOCountries();
+    static String[] getISOLanguages();
+    String getLanguage();
+    String getScript();
+    String getCountry();
+    String getVariant();
+    boolean hasExtensions();
+    Locale stripExtensions();
+    String getExtension(char arg0);
+    Set<Character> getExtensionKeys();
+    Set<String> getUnicodeLocaleAttributes();
+    String getUnicodeLocaleType(String arg0);
+    Set<String> getUnicodeLocaleKeys();
+    String toString();
+    String toLanguageTag();
+    static Locale forLanguageTag(String arg0);
+    String getISO3Language() throws MissingResourceException;
+    String getISO3Country() throws MissingResourceException;
+    String getDisplayLanguage();
+    String getDisplayLanguage(Locale arg0);
+    String getDisplayScript();
+    String getDisplayScript(Locale arg0);
+    String getDisplayCountry();
+    String getDisplayCountry(Locale arg0);
+    String getDisplayVariant();
+    String getDisplayVariant(Locale arg0);
+    String getDisplayName();
+    String getDisplayName(Locale arg0);
+    Object clone();
+    int hashCode();
+    boolean equals(Object arg0);
+    static List<Locale> filter(List<LanguageRange> arg0, Collection<Locale> arg1, FilteringMode arg2);
+    static List<Locale> filter(List<LanguageRange> arg0, Collection<Locale> arg1);
+    static List<String> filterTags(List<LanguageRange> arg0, Collection<String> arg1, FilteringMode arg2);
+    static List<String> filterTags(List<LanguageRange> arg0, Collection<String> arg1);
+    static Locale lookup(List<LanguageRange> arg0, Collection<Locale> arg1);
+    static String lookupTag(List<LanguageRange> arg0, Collection<String> arg1);
+}
+class Locale$Builder {
+    Builder();
+    Builder setLocale(Locale arg0);
+    Builder setLanguageTag(String arg0);
+    Builder setLanguage(String arg0);
+    Builder setScript(String arg0);
+    Builder setRegion(String arg0);
+    Builder setVariant(String arg0);
+    Builder setExtension(char arg0, String arg1);
+    Builder setUnicodeLocaleKeyword(String arg0, String arg1);
+    Builder addUnicodeLocaleAttribute(String arg0);
+    Builder removeUnicodeLocaleAttribute(String arg0);
+    Builder clear();
+    Builder clearExtensions();
+    Locale build();
+}
+class Locale$LanguageRange {
+    static final double MAX_WEIGHT;
+    static final double MIN_WEIGHT;
+    LanguageRange(String arg0);
+    LanguageRange(String arg0, double arg1);
+    String getRange();
+    double getWeight();
+    static List<LanguageRange> parse(String arg0);
+    static List<LanguageRange> parse(String arg0, Map<String,List<String>> arg1);
+    static List<LanguageRange> mapEquivalents(List<LanguageRange> arg0, Map<String,List<String>> arg1);
+    int hashCode();
+    boolean equals(Object arg0);
+}
+
+class LongSummaryStatistics implements LongConsumer, IntConsumer {
+    LongSummaryStatistics();
+    void accept(int arg0);
+    void accept(long arg0);
+    void combine(LongSummaryStatistics arg0);
+    long getCount();
+    long getSum();
+    long getMin();
+    long getMax();
+    double getAverage();
+    String toString();
+}
+
+interface Map<K, V> {
+    int size();
+    boolean isEmpty();
+    boolean containsKey(Object arg0);
+    boolean containsValue(Object arg0);
+    V get(Object arg0);
+    V put(K arg0, V arg1);
+    V remove(Object arg0);
+    void putAll(Map<? extends K,? extends V> arg0);
+    void clear();
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    boolean equals(Object arg0);
+    int hashCode();
+    V getOrDefault(Object arg0, V arg1);
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+    V putIfAbsent(K arg0, V arg1);
+    boolean remove(Object arg0, Object arg1);
+    boolean replace(K arg0, V arg1, V arg2);
+    V replace(K arg0, V arg1);
+    V computeIfAbsent(K arg0, Function<? super K,? extends V> arg1);
+    V computeIfPresent(K arg0, BiFunction<? super K,? super V,? extends V> arg1);
+    V compute(K arg0, BiFunction<? super K,? super V,? extends V> arg1);
+    V merge(K arg0, V arg1, BiFunction<? super V,? super V,? extends V> arg2);
+}
+interface Map$Entry<K, V> {
+    K getKey();
+    V getValue();
+    V setValue(V arg0);
+    boolean equals(Object arg0);
+    int hashCode();
+    static <K, V> Comparator<Entry<K,V>> comparingByKey();
+    static <K, V> Comparator<Entry<K,V>> comparingByValue();
+    static <K, V> Comparator<Entry<K,V>> comparingByKey(Comparator<? super K> arg0);
+    static <K, V> Comparator<Entry<K,V>> comparingByValue(Comparator<? super V> arg0);
+}
+
+class MissingFormatArgumentException extends IllegalFormatException {
+    MissingFormatArgumentException(String arg0);
+    String getFormatSpecifier();
+    String getMessage();
+}
+
+class MissingFormatWidthException extends IllegalFormatException {
+    MissingFormatWidthException(String arg0);
+    String getFormatSpecifier();
+    String getMessage();
+}
+
+class MissingResourceException extends RuntimeException {
+    MissingResourceException(String arg0, String arg1, String arg2);
+    String getClassName();
+    String getKey();
+}
+
+interface NavigableMap<K, V> extends SortedMap<K,V> {
+    Entry<K,V> lowerEntry(K arg0);
+    K lowerKey(K arg0);
+    Entry<K,V> floorEntry(K arg0);
+    K floorKey(K arg0);
+    Entry<K,V> ceilingEntry(K arg0);
+    K ceilingKey(K arg0);
+    Entry<K,V> higherEntry(K arg0);
+    K higherKey(K arg0);
+    Entry<K,V> firstEntry();
+    Entry<K,V> lastEntry();
+    Entry<K,V> pollFirstEntry();
+    Entry<K,V> pollLastEntry();
+    NavigableMap<K,V> descendingMap();
+    NavigableSet<K> navigableKeySet();
+    NavigableSet<K> descendingKeySet();
+    NavigableMap<K,V> subMap(K arg0, boolean arg1, K arg2, boolean arg3);
+    NavigableMap<K,V> headMap(K arg0, boolean arg1);
+    NavigableMap<K,V> tailMap(K arg0, boolean arg1);
+    SortedMap<K,V> subMap(K arg0, K arg1);
+    SortedMap<K,V> headMap(K arg0);
+    SortedMap<K,V> tailMap(K arg0);
+}
+
+interface NavigableSet<E> extends SortedSet<E> {
+    E lower(E arg0);
+    E floor(E arg0);
+    E ceiling(E arg0);
+    E higher(E arg0);
+    E pollFirst();
+    E pollLast();
+    Iterator<E> iterator();
+    NavigableSet<E> descendingSet();
+    Iterator<E> descendingIterator();
+    NavigableSet<E> subSet(E arg0, boolean arg1, E arg2, boolean arg3);
+    NavigableSet<E> headSet(E arg0, boolean arg1);
+    NavigableSet<E> tailSet(E arg0, boolean arg1);
+    SortedSet<E> subSet(E arg0, E arg1);
+    SortedSet<E> headSet(E arg0);
+    SortedSet<E> tailSet(E arg0);
+}
+
+class NoSuchElementException extends RuntimeException {
+    NoSuchElementException();
+    NoSuchElementException(String arg0);
+}
+
+class Objects {
+    static boolean equals(Object arg0, Object arg1);
+    static boolean deepEquals(Object arg0, Object arg1);
+    static int hashCode(Object arg0);
+    static int hash(Object[] arg0);
+    static String toString(Object arg0);
+    static String toString(Object arg0, String arg1);
+    static <T> int compare(T arg0, T arg1, Comparator<? super T> arg2);
+    static <T> T requireNonNull(T arg0);
+    static <T> T requireNonNull(T arg0, String arg1);
+    static boolean isNull(Object arg0);
+    static boolean nonNull(Object arg0);
+    static <T> T requireNonNull(T arg0, Supplier<String> arg1);
+}
+
+class Observable {
+    Observable();
+    void addObserver(Observer arg0);
+    void deleteObserver(Observer arg0);
+    void notifyObservers();
+    void notifyObservers(Object arg0);
+    void deleteObservers();
+    protected void setChanged();
+    protected void clearChanged();
+    boolean hasChanged();
+    int countObservers();
+}
+
+interface Observer {
+    void update(Observable arg0, Object arg1);
+}
+
+class Optional<T> {
+    static <T> Optional<T> empty();
+    static <T> Optional<T> of(T arg0);
+    static <T> Optional<T> ofNullable(T arg0);
+    T get();
+    boolean isPresent();
+    void ifPresent(Consumer<? super T> arg0);
+    Optional<T> filter(Predicate<? super T> arg0);
+    <U> Optional<U> map(Function<? super T,? extends U> arg0);
+    <U> Optional<U> flatMap(Function<? super T,Optional<U>> arg0);
+    T orElse(T arg0);
+    T orElseGet(Supplier<? extends T> arg0);
+    <X> T orElseThrow(Supplier<? extends X> arg0) throws X;
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+}
+
+class OptionalDouble {
+    static OptionalDouble empty();
+    static OptionalDouble of(double arg0);
+    double getAsDouble();
+    boolean isPresent();
+    void ifPresent(DoubleConsumer arg0);
+    double orElse(double arg0);
+    double orElseGet(DoubleSupplier arg0);
+    <X> double orElseThrow(Supplier<X> arg0) throws X;
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+}
+
+class OptionalInt {
+    static OptionalInt empty();
+    static OptionalInt of(int arg0);
+    int getAsInt();
+    boolean isPresent();
+    void ifPresent(IntConsumer arg0);
+    int orElse(int arg0);
+    int orElseGet(IntSupplier arg0);
+    <X> int orElseThrow(Supplier<X> arg0) throws X;
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+}
+
+class OptionalLong {
+    static OptionalLong empty();
+    static OptionalLong of(long arg0);
+    long getAsLong();
+    boolean isPresent();
+    void ifPresent(LongConsumer arg0);
+    long orElse(long arg0);
+    long orElseGet(LongSupplier arg0);
+    <X> long orElseThrow(Supplier<X> arg0) throws X;
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+}
+
+interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
+    void forEachRemaining(T_CONS arg0);
+}
+interface PrimitiveIterator$OfInt extends PrimitiveIterator<Integer,IntConsumer> {
+    int nextInt();
+    void forEachRemaining(IntConsumer arg0);
+    Integer next();
+    void forEachRemaining(Consumer<? super Integer> arg0);
+}
+interface PrimitiveIterator$OfLong extends PrimitiveIterator<Long,LongConsumer> {
+    long nextLong();
+    void forEachRemaining(LongConsumer arg0);
+    Long next();
+    void forEachRemaining(Consumer<? super Long> arg0);
+}
+interface PrimitiveIterator$OfDouble extends PrimitiveIterator<Double,DoubleConsumer> {
+    double nextDouble();
+    void forEachRemaining(DoubleConsumer arg0);
+    Double next();
+    void forEachRemaining(Consumer<? super Double> arg0);
+}
+
+class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
+    PriorityQueue();
+    PriorityQueue(int arg0);
+    PriorityQueue(Comparator<? super E> arg0);
+    PriorityQueue(int arg0, Comparator<? super E> arg1);
+    PriorityQueue(Collection<? extends E> arg0);
+    PriorityQueue(PriorityQueue<? extends E> arg0);
+    PriorityQueue(SortedSet<? extends E> arg0);
+    boolean add(E arg0);
+    boolean offer(E arg0);
+    E peek();
+    boolean remove(Object arg0);
+    boolean contains(Object arg0);
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    Iterator<E> iterator();
+    int size();
+    void clear();
+    E poll();
+    Comparator<? super E> comparator();
+    Spliterator<E> spliterator();
+}
+
+class Properties extends Hashtable<Object,Object> {
+    protected Properties defaults;
+    Properties();
+    Properties(Properties arg0);
+    Object setProperty(String arg0, String arg1);
+    void load(Reader arg0) throws IOException;
+    void load(InputStream arg0) throws IOException;
+    void save(OutputStream arg0, String arg1);
+    void store(Writer arg0, String arg1) throws IOException;
+    void store(OutputStream arg0, String arg1) throws IOException;
+    void loadFromXML(InputStream arg0) throws IOException,InvalidPropertiesFormatException;
+    void storeToXML(OutputStream arg0, String arg1) throws IOException;
+    void storeToXML(OutputStream arg0, String arg1, String arg2) throws IOException;
+    String getProperty(String arg0);
+    String getProperty(String arg0, String arg1);
+    Enumeration<?> propertyNames();
+    Set<String> stringPropertyNames();
+    void list(PrintStream arg0);
+    void list(PrintWriter arg0);
+}
+
+class PropertyPermission extends BasicPermission {
+    PropertyPermission(String arg0, String arg1);
+    boolean implies(Permission arg0);
+    boolean equals(Object arg0);
+    int hashCode();
+    String getActions();
+    PermissionCollection newPermissionCollection();
+}
+
+class PropertyResourceBundle extends ResourceBundle {
+    PropertyResourceBundle(InputStream arg0) throws IOException;
+    PropertyResourceBundle(Reader arg0) throws IOException;
+    Object handleGetObject(String arg0);
+    Enumeration<String> getKeys();
+    protected Set<String> handleKeySet();
+}
+
+interface Queue<E> extends Collection<E> {
+    boolean add(E arg0);
+    boolean offer(E arg0);
+    E remove();
+    E poll();
+    E element();
+    E peek();
+}
+
+class Random implements Serializable {
+    Random();
+    Random(long arg0);
+    void setSeed(long arg0);
+    protected int next(int arg0);
+    void nextBytes(byte[] arg0);
+    int nextInt();
+    int nextInt(int arg0);
+    long nextLong();
+    boolean nextBoolean();
+    float nextFloat();
+    double nextDouble();
+    double nextGaussian();
+    IntStream ints(long arg0);
+    IntStream ints();
+    IntStream ints(long arg0, int arg1, int arg2);
+    IntStream ints(int arg0, int arg1);
+    LongStream longs(long arg0);
+    LongStream longs();
+    LongStream longs(long arg0, long arg1, long arg2);
+    LongStream longs(long arg0, long arg1);
+    DoubleStream doubles(long arg0);
+    DoubleStream doubles();
+    DoubleStream doubles(long arg0, double arg1, double arg2);
+    DoubleStream doubles(double arg0, double arg1);
+}
+
+interface RandomAccess {
+}
+
+class ResourceBundle {
+    protected ResourceBundle parent;
+    String getBaseBundleName();
+    ResourceBundle();
+    String getString(String arg0);
+    String[] getStringArray(String arg0);
+    Object getObject(String arg0);
+    Locale getLocale();
+    protected void setParent(ResourceBundle arg0);
+    static ResourceBundle getBundle(String arg0);
+    static ResourceBundle getBundle(String arg0, Control arg1);
+    static ResourceBundle getBundle(String arg0, Locale arg1);
+    static ResourceBundle getBundle(String arg0, Locale arg1, Control arg2);
+    static ResourceBundle getBundle(String arg0, Locale arg1, ClassLoader arg2);
+    static ResourceBundle getBundle(String arg0, Locale arg1, ClassLoader arg2, Control arg3);
+    static void clearCache();
+    static void clearCache(ClassLoader arg0);
+    protected Object handleGetObject(String arg0);
+    Enumeration<String> getKeys();
+    boolean containsKey(String arg0);
+    Set<String> keySet();
+    protected Set<String> handleKeySet();
+}
+class ResourceBundle$Control {
+    static final List<String> FORMAT_DEFAULT;
+    static final List<String> FORMAT_CLASS;
+    static final List<String> FORMAT_PROPERTIES;
+    static final long TTL_DONT_CACHE;
+    static final long TTL_NO_EXPIRATION_CONTROL;
+    protected Control();
+    static Control getControl(List<String> arg0);
+    static Control getNoFallbackControl(List<String> arg0);
+    List<String> getFormats(String arg0);
+    List<Locale> getCandidateLocales(String arg0, Locale arg1);
+    Locale getFallbackLocale(String arg0, Locale arg1);
+    ResourceBundle newBundle(String arg0, Locale arg1, String arg2, ClassLoader arg3, boolean arg4) throws IllegalAccessException,InstantiationException,IOException;
+    long getTimeToLive(String arg0, Locale arg1);
+    boolean needsReload(String arg0, Locale arg1, String arg2, ClassLoader arg3, ResourceBundle arg4, long arg5);
+    String toBundleName(String arg0, Locale arg1);
+    String toResourceName(String arg0, String arg1);
+}
+
+class Scanner implements Iterator<String>, Closeable {
+    Scanner(Readable arg0);
+    Scanner(InputStream arg0);
+    Scanner(InputStream arg0, String arg1);
+    Scanner(File arg0) throws FileNotFoundException;
+    Scanner(File arg0, String arg1) throws FileNotFoundException;
+    Scanner(Path arg0) throws IOException;
+    Scanner(Path arg0, String arg1) throws IOException;
+    Scanner(String arg0);
+    Scanner(ReadableByteChannel arg0);
+    Scanner(ReadableByteChannel arg0, String arg1);
+    void close();
+    IOException ioException();
+    Pattern delimiter();
+    Scanner useDelimiter(Pattern arg0);
+    Scanner useDelimiter(String arg0);
+    Locale locale();
+    Scanner useLocale(Locale arg0);
+    int radix();
+    Scanner useRadix(int arg0);
+    MatchResult match();
+    String toString();
+    boolean hasNext();
+    String next();
+    void remove();
+    boolean hasNext(String arg0);
+    String next(String arg0);
+    boolean hasNext(Pattern arg0);
+    String next(Pattern arg0);
+    boolean hasNextLine();
+    String nextLine();
+    String findInLine(String arg0);
+    String findInLine(Pattern arg0);
+    String findWithinHorizon(String arg0, int arg1);
+    String findWithinHorizon(Pattern arg0, int arg1);
+    Scanner skip(Pattern arg0);
+    Scanner skip(String arg0);
+    boolean hasNextBoolean();
+    boolean nextBoolean();
+    boolean hasNextByte();
+    boolean hasNextByte(int arg0);
+    byte nextByte();
+    byte nextByte(int arg0);
+    boolean hasNextShort();
+    boolean hasNextShort(int arg0);
+    short nextShort();
+    short nextShort(int arg0);
+    boolean hasNextInt();
+    boolean hasNextInt(int arg0);
+    int nextInt();
+    int nextInt(int arg0);
+    boolean hasNextLong();
+    boolean hasNextLong(int arg0);
+    long nextLong();
+    long nextLong(int arg0);
+    boolean hasNextFloat();
+    float nextFloat();
+    boolean hasNextDouble();
+    double nextDouble();
+    boolean hasNextBigInteger();
+    boolean hasNextBigInteger(int arg0);
+    BigInteger nextBigInteger();
+    BigInteger nextBigInteger(int arg0);
+    boolean hasNextBigDecimal();
+    BigDecimal nextBigDecimal();
+    Scanner reset();
+}
+
+class ServiceConfigurationError extends Error {
+    ServiceConfigurationError(String arg0);
+    ServiceConfigurationError(String arg0, Throwable arg1);
+}
+
+class ServiceLoader<S> implements Iterable<S> {
+    void reload();
+    Iterator<S> iterator();
+    static <S> ServiceLoader<S> load(Class<S> arg0, ClassLoader arg1);
+    static <S> ServiceLoader<S> load(Class<S> arg0);
+    static <S> ServiceLoader<S> loadInstalled(Class<S> arg0);
+    String toString();
+}
+
+interface Set<E> extends Collection<E> {
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    Iterator<E> iterator();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    boolean containsAll(Collection<?> arg0);
+    boolean addAll(Collection<? extends E> arg0);
+    boolean retainAll(Collection<?> arg0);
+    boolean removeAll(Collection<?> arg0);
+    void clear();
+    boolean equals(Object arg0);
+    int hashCode();
+    Spliterator<E> spliterator();
+}
+
+class SimpleTimeZone extends TimeZone {
+    static final int WALL_TIME;
+    static final int STANDARD_TIME;
+    static final int UTC_TIME;
+    SimpleTimeZone(int arg0, String arg1);
+    SimpleTimeZone(int arg0, String arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9);
+    SimpleTimeZone(int arg0, String arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10);
+    SimpleTimeZone(int arg0, String arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11, int arg12);
+    void setStartYear(int arg0);
+    void setStartRule(int arg0, int arg1, int arg2, int arg3);
+    void setStartRule(int arg0, int arg1, int arg2);
+    void setStartRule(int arg0, int arg1, int arg2, int arg3, boolean arg4);
+    void setEndRule(int arg0, int arg1, int arg2, int arg3);
+    void setEndRule(int arg0, int arg1, int arg2);
+    void setEndRule(int arg0, int arg1, int arg2, int arg3, boolean arg4);
+    int getOffset(long arg0);
+    int getOffset(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    int getRawOffset();
+    void setRawOffset(int arg0);
+    void setDSTSavings(int arg0);
+    int getDSTSavings();
+    boolean useDaylightTime();
+    boolean observesDaylightTime();
+    boolean inDaylightTime(Date arg0);
+    Object clone();
+    int hashCode();
+    boolean equals(Object arg0);
+    boolean hasSameRules(TimeZone arg0);
+    String toString();
+}
+
+interface SortedMap<K, V> extends Map<K,V> {
+    Comparator<? super K> comparator();
+    SortedMap<K,V> subMap(K arg0, K arg1);
+    SortedMap<K,V> headMap(K arg0);
+    SortedMap<K,V> tailMap(K arg0);
+    K firstKey();
+    K lastKey();
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+}
+
+interface SortedSet<E> extends Set<E> {
+    Comparator<? super E> comparator();
+    SortedSet<E> subSet(E arg0, E arg1);
+    SortedSet<E> headSet(E arg0);
+    SortedSet<E> tailSet(E arg0);
+    E first();
+    E last();
+    Spliterator<E> spliterator();
+}
+
+interface Spliterator<T> {
+    static final int ORDERED;
+    static final int DISTINCT;
+    static final int SORTED;
+    static final int SIZED;
+    static final int NONNULL;
+    static final int IMMUTABLE;
+    static final int CONCURRENT;
+    static final int SUBSIZED;
+    boolean tryAdvance(Consumer<? super T> arg0);
+    void forEachRemaining(Consumer<? super T> arg0);
+    Spliterator<T> trySplit();
+    long estimateSize();
+    long getExactSizeIfKnown();
+    int characteristics();
+    boolean hasCharacteristics(int arg0);
+    Comparator<? super T> getComparator();
+}
+interface Spliterator$OfPrimitive<T, T_CONS, T_SPLITR> extends Spliterator<T> {
+    T_SPLITR trySplit();
+    boolean tryAdvance(T_CONS arg0);
+    void forEachRemaining(T_CONS arg0);
+}
+interface Spliterator$OfInt extends OfPrimitive<Integer,IntConsumer,OfInt> {
+    OfInt trySplit();
+    boolean tryAdvance(IntConsumer arg0);
+    void forEachRemaining(IntConsumer arg0);
+    boolean tryAdvance(Consumer<? super Integer> arg0);
+    void forEachRemaining(Consumer<? super Integer> arg0);
+}
+interface Spliterator$OfLong extends OfPrimitive<Long,LongConsumer,OfLong> {
+    OfLong trySplit();
+    boolean tryAdvance(LongConsumer arg0);
+    void forEachRemaining(LongConsumer arg0);
+    boolean tryAdvance(Consumer<? super Long> arg0);
+    void forEachRemaining(Consumer<? super Long> arg0);
+}
+interface Spliterator$OfDouble extends OfPrimitive<Double,DoubleConsumer,OfDouble> {
+    OfDouble trySplit();
+    boolean tryAdvance(DoubleConsumer arg0);
+    void forEachRemaining(DoubleConsumer arg0);
+    boolean tryAdvance(Consumer<? super Double> arg0);
+    void forEachRemaining(Consumer<? super Double> arg0);
+}
+
+class Spliterators {
+    static <T> Spliterator<T> emptySpliterator();
+    static OfInt emptyIntSpliterator();
+    static OfLong emptyLongSpliterator();
+    static OfDouble emptyDoubleSpliterator();
+    static <T> Spliterator<T> spliterator(Object[] arg0, int arg1);
+    static <T> Spliterator<T> spliterator(Object[] arg0, int arg1, int arg2, int arg3);
+    static OfInt spliterator(int[] arg0, int arg1);
+    static OfInt spliterator(int[] arg0, int arg1, int arg2, int arg3);
+    static OfLong spliterator(long[] arg0, int arg1);
+    static OfLong spliterator(long[] arg0, int arg1, int arg2, int arg3);
+    static OfDouble spliterator(double[] arg0, int arg1);
+    static OfDouble spliterator(double[] arg0, int arg1, int arg2, int arg3);
+    static <T> Spliterator<T> spliterator(Collection<? extends T> arg0, int arg1);
+    static <T> Spliterator<T> spliterator(Iterator<? extends T> arg0, long arg1, int arg2);
+    static <T> Spliterator<T> spliteratorUnknownSize(Iterator<? extends T> arg0, int arg1);
+    static OfInt spliterator(OfInt arg0, long arg1, int arg2);
+    static OfInt spliteratorUnknownSize(OfInt arg0, int arg1);
+    static OfLong spliterator(OfLong arg0, long arg1, int arg2);
+    static OfLong spliteratorUnknownSize(OfLong arg0, int arg1);
+    static OfDouble spliterator(OfDouble arg0, long arg1, int arg2);
+    static OfDouble spliteratorUnknownSize(OfDouble arg0, int arg1);
+    static <T> Iterator<T> iterator(Spliterator<? extends T> arg0);
+    static OfInt iterator(OfInt arg0);
+    static OfLong iterator(OfLong arg0);
+    static OfDouble iterator(OfDouble arg0);
+}
+class Spliterators$AbstractSpliterator<T> implements Spliterator<T> {
+    protected AbstractSpliterator(long arg0, int arg1);
+    Spliterator<T> trySplit();
+    long estimateSize();
+    int characteristics();
+}
+class Spliterators$AbstractIntSpliterator implements OfInt {
+    protected AbstractIntSpliterator(long arg0, int arg1);
+    OfInt trySplit();
+    long estimateSize();
+    int characteristics();
+}
+class Spliterators$AbstractLongSpliterator implements OfLong {
+    protected AbstractLongSpliterator(long arg0, int arg1);
+    OfLong trySplit();
+    long estimateSize();
+    int characteristics();
+}
+class Spliterators$AbstractDoubleSpliterator implements OfDouble {
+    protected AbstractDoubleSpliterator(long arg0, int arg1);
+    OfDouble trySplit();
+    long estimateSize();
+    int characteristics();
+}
+
+class SplittableRandom {
+    SplittableRandom(long arg0);
+    SplittableRandom();
+    SplittableRandom split();
+    int nextInt();
+    int nextInt(int arg0);
+    int nextInt(int arg0, int arg1);
+    long nextLong();
+    long nextLong(long arg0);
+    long nextLong(long arg0, long arg1);
+    double nextDouble();
+    double nextDouble(double arg0);
+    double nextDouble(double arg0, double arg1);
+    boolean nextBoolean();
+    IntStream ints(long arg0);
+    IntStream ints();
+    IntStream ints(long arg0, int arg1, int arg2);
+    IntStream ints(int arg0, int arg1);
+    LongStream longs(long arg0);
+    LongStream longs();
+    LongStream longs(long arg0, long arg1, long arg2);
+    LongStream longs(long arg0, long arg1);
+    DoubleStream doubles(long arg0);
+    DoubleStream doubles();
+    DoubleStream doubles(long arg0, double arg1, double arg2);
+    DoubleStream doubles(double arg0, double arg1);
+}
+
+class Stack<E> extends Vector<E> {
+    Stack();
+    E push(E arg0);
+    E pop();
+    E peek();
+    boolean empty();
+    int search(Object arg0);
+}
+
+class StringJoiner {
+    StringJoiner(CharSequence arg0);
+    StringJoiner(CharSequence arg0, CharSequence arg1, CharSequence arg2);
+    StringJoiner setEmptyValue(CharSequence arg0);
+    String toString();
+    StringJoiner add(CharSequence arg0);
+    StringJoiner merge(StringJoiner arg0);
+    int length();
+}
+
+class StringTokenizer implements Enumeration<Object> {
+    StringTokenizer(String arg0, String arg1, boolean arg2);
+    StringTokenizer(String arg0, String arg1);
+    StringTokenizer(String arg0);
+    boolean hasMoreTokens();
+    String nextToken();
+    String nextToken(String arg0);
+    boolean hasMoreElements();
+    Object nextElement();
+    int countTokens();
+}
+
+class TimeZone implements Serializable, Cloneable {
+    static final int SHORT;
+    static final int LONG;
+    TimeZone();
+    int getOffset(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    int getOffset(long arg0);
+    void setRawOffset(int arg0);
+    int getRawOffset();
+    String getID();
+    void setID(String arg0);
+    String getDisplayName();
+    String getDisplayName(Locale arg0);
+    String getDisplayName(boolean arg0, int arg1);
+    String getDisplayName(boolean arg0, int arg1, Locale arg2);
+    int getDSTSavings();
+    boolean useDaylightTime();
+    boolean observesDaylightTime();
+    boolean inDaylightTime(Date arg0);
+    static TimeZone getTimeZone(String arg0);
+    static TimeZone getTimeZone(ZoneId arg0);
+    ZoneId toZoneId();
+    static String[] getAvailableIDs(int arg0);
+    static String[] getAvailableIDs();
+    static TimeZone getDefault();
+    static void setDefault(TimeZone arg0);
+    boolean hasSameRules(TimeZone arg0);
+    Object clone();
+}
+
+class Timer {
+    Timer();
+    Timer(boolean arg0);
+    Timer(String arg0);
+    Timer(String arg0, boolean arg1);
+    void schedule(TimerTask arg0, long arg1);
+    void schedule(TimerTask arg0, Date arg1);
+    void schedule(TimerTask arg0, long arg1, long arg2);
+    void schedule(TimerTask arg0, Date arg1, long arg2);
+    void scheduleAtFixedRate(TimerTask arg0, long arg1, long arg2);
+    void scheduleAtFixedRate(TimerTask arg0, Date arg1, long arg2);
+    void cancel();
+    int purge();
+}
+
+class TimerTask implements Runnable {
+    protected TimerTask();
+    void run();
+    boolean cancel();
+    long scheduledExecutionTime();
+}
+
+class TooManyListenersException extends Exception {
+    TooManyListenersException();
+    TooManyListenersException(String arg0);
+}
+
+class TreeMap<K, V> extends AbstractMap<K,V> implements NavigableMap<K,V>, Cloneable, Serializable {
+    TreeMap();
+    TreeMap(Comparator<? super K> arg0);
+    TreeMap(Map<? extends K,? extends V> arg0);
+    TreeMap(SortedMap<K,? extends V> arg0);
+    int size();
+    boolean containsKey(Object arg0);
+    boolean containsValue(Object arg0);
+    V get(Object arg0);
+    Comparator<? super K> comparator();
+    K firstKey();
+    K lastKey();
+    void putAll(Map<? extends K,? extends V> arg0);
+    V put(K arg0, V arg1);
+    V remove(Object arg0);
+    void clear();
+    Object clone();
+    Entry<K,V> firstEntry();
+    Entry<K,V> lastEntry();
+    Entry<K,V> pollFirstEntry();
+    Entry<K,V> pollLastEntry();
+    Entry<K,V> lowerEntry(K arg0);
+    K lowerKey(K arg0);
+    Entry<K,V> floorEntry(K arg0);
+    K floorKey(K arg0);
+    Entry<K,V> ceilingEntry(K arg0);
+    K ceilingKey(K arg0);
+    Entry<K,V> higherEntry(K arg0);
+    K higherKey(K arg0);
+    Set<K> keySet();
+    NavigableSet<K> navigableKeySet();
+    NavigableSet<K> descendingKeySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    NavigableMap<K,V> descendingMap();
+    NavigableMap<K,V> subMap(K arg0, boolean arg1, K arg2, boolean arg3);
+    NavigableMap<K,V> headMap(K arg0, boolean arg1);
+    NavigableMap<K,V> tailMap(K arg0, boolean arg1);
+    SortedMap<K,V> subMap(K arg0, K arg1);
+    SortedMap<K,V> headMap(K arg0);
+    SortedMap<K,V> tailMap(K arg0);
+    boolean replace(K arg0, V arg1, V arg2);
+    V replace(K arg0, V arg1);
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+}
+
+class TreeSet<E> extends AbstractSet<E> implements NavigableSet<E>, Cloneable, Serializable {
+    TreeSet();
+    TreeSet(Comparator<? super E> arg0);
+    TreeSet(Collection<? extends E> arg0);
+    TreeSet(SortedSet<E> arg0);
+    Iterator<E> iterator();
+    Iterator<E> descendingIterator();
+    NavigableSet<E> descendingSet();
+    int size();
+    boolean isEmpty();
+    boolean contains(Object arg0);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    void clear();
+    boolean addAll(Collection<? extends E> arg0);
+    NavigableSet<E> subSet(E arg0, boolean arg1, E arg2, boolean arg3);
+    NavigableSet<E> headSet(E arg0, boolean arg1);
+    NavigableSet<E> tailSet(E arg0, boolean arg1);
+    SortedSet<E> subSet(E arg0, E arg1);
+    SortedSet<E> headSet(E arg0);
+    SortedSet<E> tailSet(E arg0);
+    Comparator<? super E> comparator();
+    E first();
+    E last();
+    E lower(E arg0);
+    E floor(E arg0);
+    E ceiling(E arg0);
+    E higher(E arg0);
+    E pollFirst();
+    E pollLast();
+    Object clone();
+    Spliterator<E> spliterator();
+}
+
+class UUID implements Serializable, Comparable<UUID> {
+    UUID(long arg0, long arg1);
+    static UUID randomUUID();
+    static UUID nameUUIDFromBytes(byte[] arg0);
+    static UUID fromString(String arg0);
+    long getLeastSignificantBits();
+    long getMostSignificantBits();
+    int version();
+    int variant();
+    long timestamp();
+    int clockSequence();
+    long node();
+    String toString();
+    int hashCode();
+    boolean equals(Object arg0);
+    int compareTo(UUID arg0);
+}
+
+class UnknownFormatConversionException extends IllegalFormatException {
+    UnknownFormatConversionException(String arg0);
+    String getConversion();
+    String getMessage();
+}
+
+class UnknownFormatFlagsException extends IllegalFormatException {
+    UnknownFormatFlagsException(String arg0);
+    String getFlags();
+    String getMessage();
+}
+
+class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+    protected Object[] elementData;
+    protected int elementCount;
+    protected int capacityIncrement;
+    Vector(int arg0, int arg1);
+    Vector(int arg0);
+    Vector();
+    Vector(Collection<? extends E> arg0);
+    void copyInto(Object[] arg0);
+    void trimToSize();
+    void ensureCapacity(int arg0);
+    void setSize(int arg0);
+    int capacity();
+    int size();
+    boolean isEmpty();
+    Enumeration<E> elements();
+    boolean contains(Object arg0);
+    int indexOf(Object arg0);
+    int indexOf(Object arg0, int arg1);
+    int lastIndexOf(Object arg0);
+    int lastIndexOf(Object arg0, int arg1);
+    E elementAt(int arg0);
+    E firstElement();
+    E lastElement();
+    void setElementAt(E arg0, int arg1);
+    void removeElementAt(int arg0);
+    void insertElementAt(E arg0, int arg1);
+    void addElement(E arg0);
+    boolean removeElement(Object arg0);
+    void removeAllElements();
+    Object clone();
+    Object[] toArray();
+    <T> T[] toArray(T[] arg0);
+    E get(int arg0);
+    E set(int arg0, E arg1);
+    boolean add(E arg0);
+    boolean remove(Object arg0);
+    void add(int arg0, E arg1);
+    E remove(int arg0);
+    void clear();
+    boolean containsAll(Collection<?> arg0);
+    boolean addAll(Collection<? extends E> arg0);
+    boolean removeAll(Collection<?> arg0);
+    boolean retainAll(Collection<?> arg0);
+    boolean addAll(int arg0, Collection<? extends E> arg1);
+    boolean equals(Object arg0);
+    int hashCode();
+    String toString();
+    List<E> subList(int arg0, int arg1);
+    protected void removeRange(int arg0, int arg1);
+    ListIterator<E> listIterator(int arg0);
+    ListIterator<E> listIterator();
+    Iterator<E> iterator();
+    void forEach(Consumer<? super E> arg0);
+    boolean removeIf(Predicate<? super E> arg0);
+    void replaceAll(UnaryOperator<E> arg0);
+    void sort(Comparator<? super E> arg0);
+    Spliterator<E> spliterator();
+}
+
+class WeakHashMap<K, V> extends AbstractMap<K,V> implements Map<K,V> {
+    WeakHashMap(int arg0, float arg1);
+    WeakHashMap(int arg0);
+    WeakHashMap();
+    WeakHashMap(Map<? extends K,? extends V> arg0);
+    int size();
+    boolean isEmpty();
+    V get(Object arg0);
+    boolean containsKey(Object arg0);
+    V put(K arg0, V arg1);
+    void putAll(Map<? extends K,? extends V> arg0);
+    V remove(Object arg0);
+    void clear();
+    boolean containsValue(Object arg0);
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Entry<K,V>> entrySet();
+    void forEach(BiConsumer<? super K,? super V> arg0);
+    void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
+}

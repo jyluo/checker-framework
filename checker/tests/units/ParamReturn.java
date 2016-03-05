@@ -2,6 +2,8 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
+import java.util.List;
+import java.util.LinkedList;
 
 public class ParamReturn {
     @m int meter = 20 * UnitsTools.m;
@@ -112,4 +114,60 @@ public class ParamReturn {
         int [] x = new int[5];
         for(int i : x);
     }
+
+    <T> T methodDefaultImplicitUpper(T input) {
+        return input;
+    }
+
+    <@UnknownUnits T> T methodDeclaredImplicitUpper(T input) {
+        return input;
+    }
+
+    void implicitUpperTest() {
+        Object x = null;
+        x = methodDefaultImplicitUpper(x);
+        x = methodDeclaredImplicitUpper(x);
+
+        @UnknownUnits Object y = new @UnknownUnits Object();
+        y = methodDefaultImplicitUpper(y);
+        y = methodDeclaredImplicitUpper(y);
+
+        @m Object z = new @m Object();
+        z = methodDefaultImplicitUpper(z);
+        z = methodDeclaredImplicitUpper(z);
+    }
+
+    <T extends Object> T methodDefaultExplicitUpper(T input) {
+        return input;
+    }
+
+    <@UnknownUnits T extends Object> T methodDeclaredExplicitUpper(T input) {
+        return input;
+    }
+
+    void explicitUpperTest() {
+        // Scalar by default
+        Object x = new Object();
+        x = methodDefaultExplicitUpper(x);
+        x = methodDeclaredExplicitUpper(x);
+
+        @UnknownUnits Object y = new @UnknownUnits Object();
+        y = methodDefaultExplicitUpper(y);
+        y = methodDeclaredExplicitUpper(y);
+
+        @m Object z = new @m Object();
+        z = methodDefaultExplicitUpper(z);
+        z = methodDeclaredExplicitUpper(z);
+    }
+
+    void someList() {
+        List<Number> list = new LinkedList<Number>();
+        list.add(new @UnknownUnits Integer(5));
+    }
+
+    void objectParameterTest(@m Object x, @s Object y) {
+        //:: error: (operands.unit.mismatch)
+        if(x == y);
+    }
+
 }

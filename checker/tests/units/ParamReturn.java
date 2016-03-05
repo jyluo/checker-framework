@@ -141,7 +141,7 @@ public class ParamReturn {
         return input;
     }
 
-    <@UnknownUnits T extends Object> T methodDeclaredExplicitUpper(T input) {
+    <@UnknownUnits T extends @UnknownUnits Object> T methodDeclaredExplicitUpper(T input) {
         return input;
     }
 
@@ -170,4 +170,23 @@ public class ParamReturn {
         if(x == y);
     }
 
+    private class A<@Length T> {
+        public A() {
+
+        }
+
+        T method(T input) {
+            return input;
+        }
+    }
+
+    void classTest() {
+        A<@m Number> a = new A<@m Number>();
+        a.method(new @UnknownUnits Integer(5));
+    }
 }
+
+
+
+
+

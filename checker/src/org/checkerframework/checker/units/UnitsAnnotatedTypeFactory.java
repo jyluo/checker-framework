@@ -439,7 +439,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     public TreeAnnotator createTreeAnnotator() {
         ImplicitsTreeAnnotator implicitsTreeAnnotator = new ImplicitsTreeAnnotator(this);
-        implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM);
+        // implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM);
         return new ListTreeAnnotator(new UnitsPropagationTreeAnnotator(this), implicitsTreeAnnotator, new UnitsTreeAnnotator(this));
     }
 

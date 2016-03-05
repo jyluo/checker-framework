@@ -1,11 +1,6 @@
 package org.checkerframework.checker.units.qual;
 
-import org.checkerframework.framework.qual.DefaultFor;
-import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
-import org.checkerframework.framework.qual.DefaultQualifierInHierarchyInUncheckedCode;
-import org.checkerframework.framework.qual.InvisibleQualifier;
 import org.checkerframework.framework.qual.SubtypeOf;
-import org.checkerframework.framework.qual.TypeUseLocation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,12 +18,13 @@ import java.lang.annotation.Target;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@InvisibleQualifier
 @SubtypeOf(UnknownUnits.class)
-@DefaultQualifierInHierarchy
-// CF sets upper bounds to TOP by default, so we must set it manually here to Scalar
-@DefaultFor({TypeUseLocation.UPPER_BOUND})
-@DefaultQualifierInHierarchyInUncheckedCode
+
+//@DefaultQualifierInHierarchy
+//@DefaultQualifierInHierarchyInUncheckedCode
+////CF sets upper bounds to TOP by default, so we must set it manually here to Scalar
+//@DefaultFor({TypeUseLocation.EXPLICIT_UPPER_BOUND})
+
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })

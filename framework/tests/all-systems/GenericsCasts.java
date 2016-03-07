@@ -35,6 +35,7 @@ class GenericsCasts {
       }
   }
 
+  @SuppressWarnings({"units"})
   public static <T extends Object> int indexOf(T[] a) {
       return indexOfEq(a);
   }

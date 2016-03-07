@@ -19,10 +19,13 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.type.TypeMirror;
 
+import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.TypeCastTree;
 
 /**
  * Units visitor.
@@ -90,69 +93,32 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 useType.getEffectiveAnnotation(UnitsBottom.class) == null;
     }
 
-    @Override
-    public Void visitCompoundAssignment(CompoundAssignmentTree node, Void p) {
-        ExpressionTree var = node.getVariable();
-        ExpressionTree expr = node.getExpression();
-        AnnotatedTypeMirror varType = atypeFactory.getAnnotatedType(var);
-        AnnotatedTypeMirror exprType = atypeFactory.getAnnotatedType(expr);
-        Tree.Kind kind = node.getKind();
+    // DEBUG USE
+//    @Override
+//    public Void visitMethodInvocation(MethodInvocationTree node, Void p) {
+//        System.out.println("invoking method: " + node + " =============================");
+//
+//        Pair<AnnotatedExecutableType, List<AnnotatedTypeMirror>> mfuPair = atypeFactory.methodFromUse(node);
+//        AnnotatedExecutableType invokedMethod = mfuPair.first;
+//        List<AnnotatedTypeMirror> typeargs = mfuPair.second;
+//
+//        List<AnnotatedTypeParameterBounds> paramBounds = new ArrayList<>();
+//        for (AnnotatedTypeVariable param : invokedMethod.getTypeVariables()) {
+//            paramBounds.add(param.getBounds());
+//        }
+//
+//        System.out.println("type args: " + typeargs);
+//        System.out.println("paramBounds: " + paramBounds);
+//        System.out.println("args: " + node.getArguments());
+//
+//        return super.visitMethodInvocation(node, p);
+//    }
 
-        // skip checking addition on Strings
-        if (kind == Tree.Kind.PLUS_ASSIGNMENT && isSameUnderlyingType(varType.getUnderlyingType(), stringType)) {
-            return null;
-        }
-
-        // plus and minus assignment
-        if (kind == Tree.Kind.PLUS_ASSIGNMENT || kind == Tree.Kind.MINUS_ASSIGNMENT) {
-            // if the right hand side (expr) is not a subtype of the left hand
-            // side (var) then throw error
-            if (!atypeFactory.getTypeHierarchy().isSubtype(exprType, varType)) {
-                checker.report(Result.failure("compound.assignment.type.incompatible",
-                        varType, exprType), node);
-            }
-        }
-        // multiply, divide, modulus assignment
-        else if (kind == Tree.Kind.MULTIPLY_ASSIGNMENT || kind == Tree.Kind.DIVIDE_ASSIGNMENT || kind == Tree.Kind.REMAINDER_ASSIGNMENT) {
-            if (UnitsRelationsTools.hasSpecificUnit(varType, TOP)) {
-                // if the left hand side is unknown, turn it into whatever is on
-                // right hand side
-                varType.replaceAnnotations(exprType.getAnnotations());
-            } else if (!UnitsRelationsTools.hasSpecificUnit(exprType, scalar)) {
-                // if the right hand side is not a scalar then throw error
-                // Only allow mul/div with unqualified units
-                checker.report(Result.failure("compound.assignment.type.incompatible",
-                        varType, exprType), node);
-            }
-        }
-
-        return null;
-    }
-
-    private boolean isSameUnderlyingType(TypeMirror lht, TypeMirror rht) {
-        // use typeUtils.isSameType instead of TypeMirror.equals as this
-        // will check only the underlying type and ignores declarations on
-        // the type mirror
-        return checker.getTypeUtils().isSameType(lht, rht);
-    }
-
-    private boolean isNotPrimitiveNumberTypes(TypeMirror t) {
-        switch(t.getKind()) {
-        case BYTE:
-        case SHORT:
-        case INT:
-        case LONG:
-        case FLOAT:
-        case DOUBLE:
-            return false;
-        default:
-            return true;
-        }
-    }
-
-    // allow the passing of UnknownUnits variables into Scalar method parameters
-    // (all parameters are scalar by default), if the variable is a
-    // non-primitive type.
+    // allow the passing of UnknownUnits number literals into Scalar method
+    // parameters
+    // old: allow the passing of UnknownUnits references into Scalar method
+    // parameters
+    // (all parameters are scalar by default).
     // keep in sync with super implementation.
     @Override
     protected void checkArguments(List<? extends AnnotatedTypeMirror> requiredArgs, List<? extends ExpressionTree> passedArgs) {
@@ -166,18 +132,21 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
 
                 // Units Checker Code =======================
                 AnnotatedTypeMirror requiredArg = requiredArgs.get(i);
-                AnnotatedTypeMirror passedArg = atypeFactory.getAnnotatedType(passedArgs.get(i));
+                ExpressionTree passedExpression = passedArgs.get(i);
+                AnnotatedTypeMirror passedArg = atypeFactory.getAnnotatedType(passedExpression);
 
-                if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && UnitsRelationsTools.hasSpecificUnit(passedArg, TOP)
-                        && isNotPrimitiveNumberTypes(requiredArg.getUnderlyingType()) && isNotPrimitiveNumberTypes(passedArg.getUnderlyingType())) {
-                    // if the method parameter is Scalar, and the passed in
-                    // argument is UnknownUnits, and both the parameter and the
-                    // argument are not primitive number types, pass
-                } else if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && isSameUnderlyingType(requiredArg.getUnderlyingType(), objectType)) {
-                    // if the method parameter is Scalar Object, pass regardless of what the argument is as Object accepts anything
+                if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar)
+                        && UnitsRelationsTools.hasSpecificUnit(passedArg, TOP)
+                        && isPrimitiveNumberLiteralExpression(passedExpression)) {
+                    // if the method parameter is Scalar, and the passed in argument
+                    // is an UnknownUnits mathematical expression that consists of only number literals
+                    // pass the check
+
+                    //                } else if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && isSameUnderlyingType(requiredArg.getUnderlyingType(), objectType)) {
+                    //                    // if the method parameter is Scalar Object, pass regardless of what the argument is as Object accepts anything
                 } else {
-                    commonAssignmentCheck(requiredArg, passedArgs.get(i),
-                            "argument.type.incompatible", false);
+                    // Developer note: keep in sync with super implementation
+                    commonAssignmentCheck(requiredArg, passedExpression, "argument.type.incompatible", false);
                 }
                 // End Units Checker Code ===================
 
@@ -187,6 +156,38 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             }
         } finally {
             visitorState.setAssignmentContext(preAssCtxt);
+        }
+    }
+
+    // checks to see if an entire mathematical expression consists of only
+    // number literals
+    private boolean isPrimitiveNumberLiteralExpression(ExpressionTree tree) {
+        // TODO: bitshift support?
+        switch (tree.getKind()) {
+        case TYPE_CAST:
+            // any type casting of the number literals are ignored
+            return isPrimitiveNumberLiteralExpression(((TypeCastTree) tree).getExpression());
+        case PARENTHESIZED:
+            // descend into parentheses
+            return isPrimitiveNumberLiteralExpression(((ParenthesizedTree) tree).getExpression());
+        case PLUS:
+        case MINUS:
+        case MULTIPLY:
+        case DIVIDE:
+        case REMAINDER:
+            // for the 5 mathematical operations, return true if both operands
+            // are mathematical sub-expression that consists of only number
+            // literals
+            BinaryTree bTree = (BinaryTree) tree;
+            return isPrimitiveNumberLiteralExpression(bTree.getLeftOperand())
+                    && isPrimitiveNumberLiteralExpression(bTree.getRightOperand());
+        case INT_LITERAL:
+        case LONG_LITERAL:
+        case FLOAT_LITERAL:
+        case DOUBLE_LITERAL:
+            return true;
+        default:
+            return false;
         }
     }
 
@@ -218,16 +219,64 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
 
         // Units Checker Code =======================
-        // if the method receiver is Scalar and the receiving object is UnknownUnits, pass
-        if (UnitsRelationsTools.hasSpecificUnit(methodReceiver, scalar) && UnitsRelationsTools.hasSpecificUnit(treeReceiver, TOP)) {
+        // if the method receiver is Scalar and the receiving object is
+        // UnknownUnits, pass
+        if (UnitsRelationsTools.hasSpecificUnit(methodReceiver, scalar)
+                && UnitsRelationsTools.hasSpecificUnit(treeReceiver, TOP)) {
             return;
         }
         // End Units Checker Code ===================
 
         if (!atypeFactory.getTypeHierarchy().isSubtype(treeReceiver, methodReceiver)) {
-            checker.report(Result.failure("method.invocation.invalid",
-                    TreeUtils.elementFromUse(node),
-                    treeReceiver.toString(), methodReceiver.toString()), node);
+            checker.report(Result.failure("method.invocation.invalid", TreeUtils.elementFromUse(node), treeReceiver.toString(), methodReceiver.toString()), node);
         }
+    }
+
+    @Override
+    public Void visitCompoundAssignment(CompoundAssignmentTree node, Void p) {
+        ExpressionTree var = node.getVariable();
+        ExpressionTree expr = node.getExpression();
+        AnnotatedTypeMirror varType = atypeFactory.getAnnotatedType(var);
+        AnnotatedTypeMirror exprType = atypeFactory.getAnnotatedType(expr);
+        Tree.Kind kind = node.getKind();
+
+        // skip checking addition on Strings
+        if (kind == Tree.Kind.PLUS_ASSIGNMENT
+                && isSameUnderlyingType(varType.getUnderlyingType(), stringType)) {
+            return null;
+        }
+
+        // plus and minus assignment
+        if (kind == Tree.Kind.PLUS_ASSIGNMENT
+                || kind == Tree.Kind.MINUS_ASSIGNMENT) {
+            // if the right hand side (expr) is not a subtype of the left hand
+            // side (var) then throw error
+            if (!atypeFactory.getTypeHierarchy().isSubtype(exprType, varType)) {
+                checker.report(Result.failure("compound.assignment.type.incompatible", varType, exprType), node);
+            }
+        }
+        // multiply, divide, modulus assignment
+        else if (kind == Tree.Kind.MULTIPLY_ASSIGNMENT
+                || kind == Tree.Kind.DIVIDE_ASSIGNMENT
+                || kind == Tree.Kind.REMAINDER_ASSIGNMENT) {
+            if (UnitsRelationsTools.hasSpecificUnit(varType, TOP)) {
+                // if the left hand side is unknown, turn it into whatever is on
+                // right hand side
+                varType.replaceAnnotations(exprType.getAnnotations());
+            } else if (!UnitsRelationsTools.hasSpecificUnit(exprType, scalar)) {
+                // if the right hand side is not a scalar then throw error
+                // Only allow mul/div with unqualified units
+                checker.report(Result.failure("compound.assignment.type.incompatible", varType, exprType), node);
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isSameUnderlyingType(TypeMirror lht, TypeMirror rht) {
+        // use typeUtils.isSameType instead of TypeMirror.equals as this
+        // will check only the underlying type and ignores declarations on
+        // the type mirror
+        return checker.getTypeUtils().isSameType(lht, rht);
     }
 }

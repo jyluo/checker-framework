@@ -543,7 +543,7 @@ public class DefaultTypeArgumentInference implements TypeArgumentInference {
     /**
      * For any types we have not inferred, use a wildcard with the bounds from the original type parameter.
      */
-    private void handleUninferredTypeVariables(AnnotatedTypeFactory typeFactory, AnnotatedExecutableType methodType,
+    protected void handleUninferredTypeVariables(AnnotatedTypeFactory typeFactory, AnnotatedExecutableType methodType,
                                                Set<TypeVariable> targets, Map<TypeVariable, AnnotatedTypeMirror> inferredArgs) {
 
         for (AnnotatedTypeVariable atv : methodType.getTypeVariables()) {

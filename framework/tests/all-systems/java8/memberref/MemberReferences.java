@@ -28,7 +28,7 @@ class Super {
             //:: warning: (methodref.inference.unimplemented)
             Function f2 = super::func2;
             // Top level wildcards are ignored when type checking
-            @SuppressWarnings("javari")
+            @SuppressWarnings({"javari", "units"})
             Function<? extends String, ? extends String> f3 = super::<String>func2;
         }
     }
@@ -55,7 +55,7 @@ class Unbound {
         Function<String, String> f1 = String::toString;
         // TODO: type argument inference
         BiFunction<Unbound, String, String> f2 = Unbound::func1;
-        @SuppressWarnings("nullness:type.argument.type.incompatible")
+        @SuppressWarnings({"nullness:type.argument.type.incompatible", "units"})
         BiFunction<? extends Unbound, ? super Integer, ? extends Integer> f3 = Unbound::<Integer>func1;
     }
 }
@@ -69,6 +69,7 @@ abstract class UnboundWithArg<U> {
         Function<UnboundWithArg<String>, String> f2 = UnboundWithArg<String>::func1;
         // TODO: type argument inference
         Function<? extends UnboundWithArg<String>, String> f3 = UnboundWithArg::func1;
+        @SuppressWarnings({"units"})
         Function<? extends UnboundWithArg<String>, String> f4 = UnboundWithArg<String>::func1;
     }
 }
@@ -96,6 +97,7 @@ class Bound {
         // TODO: type argument inference
         Function<String, String> f2 = this::func1;
         Function<String, String> f3 = this::<String>func1;
+        @SuppressWarnings({"units"})
         Function<? extends String, ? extends String> f4 = this::<String>func1;
     }
 }

@@ -1,4 +1,4 @@
-@SuppressWarnings("javari")
+@SuppressWarnings({"javari", "units"})
 class InferAndIntersection {
 
     <T> void toInfer(Iterable<T> t) {}

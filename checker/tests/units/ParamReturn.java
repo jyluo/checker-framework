@@ -33,29 +33,25 @@ public class ParamReturn {
         return new int[5];
     }
 
-    int paramNoRefineReturn(int x) {
-        return x;
+    int scalarParamScalarReturn(int x) {
+        return x + x;
     }
 
-    int paramRefinedReturn(int x) {
+    int scalarParamScalarReturnBad(int x) {
         // expected to fail, can't pass a meter out unless return type is annotated
         //:: error: (return.type.incompatible)
         return x * meter;
     }
 
-    @m int paramRefinedReturnMeter(int x) {
+    @m int scalarParamMeterReturn(int x) {
         // expected to pass
         return x * meter;
     }
 
-    @m int paramRefinedReturnMeterBad(int x) {
+    @m int scalarParamMeterReturnBad(int x) {
         // expected to fail as we are returning a second where a meter is expected
         //:: error: (return.type.incompatible)
         return x * second;
-    }
-
-    @Scalar int paramIsScalar(int x) {
-        return x + x;
     }
 
     void methodAcceptingScalarObjects(Integer x) {
@@ -66,31 +62,59 @@ public class ParamReturn {
         return;
     }
 
+    void paramTest(@UnknownUnits int y) {
+        // pass scalar into scalar
+        scalarParamScalarReturn(5);
+
+        // unknown local variable refined into scalar
+        int x = 5;
+        // pass scalar into scalar
+        scalarParamScalarReturn(x);
+
+        // pass unknown into scalar
+        //:: error: (argument.type.incompatible)
+        scalarParamScalarReturn(y);
+
+        // unknown parameter refined into scalar
+        y = 5;
+        scalarParamScalarReturn(y);
+
+        // scalar type converted to Unknown and passed into scalar
+        scalarParamScalarReturn( (@UnknownUnits int) 5 );
+
+        // scalar type converted to Unknown and passed into scalar
+        scalarParamScalarReturn( (@UnknownUnits int) (5 + 30 + 100) );
+
+        // 1 equation value is (scalar converted to Unknown), the result of the additions is Unknown and passed into scalar
+        scalarParamScalarReturn( (@UnknownUnits int) 5 + 30 + 100 );
+    }
+
     void methodCalls() {
-        // assigning meter into unknown, x becomes meter // pass
-        int x = paramRefinedReturnMeter(5) + meter;
+        // assigning meter into unknown, x becomes meter
+        int x = scalarParamMeterReturn(5) + meter;
+
         // assigning unknown into scalar should fail
         //:: error: (assignment.type.incompatible)
-        @Scalar int xBad = paramRefinedReturnMeter(5) + second;
-        // assigning unknown into scalar should fail
+        @Scalar int xBad = scalarParamMeterReturn(5) + second;
+
+        // assigning meter into scalar should fail
         //:: error: (assignment.type.incompatible)
-        @Scalar int y = paramRefinedReturnMeter(5) + meter;
+        @Scalar int y = scalarParamMeterReturn(5) + meter;
 
         // pass
-        @Scalar int a = paramNoRefineReturn(5);
-        // pass
-        @Scalar int b = paramRefinedReturn(5);
-
+        @Scalar int a = scalarParamScalarReturn(5);
 
         int unknownPrimitiveInt = (@UnknownUnits int) 5;
         //:: error: (argument.type.incompatible)
-        b = paramRefinedReturn(unknownPrimitiveInt);
+        @Scalar int b = scalarParamScalarReturn(unknownPrimitiveInt);
 
-        // Classes, and thus local objects by default are Scalar
+        // References are by default UnknownUnits
+        // Objects are by default Scalar
         Integer unknownInteger = new @UnknownUnits Integer(5);
         // default receiver is Scalar, but we allow it to be invoked on UnknownUnits receivers in ATF
         unknownInteger.toString();
 
+        //:: error: (argument.type.incompatible)
         methodAcceptingScalarObjects(unknownInteger);
         methodAcceptingMeterObjects(new @m Integer(30));
         //:: error: (argument.type.incompatible)
@@ -98,95 +122,21 @@ public class ParamReturn {
 
         Integer scalarInteger = new Integer(30);
         scalarInteger.toString();
+        methodAcceptingScalarObjects(scalarInteger);
         //:: error: (argument.type.incompatible)
         methodAcceptingMeterObjects(scalarInteger);
 
-
+        methodAcceptingScalarObjects(null);
+        methodAcceptingMeterObjects(null);
     }
 
-    @Scalar Object methodReturningUnknownObject() {
-        Object x = new @UnknownUnits Object();
+    @Scalar Object methodReturningUnknownObject(@UnknownUnits Object x) {
         //:: error: (return.type.incompatible)
         return x;
-    }
-
-    void foreachLoopIndexComparison() {
-        int [] x = new int[5];
-        for(int i : x);
-    }
-
-    <T> T methodDefaultImplicitUpper(T input) {
-        return input;
-    }
-
-    <@UnknownUnits T> T methodDeclaredImplicitUpper(T input) {
-        return input;
-    }
-
-    void implicitUpperTest() {
-        Object x = null;
-        x = methodDefaultImplicitUpper(x);
-        x = methodDeclaredImplicitUpper(x);
-
-        @UnknownUnits Object y = new @UnknownUnits Object();
-        y = methodDefaultImplicitUpper(y);
-        y = methodDeclaredImplicitUpper(y);
-
-        @m Object z = new @m Object();
-        z = methodDefaultImplicitUpper(z);
-        z = methodDeclaredImplicitUpper(z);
-    }
-
-    <T extends Object> T methodDefaultExplicitUpper(T input) {
-        return input;
-    }
-
-    <@UnknownUnits T extends @UnknownUnits Object> T methodDeclaredExplicitUpper(T input) {
-        return input;
-    }
-
-    void explicitUpperTest() {
-        // Scalar by default
-        Object x = new Object();
-        x = methodDefaultExplicitUpper(x);
-        x = methodDeclaredExplicitUpper(x);
-
-        @UnknownUnits Object y = new @UnknownUnits Object();
-        y = methodDefaultExplicitUpper(y);
-        y = methodDeclaredExplicitUpper(y);
-
-        @m Object z = new @m Object();
-        z = methodDefaultExplicitUpper(z);
-        z = methodDeclaredExplicitUpper(z);
-    }
-
-    void someList() {
-        List<Number> list = new LinkedList<Number>();
-        list.add(new @UnknownUnits Integer(5));
     }
 
     void objectParameterTest(@m Object x, @s Object y) {
         //:: error: (operands.unit.mismatch)
         if(x == y);
     }
-
-    private class A<@Length T> {
-        public A() {
-
-        }
-
-        T method(T input) {
-            return input;
-        }
-    }
-
-    void classTest() {
-        A<@m Number> a = new A<@m Number>();
-        a.method(new @UnknownUnits Integer(5));
-    }
 }
-
-
-
-
-

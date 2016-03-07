@@ -31,6 +31,7 @@ class Issue450 {
         new Issue450(Issue450::consumeStr);
 
         Consumer<String> cs1 = (false) ? Issue450::consumeStr2 : Issue450::consumeStr;
+        @SuppressWarnings({"units"})
         Consumer<String> cs2 = (false) ? e : Issue450::consumeStr;
         Top t = (false) ? s : Issue450::consumeStr;
 

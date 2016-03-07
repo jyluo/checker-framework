@@ -1,10 +1,11 @@
 package org.checkerframework.checker.units.qual;
 
-import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
-import org.checkerframework.framework.qual.DefaultQualifierInHierarchyInUncheckedCode;
+import org.checkerframework.framework.qual.DefaultFor;
+import org.checkerframework.framework.qual.DefaultInUncheckedCodeFor;
 import org.checkerframework.framework.qual.ImplicitFor;
 import org.checkerframework.framework.qual.InvisibleQualifier;
 import org.checkerframework.framework.qual.SubtypeOf;
+import org.checkerframework.framework.qual.TypeUseLocation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -26,16 +27,23 @@ import javax.lang.model.type.TypeKind;
 @InvisibleQualifier
 @SubtypeOf({})
 
-@DefaultQualifierInHierarchy
-@DefaultQualifierInHierarchyInUncheckedCode
+//@DefaultQualifierInHierarchy
+//@DefaultQualifierInHierarchyInUncheckedCode
 
-//// Allows flow based type refinement in the body of methods
-//@DefaultFor({ TypeUseLocation.LOCAL_VARIABLE
-//    , TypeUseLocation.IMPLICIT_UPPER_BOUND
-//    })
+// Allows flow based type refinement in the body of methods
+@DefaultFor({ TypeUseLocation.LOCAL_VARIABLE
+    , TypeUseLocation.IMPLICIT_UPPER_BOUND
+    , TypeUseLocation.EXPLICIT_UPPER_BOUND
+})
+@DefaultInUncheckedCodeFor({TypeUseLocation.UPPER_BOUND})
 
-
-@ImplicitFor(types = { TypeKind.NONE })
+@ImplicitFor(
+        types = { TypeKind.NONE
+                //, TypeKind.DECLARED
+        },
+        // Exceptions are always TOP type, so Throwable must also be
+        typeNames = { java.lang.Throwable.class }
+        )
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })

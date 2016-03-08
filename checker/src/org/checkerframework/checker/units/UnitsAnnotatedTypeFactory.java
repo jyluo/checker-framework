@@ -26,7 +26,6 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedTypeVari
 import org.checkerframework.framework.type.DefaultTypeHierarchy;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.TypeHierarchy;
-import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.PropagationTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
@@ -447,9 +446,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     @Override
     public TreeAnnotator createTreeAnnotator() {
-        ImplicitsTreeAnnotator implicitsTreeAnnotator = new ImplicitsTreeAnnotator(this);
-        // implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM);
-        return new ListTreeAnnotator(new UnitsPropagationTreeAnnotator(this), implicitsTreeAnnotator, new UnitsTreeAnnotator(this));
+        return new ListTreeAnnotator(new UnitsPropagationTreeAnnotator(this), new UnitsTreeAnnotator(this));
     }
 
     private static class UnitsPropagationTreeAnnotator extends PropagationTreeAnnotator {
@@ -667,7 +664,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
          *            expression
          * @return a pair of a Double and a Boolean
          */
-        private final Pair<Double, Boolean> evalMathExpression(ExpressionTree root) {
+        private Pair<Double, Boolean> evalMathExpression(ExpressionTree root) {
             String mathExpression = root.toString();
             // check against the cache to see if this expression has been
             // evaluated before
@@ -684,71 +681,67 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         // evaluate the expression and sub-expressions via recursion
-        private final Pair<Double, Boolean> evalMathExpression(ExpressionTree node, Boolean success) {
+        private Pair<Double, Boolean> evalMathExpression(ExpressionTree node, Boolean success) {
             // if a previous step resulted in failure then terminate the
             // recursion chain by returning 0 as the double value
             if (success == false) {
                 return Pair.of(0.0, false);
             }
 
-            // TODO: change use of instanceof to getKind()
-
-            if (node instanceof LiteralTree) {
-                // if the expression is a numerical literal, then extract the
-                // value
-                double literalVal = 0.0;
-                Object val = ((LiteralTree) node).getValue();
-                // convert the literal value from object type into a Double and
-                // then return it
-                if (node.getKind() == Tree.Kind.DOUBLE_LITERAL) {
-                    literalVal = (double) val;
-                } else if (node.getKind() == Tree.Kind.FLOAT_LITERAL) {
-                    literalVal = (float) val;
-                } else if (node.getKind() == Tree.Kind.LONG_LITERAL) {
-                    literalVal = (long) val;
-                } else if (node.getKind() == Tree.Kind.INT_LITERAL) {
-                    literalVal = (int) val;
-                }
-                return Pair.of(literalVal, true);
-
-            } else if (node.getKind() == Tree.Kind.PARENTHESIZED) {
+            switch (node.getKind()) {
+            // if the expression is a numerical literal, then extract and return
+            // the value
+            case DOUBLE_LITERAL:
+                return Pair.of((double) ((LiteralTree) node).getValue(), true);
+            case FLOAT_LITERAL:
+                return Pair.of((double) (float) ((LiteralTree) node).getValue(), true);
+            case LONG_LITERAL:
+                return Pair.of((double) (long) ((LiteralTree) node).getValue(), true);
+            case INT_LITERAL:
+                return Pair.of((double) (int) ((LiteralTree) node).getValue(), true);
+            case PARENTHESIZED:
                 // if there's a parenthesis, evaluate and return the value of
                 // the parenthesized expression
-                ExpressionTree innerExpression = ((ParenthesizedTree) node).getExpression();
-                return evalMathExpression(innerExpression, success);
+                return evalMathExpression(((ParenthesizedTree) node).getExpression(), success);
+            case PLUS:
+            case MINUS:
+            case MULTIPLY:
+            case DIVIDE:
+            case REMAINDER:
+                return evalMathOperation((BinaryTree) node, success);
+            default:
+                // otherwise return 0 and false
+                return Pair.of(0.0, false);
+            }
+        }
 
-            } else if (node instanceof BinaryTree) {
-                // if it is a binary math operation, evaluate each operand and
-                // then return the result
-                BinaryTree expression = (BinaryTree) node;
-                Pair<Double, Boolean> left = evalMathExpression(expression.getLeftOperand(), success);
-                Pair<Double, Boolean> right = evalMathExpression(expression.getRightOperand(), left.second);
+        // evaluates only binary trees for plus, minus, multiply, divide, and remainder
+        private Pair<Double, Boolean> evalMathOperation(BinaryTree node, Boolean success) {
+            // evaluate each operand and then return the result
+            Pair<Double, Boolean> left = evalMathExpression(node.getLeftOperand(), success);
+            Pair<Double, Boolean> right = evalMathExpression(node.getRightOperand(), left.second);
 
-                // if either of the evaluations resulted in failure then
-                // terminate the recursion chain
-                if (left.second == false || right.second == false) {
-                    return Pair.of(0.0, false);
-                }
-
-                // TODO: bitshift support?
-                switch (node.getKind()) {
-                case PLUS:
-                    return Pair.of(left.first + right.first, true);
-                case MINUS:
-                    return Pair.of(left.first - right.first, true);
-                case MULTIPLY:
-                    return Pair.of(left.first * right.first, true);
-                case DIVIDE:
-                    return Pair.of(left.first / right.first, true);
-                case REMAINDER:
-                    return Pair.of(left.first % right.first, true);
-                default:
-                    break;
-                }
+            // if either of the evaluations resulted in failure then
+            // terminate the recursion chain
+            if (left.second == false || right.second == false) {
+                return Pair.of(0.0, false);
             }
 
-            // otherwise return 0 and false
-            return Pair.of(0.0, false);
+            // TODO: bitshift support?
+            switch (node.getKind()) {
+            case PLUS:
+                return Pair.of(left.first + right.first, true);
+            case MINUS:
+                return Pair.of(left.first - right.first, true);
+            case MULTIPLY:
+                return Pair.of(left.first * right.first, true);
+            case DIVIDE:
+                return Pair.of(left.first / right.first, true);
+            case REMAINDER:
+                return Pair.of(left.first % right.first, true);
+            default:
+                return Pair.of(0.0, false);
+            }
         }
 
         /**

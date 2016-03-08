@@ -1,6 +1,6 @@
-package org.checkerframework.checker.units.qual.time.duration;
+package org.checkerframework.checker.units.qual.time.instant;
 
-import org.checkerframework.checker.units.qual.time.AbstractTime;
+import org.checkerframework.checker.units.qual.time.duration.min;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 import java.lang.annotation.Documented;
@@ -10,14 +10,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Units of time duration, which is the amount of elapsed time between two time
- * instants. Subtypes of this type represent units of specific time durations,
- * such as hours, mins, seconds, etc.
+ * A Calendar millisecond.
+ *
+ * This unit is used to denote a time instant in minutes, such as the the minute
+ * of the current hour. Variables with this unit typically have its values bound
+ * between 0-59 or 1-60.
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@SubtypeOf(AbstractTime.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
-public @interface TimeDuration {}
+@SubtypeOf(TimeInstant.class)
+@DurationUnit(unit = min.class)
+public @interface CALmin {}

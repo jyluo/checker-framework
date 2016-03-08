@@ -1,6 +1,6 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
-import org.checkerframework.checker.units.qual.UnknownUnits;
+import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 
 import java.lang.annotation.Annotation;
 
@@ -13,5 +13,5 @@ public @interface DurationUnit {
     /**
      * @return The base time unit.
      */
-    Class<? extends Annotation> unit() default UnknownUnits.class;
+    Class<? extends Annotation> unit() default TimeDuration.class;
 }

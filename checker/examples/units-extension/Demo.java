@@ -14,16 +14,19 @@ class UnitsExtensionDemo {
         //:: error: (assignment.type.incompatible)
         frq = 5;
 
-        // surpress all warnings issued by the units checker for the d1 assignment statement
+        // surpress all warnings issued by the units checker for the d1
+        // assignment statement
         @SuppressWarnings("units")
         @Hz int d1 = 9;
 
-        // specifically surpress warnings related to any frequency units for the d2 assigment statement
+        // specifically surpress warnings related to any frequency units for the
+        // d2 assigment statement
         @SuppressWarnings("frequency")
         @Hz int d2 = 10;
     }
 
-    // specifically surpresses warnings for the hz annotation for the toHz method
+    // specifically surpresses warnings for the hz annotation for the toHz
+    // method
     @SuppressWarnings("hz")
     static @Hz int toHz(int hz) {
         return hz;
@@ -59,10 +62,12 @@ class UnitsExtensionDemo {
         @kHz int resultkHz = kilohertz + 50 / millisec;
         System.out.println(resultkHz);
 
-        // this demonstrates the type hierarchy resolution: the common supertype of Hz and kHz is Frequency, so this statement will pass
+        // this demonstrates the type hierarchy resolution: the supertype of Hz
+        // and kHz is Frequency, so this statement will pass
         @Frequency int okTernaryAssign = seconds > otherSeconds ? hertz : kilohertz;
 
-        // on the other hand, this statement expects the right hand side to be a Hz, so it will fail
+        // on the other hand, this statement expects the right hand side to be a
+        // Hz, so it will fail
         //:: error: (assignment.type.incompatible)
         @Hz int badTernaryAssign = seconds > otherSeconds ? hertz : kilohertz;
     }

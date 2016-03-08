@@ -29,8 +29,6 @@ import com.sun.source.tree.TypeCastTree;
 
 /**
  * Units visitor.
- *
- * Ensure consistent use of compound assignments.
  */
 public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     protected final AnnotationMirror scalar = AnnotationUtils.fromClass(elements, Scalar.class);
@@ -38,13 +36,13 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     protected final AnnotationMirror BOTTOM = AnnotationUtils.fromClass(elements, UnitsBottom.class);
 
     private final TypeMirror stringType;
-    private final TypeMirror objectType;
+    //private final TypeMirror objectType;
 
     public UnitsVisitor(BaseTypeChecker checker) {
         super(checker);
 
         stringType = checker.getElementUtils().getTypeElement(java.lang.String.class.getCanonicalName()).asType();
-        objectType = checker.getElementUtils().getTypeElement(java.lang.Object.class.getCanonicalName()).asType();
+        //objectType = checker.getElementUtils().getTypeElement(java.lang.Object.class.getCanonicalName()).asType();
     }
 
     // Override to allow references to be declared using any units annotation
@@ -93,33 +91,9 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 useType.getEffectiveAnnotation(UnitsBottom.class) == null;
     }
 
-    // DEBUG USE
-//    @Override
-//    public Void visitMethodInvocation(MethodInvocationTree node, Void p) {
-//        System.out.println("invoking method: " + node + " =============================");
-//
-//        Pair<AnnotatedExecutableType, List<AnnotatedTypeMirror>> mfuPair = atypeFactory.methodFromUse(node);
-//        AnnotatedExecutableType invokedMethod = mfuPair.first;
-//        List<AnnotatedTypeMirror> typeargs = mfuPair.second;
-//
-//        List<AnnotatedTypeParameterBounds> paramBounds = new ArrayList<>();
-//        for (AnnotatedTypeVariable param : invokedMethod.getTypeVariables()) {
-//            paramBounds.add(param.getBounds());
-//        }
-//
-//        System.out.println("type args: " + typeargs);
-//        System.out.println("paramBounds: " + paramBounds);
-//        System.out.println("args: " + node.getArguments());
-//
-//        return super.visitMethodInvocation(node, p);
-//    }
-
-    // allow the passing of UnknownUnits number literals into Scalar method
-    // parameters
-    // old: allow the passing of UnknownUnits references into Scalar method
-    // parameters
-    // (all parameters are scalar by default).
-    // keep in sync with super implementation.
+    // Allow the passing of UnknownUnits number literals into Scalar method
+    // parameters. all parameters are scalar by default.
+    // Developer Notes: keep in sync with super implementation.
     @Override
     protected void checkArguments(List<? extends AnnotatedTypeMirror> requiredArgs, List<? extends ExpressionTree> passedArgs) {
         assert requiredArgs.size() == passedArgs.size() : "mismatch between required args (" + requiredArgs +
@@ -138,12 +112,12 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar)
                         && UnitsRelationsTools.hasSpecificUnit(passedArg, TOP)
                         && isPrimitiveNumberLiteralExpression(passedExpression)) {
-                    // if the method parameter is Scalar, and the passed in argument
-                    // is an UnknownUnits mathematical expression that consists of only number literals
-                    // pass the check
+                    // if the method parameter is Scalar, and the passed in
+                    // argument is an UnknownUnits mathematical expression that
+                    // consists of only number literals pass the check
 
-                    //                } else if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && isSameUnderlyingType(requiredArg.getUnderlyingType(), objectType)) {
-                    //                    // if the method parameter is Scalar Object, pass regardless of what the argument is as Object accepts anything
+                    //} else if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && isSameUnderlyingType(requiredArg.getUnderlyingType(), objectType)) {
+                    //    // if the method parameter is Scalar Object, pass regardless of what the argument is as Object accepts anything
                 } else {
                     // Developer note: keep in sync with super implementation
                     commonAssignmentCheck(requiredArg, passedExpression, "argument.type.incompatible", false);
@@ -193,7 +167,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
 
     // allow the invocation of a method defined in a Scalar class (all classes
     // are scalar by default) on an UnknownUnits object
-    // keep in sync with super implementation.
+    // Developer Notes: keep in sync with super implementation.
     @Override
     protected void checkMethodInvocability(AnnotatedExecutableType method, MethodInvocationTree node) {
         if (method.getReceiverType() == null) {

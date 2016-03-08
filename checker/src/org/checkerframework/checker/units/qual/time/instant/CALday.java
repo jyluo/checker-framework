@@ -10,9 +10,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A Calendar Day. The variables with this unit has its values bounded between 1
- * to 31 depending on the month or 1 to 366 depending on the year, by the Java 8
- * Time API.
+ * A Calendar Day.
+ *
+ * This unit is used to denote a time instant in days, such as the 15th day of
+ * some month.
+ *
+ * The variables with this unit has its values bounded between 1 to 7 depending
+ * on the week, or 1 to 31 depending on the month or 1 to 366 depending on the
+ * year, by the Java 8 Time API.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

@@ -1,4 +1,5 @@
 import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.AbstractTime;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
@@ -16,20 +17,21 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
     // Deprecated
     // As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date)
     // or GregorianCalendar(year + 1900, month, date).
-    // Parameters: year - the year minus 1900. month - the month between 0-11.
+    // Parameters: year - the current year minus 1900. month - the month between 0-11.
     // date - the day of the month between 1-31.
-    Date(@Year int year, @Month int month, @Day int date);
+    // eg to set it to dec 31 2015, call Date(115, 11, 31)
+    Date(@CALyear int year, @CALmonth int month, @CALday int date);
 
     // Deprecated
     // As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date,
     // hrs, min) or GregorianCalendar(year + 1900, month, date, hrs, min).
-    Date(@Year int year, @Month int month, @Day int date, @h int hrs, @min int min);
+    Date(@CALyear int year, @CALMonth int month, @CALday int date, @CALh int hrs, @CALmin int min);
 
     // Deprecated
     // As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date,
     // hrs, min, sec) or GregorianCalendar(year + 1900, month, date, hrs, min,
     // sec).
-    Date(@Year int year, @Month int month, @Day int date, @h int hrs, @min int min, @s int sec);
+    Date(@CALyear int year, @CALMonth int month, @CALday int date, @CALh int hrs, @CALmin int min, @CALs int sec);
 
     // Deprecated
     // As of JDK version 1.1, replaced by DateFormat.parse(String s).
@@ -53,38 +55,38 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
 
     // Deprecated
     // Gets and sets the year minus 1900
-    @Year int getYear();
-    void setYear(@Year int arg0);
+    @CALyear int getYear();
+    void setYear(@CALyear int arg0);
 
     // Deprecated
     // Gets and sets the month using 0-11
-    @Month int getMonth();
-    void setMonth(@Month int arg0);
+    @CALmonth int getMonth();
+    void setMonth(@CALmonth int arg0);
 
     // Deprecated
     // Gets and sets the day of the month using 1->31
-    @Day int getDate();
-    void setDate(@Day int arg0);
+    @CALday int getDate();
+    void setDate(@CALday int arg0);
 
     // Deprecated
     // returns 0->7 representing day of the week
-    @WeekDay int getDay();
+    @CALday int getDay();
 
     // Deprecated
     // Gets and sets the hour of the day using 0-23
-    @h int getHours();
-    void setHours(@h int arg0);
+    @CALh int getHours();
+    void setHours(@CALh int arg0);
 
     // Deprecated
     // Gets and sets the minut within the current hour using 0-59
-    @min int getMinutes();
-    void setMinutes(@min int arg0);
+    @CALmin int getMinutes();
+    void setMinutes(@CALmin int arg0);
 
     // Deprecated
     // Gets and sets the seconds within the current minute using 0-61
     // the values 60 and 61 are only used by JVMs that support leap seconds
-    @s int getSeconds();
-    void setSeconds(@s int arg0);
+    @CALs int getSeconds();
+    void setSeconds(@CALs int arg0);
 
     // Gets and sets the time in milliseconds since epoch
     @ms long getTime();
@@ -116,51 +118,51 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
 }
 
 class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
-    static final int ERA;
-    static final int YEAR;
-    static final int MONTH;
-    static final int WEEK_OF_YEAR;
-    static final int WEEK_OF_MONTH;
-    static final int DATE;
-    static final int DAY_OF_MONTH;
-    static final int DAY_OF_YEAR;
-    static final int DAY_OF_WEEK;
-    static final int DAY_OF_WEEK_IN_MONTH;
-    static final int AM_PM;
-    static final int HOUR;
-    static final int HOUR_OF_DAY;
-    static final int MINUTE;
-    static final int SECOND;
-    static final int MILLISECOND;
-    static final int ZONE_OFFSET;
-    static final int DST_OFFSET;
+    static final @CALera int ERA;
+    static final @CALyear int YEAR;
+    static final @CALmonth int MONTH;
+    static final @CALweek int WEEK_OF_YEAR;
+    static final @CALweek int WEEK_OF_MONTH;
+    static final @CALday int DATE;
+    static final @CALday int DAY_OF_MONTH;
+    static final @CALday int DAY_OF_YEAR;
+    static final @CALday int DAY_OF_WEEK;
+    static final @CALday int DAY_OF_WEEK_IN_MONTH;
+    static final @CALampm int AM_PM;
+    static final @CALh int HOUR;
+    static final @CALh int HOUR_OF_DAY;
+    static final @CALmin int MINUTE;
+    static final @CALs int SECOND;
+    static final @CALms int MILLISECOND;
+    static final @ms int ZONE_OFFSET;   // in milliseconds
+    static final @ms int DST_OFFSET;    // in milliseconds
     static final int FIELD_COUNT;
 
-    static final @WeekDay(Days.sunday) int SUNDAY;
-    static final @WeekDay(Days.monday) int MONDAY;
-    static final @WeekDay(Days.tuesday) int TUESDAY;
-    static final @WeekDay(Days.wednesday) int WEDNESDAY;
-    static final @WeekDay(Days.thursday) int THURSDAY;
-    static final @WeekDay(Days.friday) int FRIDAY;
-    static final @WeekDay(Days.saturday) int SATURDAY;
+    static final @CALday int SUNDAY;
+    static final @CALday int MONDAY;
+    static final @CALday int TUESDAY;
+    static final @CALday int WEDNESDAY;
+    static final @CALday int THURSDAY;
+    static final @CALday int FRIDAY;
+    static final @CALday int SATURDAY;
 
-    static final int JANUARY;
-    static final int FEBRUARY;
-    static final int MARCH;
-    static final int APRIL;
-    static final int MAY;
-    static final int JUNE;
-    static final int JULY;
-    static final int AUGUST;
-    static final int SEPTEMBER;
-    static final int OCTOBER;
-    static final int NOVEMBER;
-    static final int DECEMBER;
+    static final @CALmonth int JANUARY;
+    static final @CALmonth int FEBRUARY;
+    static final @CALmonth int MARCH;
+    static final @CALmonth int APRIL;
+    static final @CALmonth int MAY;
+    static final @CALmonth int JUNE;
+    static final @CALmonth int JULY;
+    static final @CALmonth int AUGUST;
+    static final @CALmonth int SEPTEMBER;
+    static final @CALmonth int OCTOBER;
+    static final @CALmonth int NOVEMBER;
+    static final @CALmonth int DECEMBER;
     // 13th month
-    static final int UNDECIMBER;
+    static final @CALmonth int UNDECIMBER;
 
-    static final int AM;
-    static final int PM;
+    static final @CALampm int AM;
+    static final @CALampm int PM;
     static final int ALL_STYLES;
     static final int SHORT;
     static final int LONG;
@@ -170,9 +172,11 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
     static final int LONG_FORMAT;
     static final int SHORT_STANDALONE;
     static final int LONG_STANDALONE;
-    protected int[] fields;
+    
+    // The calendar field values for the currently set time for this calendar. This is an array of FIELD_COUNT integers, with index values ERA through DST_OFFSET.
+    protected @AbstractTime int[] fields;
     protected boolean[] isSet;
-    protected long time;
+    protected @ms long time;
     protected boolean isTimeSet;
     protected boolean areFieldsSet;
 
@@ -198,31 +202,35 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
 
     void setTime(Date arg0);
 
-    long getTimeInMillis();
+    // get and set time in millis since epoch
+    @ms long getTimeInMillis();
+    void setTimeInMillis(@ms long arg0);
 
-    void setTimeInMillis(long arg0);
+    // Returns the value of the given calendar field. The fields are the fields of this class.
+    @PolyUnit int get(@PolyUnit int field);
 
-    int get(int arg0);
+    protected @PolyUnit int internalGet(@PolyUnit int field);
 
-    protected int internalGet(int arg0);
+    // Sets the given calendar field to the given value.
+    // TODO: ensure the two have the same units
+    void set(@AbstractTime int field, @AbstractTime int value);
 
-    void set(int arg0, int arg1);
+    
+    void set(@CALyear int year, @CALmonth int month, @CALday int date);
 
-    void set(int arg0, int arg1, int arg2);
+    void set(@CALyear int year, @CALmonth int month, @CALday int date, @CALh int hourOfDay, @CALmin int minute);
 
-    void set(int arg0, int arg1, int arg2, int arg3, int arg4);
-
-    void set(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5);
+    void set(@CALyear int year, @CALmonth int month, @CALday int date, @CALh int hourOfDay, @CALmin int minute, @CALs int second);
 
     void clear();
 
-    void clear(int arg0);
+    void clear(@AbstractTime int field);
 
-    boolean isSet(int arg0);
+    boolean isSet(@AbstractTime int field);
 
-    String getDisplayName(int arg0, int arg1, Locale arg2);
+    String getDisplayName(@AbstractTime int field, int style, Locale arg2);
 
-    Map<String, Integer> getDisplayNames(int arg0, int arg1, Locale arg2);
+    Map<String, Integer> getDisplayNames(@AbstractTime int field, int style, Locale arg2);
 
     protected void complete();
 
@@ -240,11 +248,13 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
 
     int compareTo(Calendar arg0);
 
-    void add(int arg0, int arg1);
+    // TODO: ensure units are same
+    void add(@AbstractTime int field, @AbstractTime int amount);
 
-    void roll(int arg0, boolean arg1);
+    void roll(int field, boolean up);
 
-    void roll(int arg0, int arg1);
+    // TODO: ensure units are same
+    void roll(@AbstractTime int field, @AbstractTime int amount);
 
     void setTimeZone(TimeZone arg0);
 
@@ -254,33 +264,33 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
 
     boolean isLenient();
 
-    void setFirstDayOfWeek(int arg0);
+    void setFirstDayOfWeek(@CALday int arg0);
 
-    int getFirstDayOfWeek();
+    @CALday int getFirstDayOfWeek();
 
-    void setMinimalDaysInFirstWeek(int arg0);
+    void setMinimalDaysInFirstWeek(@day int arg0);
 
-    int getMinimalDaysInFirstWeek();
+    @day int getMinimalDaysInFirstWeek();
 
     boolean isWeekDateSupported();
 
-    int getWeekYear();
+    @CALyear int getWeekYear();
 
-    void setWeekDate(int arg0, int arg1, int arg2);
+    void setWeekDate(@CALyear int weekYear, @CALweek int weekOfYear, @CALday int dayOfWeek);
 
-    int getWeeksInWeekYear();
+    @week int getWeeksInWeekYear();
 
-    int getMinimum(int arg0);
+    @PolyUnit int getMinimum(@PolyUnit int field);
 
-    int getMaximum(int arg0);
+    @PolyUnit int getMaximum(@PolyUnit int field);
 
-    int getGreatestMinimum(int arg0);
+    @PolyUnit int getGreatestMinimum(@PolyUnit int field);
 
-    int getLeastMaximum(int arg0);
+    @PolyUnit int getLeastMaximum(@PolyUnit int field);
 
-    int getActualMinimum(int arg0);
+    @PolyUnit int getActualMinimum(@PolyUnit int field);
 
-    int getActualMaximum(int arg0);
+    @PolyUnit int getActualMaximum(@PolyUnit int field);
 
     Object clone();
 
@@ -289,24 +299,27 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
     Instant toInstant();
 }
 
+// Java 8 class
 class Calendar$Builder {
     Builder();
 
-    Builder setInstant(long arg0);
+    Builder setInstant(@ms long instant);
 
     Builder setInstant(Date arg0);
 
-    Builder set(int arg0, int arg1);
+    // TODO: ensure are same units
+    Builder set(@AbstractTime int field, @AbstractTime int value);
 
-    Builder setFields(int[] arg0);
+    Builder setFields(@AbstractTime int[] arg0);
 
-    Builder setDate(int arg0, int arg1, int arg2);
+    // year: enter 115 for year 2015, this is still offset internally by 1900 like in Java 7
+    Builder setDate(@CALyear int year, @CALmonth int month, @CALday int dayOfMonth);
 
-    Builder setTimeOfDay(int arg0, int arg1, int arg2);
+    Builder setTimeOfDay(@CALh int hourOfDay, @CALmin int minute, @CALs int second);
 
-    Builder setTimeOfDay(int arg0, int arg1, int arg2, int arg3);
+    Builder setTimeOfDay(@CALh int hourOfDay, @CALmin int minute, @CALs int second, @CALms int millis);
 
-    Builder setWeekDate(int arg0, int arg1, int arg2);
+    Builder setWeekDate(@CALyear int weekYear, @CALweek int weekOfYear, @CALday int dayOfWeek);
 
     Builder setTimeZone(TimeZone arg0);
 
@@ -316,16 +329,16 @@ class Calendar$Builder {
 
     Builder setLocale(Locale arg0);
 
-    Builder setWeekDefinition(int arg0, int arg1);
+    Builder setWeekDefinition(@CALday int firstDayOfWeek, @day int minimalDaysInFirstWeek);
 
     Calendar build();
 }
 
 class GregorianCalendar extends Calendar {
     // ERA field value (year values are in BC/BCE)
-    static final @Year int BC;
+    static final @CALera int BC;
     // ERA field value (year values are in AD/CE)
-    static final @Year int AD;
+    static final @CALera int AD;
 
     GregorianCalendar();
     GregorianCalendar(TimeZone arg0);

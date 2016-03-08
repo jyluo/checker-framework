@@ -1,6 +1,6 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
-import org.checkerframework.checker.units.qual.UnknownUnits;
+import org.checkerframework.checker.units.qual.time.AbstractTime;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 import org.checkerframework.framework.qual.SubtypeOf;
 
@@ -19,9 +19,9 @@ import java.lang.annotation.Target;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-// TODO: intention: subtraction of two time instants yields a time difference,
+// Subtraction of two time instants yields a time duration,
 // which is in a unit of time (seconds, year, etc)
-@SubtypeOf(UnknownUnits.class)
+@SubtypeOf(AbstractTime.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })

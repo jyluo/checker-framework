@@ -45,7 +45,7 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
     // sec), using a UTC TimeZone, followed by Calendar.getTime().getTime().
     // Determines the time relative to UTC and returns it in milliseconds since
     // epoch
-    static @ms long UTC(@Year int year, @Month int month, @Day int date, @h int hrs, @min int min, @s int sec);
+    static @ms long UTC(@CALyear int year, @CALMonth int month, @CALday int date, @CALh int hrs, @CALmin int min, @CALs int sec);
 
     // Deprecated
     // Attempts to parse string s into a date and time, if successful returns

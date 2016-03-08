@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Concept of forever, artificially defined in Java 8 as
+ * A conceptual duration of forever, artificially defined in Java 8 as
  * {@linkplain Long#MAX_VALUE} seconds + 999999999 nanoseconds.
  *
  * @checker_framework.manual #units-checker Units Checker

@@ -25,7 +25,10 @@ import org.checkerframework.checker.units.qual.mol;
 import org.checkerframework.checker.units.qual.radians;
 import org.checkerframework.checker.units.qual.time.duration.h;
 import org.checkerframework.checker.units.qual.time.duration.min;
+import org.checkerframework.checker.units.qual.time.duration.ms;
+import org.checkerframework.checker.units.qual.time.duration.ns;
 import org.checkerframework.checker.units.qual.time.duration.s;
+import org.checkerframework.checker.units.qual.time.duration.us;
 
 /**
  * Utility methods to generate annotated types and to convert between them.
@@ -92,6 +95,9 @@ public class UnitsTools {
 
     // Time
     public static final @s int s = 1;
+    public static final @ms int ms = 1;
+    public static final @us int us = 1;
+    public static final @ns int ns = 1;
     public static final @min int min = 1;
     public static final @h int h = 1;
 

@@ -25,7 +25,7 @@ import javax.annotation.processing.SupportedOptions;
 @SupportedOptions({ "units", "unitsDirs" })
 @StubFiles({
     "Math.astub", "StrictMath.astub", "PrintStream.astub",
-    "JavaSystemTime.astub", "JavaUtilTime.astub",
+    "JavaSystemTime.astub", "JavaUtilTime.astub", "JavaThread.astub",
     "Java8Time.astub", "Java8TemporalTime.astub",
     "JavaGenerics.astub"
 })

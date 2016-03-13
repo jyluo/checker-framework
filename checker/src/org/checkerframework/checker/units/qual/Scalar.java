@@ -1,8 +1,10 @@
 package org.checkerframework.checker.units.qual;
 
+import org.checkerframework.framework.qual.DefaultInUncheckedCodeFor;
 import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
 import org.checkerframework.framework.qual.DefaultQualifierInHierarchyInUncheckedCode;
 import org.checkerframework.framework.qual.SubtypeOf;
+import org.checkerframework.framework.qual.TypeUseLocation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,6 +26,8 @@ import java.lang.annotation.Target;
 @SubtypeOf(UnknownUnits.class)
 @DefaultQualifierInHierarchy
 @DefaultQualifierInHierarchyInUncheckedCode
+// @DefaultFor({TypeUseLocation.EXPLICIT_UPPER_BOUND})
+@DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })

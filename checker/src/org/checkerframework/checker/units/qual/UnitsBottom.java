@@ -41,6 +41,8 @@ import javax.lang.model.type.TypeKind;
         types = {TypeKind.NULL, TypeKind.VOID},
         typeNames = {java.lang.Void.class}
 )
-@DefaultFor({TypeUseLocation.IMPLICIT_LOWER_BOUND, TypeUseLocation.EXPLICIT_LOWER_BOUND})
+@DefaultFor({TypeUseLocation.IMPLICIT_LOWER_BOUND,
+    //TypeUseLocation.EXPLICIT_LOWER_BOUND
+    })
 @DefaultInUncheckedCodeFor({TypeUseLocation.LOWER_BOUND})
 public @interface UnitsBottom {}

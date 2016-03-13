@@ -63,6 +63,19 @@ public class DefaultRawnessComparer extends AbstractAtmComboVisitor<Boolean, Vis
     }
 
     @Override
+    public Boolean visitNull_Declared(AnnotatedNullType subtype, AnnotatedDeclaredType supertype, VisitHistory visited) {
+        if (checkOrAdd(subtype, supertype, visited)) {
+            return true;
+        }
+
+        if (!arePrimaryAnnotationsEqual(subtype, supertype)) {
+            return false;
+        }
+
+        return !supertype.wasRaw();
+    }
+
+    @Override
     public Boolean visitDeclared_Declared(AnnotatedDeclaredType subtype, AnnotatedDeclaredType supertype, VisitHistory visited) {
         if (checkOrAdd(subtype, supertype, visited)) {
             return true;

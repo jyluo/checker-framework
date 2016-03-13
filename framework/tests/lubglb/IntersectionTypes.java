@@ -1,5 +1,7 @@
 import lubglb.quals.*;
 
+// @skip-tests
+
 interface Foo {}
 interface Bar {}
 

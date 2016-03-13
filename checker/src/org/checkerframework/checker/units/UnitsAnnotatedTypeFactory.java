@@ -21,8 +21,6 @@ import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFormatter;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedTypeVariable;
 import org.checkerframework.framework.type.DefaultTypeHierarchy;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.TypeHierarchy;
@@ -32,7 +30,6 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.GraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
 import org.checkerframework.framework.util.typeinference.DefaultTypeArgumentInference;
-import org.checkerframework.framework.util.typeinference.TypeArgumentInference;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.Pair;
 import org.checkerframework.javacutil.TreeUtils;
@@ -47,9 +44,7 @@ import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Name;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
 import javax.tools.Diagnostic.Kind;
 
 import com.sun.source.tree.BinaryTree;
@@ -1195,57 +1190,57 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // Type Argument Inference
     // ===============================
 
-    @Override
-    protected TypeArgumentInference createTypeArgumentInference() {
-        return new UnitsTypeArgumentInference();
-    }
+//    @Override
+//    protected TypeArgumentInference createTypeArgumentInference() {
+//        return new UnitsTypeArgumentInference();
+//    }
 
     protected class UnitsTypeArgumentInference extends DefaultTypeArgumentInference {
-        //        @Override
-        //        public Map<TypeVariable, AnnotatedTypeMirror> inferTypeArgs(
-        //                AnnotatedTypeFactory typeFactory,
-        //                ExpressionTree expressionTree,
-        //                ExecutableElement methodElem,
-        //                AnnotatedExecutableType methodType) {
-        //
-        //            //            System.out.println("units type arg inference");
-        //            //            System.out.println("expressionTree: " + expressionTree);
-        //            //            System.out.println("methodElem: " + methodElem);
-        //            //            System.out.println("methodType: " + methodType);
-        //
-        //            // Keep in sync with super implementation
-        //
-        //            return super.inferTypeArgs(typeFactory, expressionTree, methodElem, methodType);
-        //        }
 
-        /**
-         * For any types we have not inferred, use a wildcard with the bounds from the original type parameter.
-         * For any types we have inferred to be an AnnotatedNullType leave it unchanged for units checker.
-         */
-        // Keep in sync with super implementation
-        @Override
-        protected void handleUninferredTypeVariables(AnnotatedTypeFactory typeFactory,
-                AnnotatedExecutableType methodType,
-                Set<TypeVariable> targets,
-                Map<TypeVariable, AnnotatedTypeMirror> inferredArgs) {
-
-            for (AnnotatedTypeVariable atv : methodType.getTypeVariables()) {
-                final TypeVariable typeVar = atv.getUnderlyingType();
-
-                if (targets.contains(typeVar)) {
-                    final AnnotatedTypeMirror inferredType = inferredArgs.get(typeVar);
-
-                    // Units Checker Code =======================
-                    if (inferredType == null) {
-                        // create the wildcard
-                        AnnotatedTypeMirror dummy = typeFactory.getUninferredWildcardType(atv);
-                        inferredArgs.put(typeVar, dummy);
-                    } else if(inferredType.getKind() == TypeKind.NULL) {
-                        // do nothing
-                    }
-                    // End Units Checker Code ===================
-                }
-            }
-        }
+//        /**
+//         * For any types we have not inferred, use a wildcard with the bounds from the original type parameter.
+//         * For any types we have inferred to be an AnnotatedNullType leave it unchanged for units checker.
+//         */
+//        // Keep in sync with super implementation
+//        @Override
+//        protected void handleUninferredTypeVariables(AnnotatedTypeFactory typeFactory,
+//                AnnotatedExecutableType methodType,
+//                Set<TypeVariable> targets,
+//                Map<TypeVariable, AnnotatedTypeMirror> inferredArgs) {
+//
+//            for (AnnotatedTypeVariable atv : methodType.getTypeVariables()) {
+//                final TypeVariable typeVar = atv.getUnderlyingType();
+//
+//                if (targets.contains(typeVar)) {
+//                    final AnnotatedTypeMirror inferredType = inferredArgs.get(typeVar);
+//
+//                    // Units Checker Code =======================
+////                    if (inferredType == null) {
+////                        // create the wildcard
+////                        AnnotatedTypeMirror dummy = typeFactory.getUninferredWildcardType(atv);
+////                        inferredArgs.put(typeVar, dummy);
+////                    } else if(inferredType.getKind() == TypeKind.NULL) {
+////                        // do nothing
+////                    }
+//                    // End Units Checker Code ===================
+//
+//                    // 1) reproduce this in a different type system
+//                    // 2) if so, in real one remove "inferredType.getKind() == TypeKind.NULL" and see if it works
+//                    //    , the inner if statement would become dead code, remove it too
+//
+//                    if (inferredType == null || inferredType.getKind() == TypeKind.NULL) {
+//                        AnnotatedTypeMirror dummy = typeFactory.getUninferredWildcardType(atv);
+//                        inferredArgs.put(atv.getUnderlyingType(), dummy);
+//
+//                        if (inferredType != null) { //then the type kind must be TypeKind.NULL
+//                            dummy.replaceAnnotations(inferredType.getAnnotations());
+//                        }
+//                    }
+//
+//                    // ================
+//
+//                }
+//            }
+//        }
     }
 }

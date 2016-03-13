@@ -4,11 +4,15 @@ import org.checkerframework.checker.units.qual.Scalar;
 import org.checkerframework.checker.units.qual.UnitsBottom;
 import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.common.basetype.BaseTypeValidator;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
+import org.checkerframework.common.basetype.TypeValidator;
 import org.checkerframework.framework.source.Result;
+import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
+import org.checkerframework.framework.type.AnnotatedTypeParameterBounds;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.Pair;
 import org.checkerframework.javacutil.TreeUtils;
@@ -23,6 +27,7 @@ import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeCastTree;
@@ -252,5 +257,51 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         // will check only the underlying type and ignores declarations on
         // the type mirror
         return checker.getTypeUtils().isSameType(lht, rht);
+    }
+
+
+    @Override
+    protected void checkTypeArguments(Tree toptree,
+            List<? extends AnnotatedTypeParameterBounds> paramBounds,
+            List<? extends AnnotatedTypeMirror> typeargs,
+            List<? extends Tree> typeargTrees) {
+
+//        if(! toptree.toString().startsWith("super")) {
+//            System.out.println();
+//            System.out.println("Check Type Args: ");
+//            System.out.println("Tree: " + toptree);
+//            System.out.println("ParamBounds: " + Arrays.toString(paramBounds.toArray()));
+//            System.out.println("typeargs: " + Arrays.toString(typeargs.toArray()));
+//            System.out.println("typeargTrees: " + Arrays.toString(typeargTrees.toArray()));
+//        }
+//
+
+        super.checkTypeArguments(toptree, paramBounds, typeargs, typeargTrees);
+    }
+
+
+    @Override
+    protected TypeValidator createTypeValidator() {
+        return new UnitsTypeValidator(checker, this, atypeFactory);
+    }
+
+    class UnitsTypeValidator extends BaseTypeValidator {
+
+        public UnitsTypeValidator(BaseTypeChecker checker, BaseTypeVisitor<?> visitor, AnnotatedTypeFactory atypeFactory) {
+            super(checker, visitor, atypeFactory);
+        }
+
+        @Override
+        protected Void visitParameterizedType(AnnotatedDeclaredType type, ParameterizedTypeTree tree) {
+
+//            System.out.println();
+//            System.out.println("Visit Parameterized Type");
+//            System.out.println("declared type: " + type);
+//            System.out.println("param type tree: " + tree);
+
+
+            return super.visitParameterizedType(type, tree);
+        }
+
     }
 }

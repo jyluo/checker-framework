@@ -2008,6 +2008,15 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
                         typeArg, toptree,
                         "type.argument.type.incompatible", false);
             } else {
+
+//                System.out.println();
+//                System.out.println("checking assignment: ");
+//                System.out.println("paramUpperBound: " + paramUpperBound);
+//                System.out.println("typeArg: " + typeArg);
+//                System.out.println("typeargTrees.get : " + typeargTrees.get(typeargs.indexOf(typeArg)));
+
+
+
                 commonAssignmentCheck(paramUpperBound, typeArg,
                         typeargTrees.get(typeargs.indexOf(typeArg)),
                         "type.argument.type.incompatible", false);

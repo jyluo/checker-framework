@@ -4,30 +4,29 @@ import org.checkerframework.checker.units.qual.Scalar;
 import org.checkerframework.checker.units.qual.UnitsBottom;
 import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.common.basetype.BaseTypeValidator;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
-import org.checkerframework.common.basetype.TypeValidator;
 import org.checkerframework.framework.source.Result;
-import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedWildcardType;
 import org.checkerframework.framework.type.AnnotatedTypeParameterBounds;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.Pair;
 import org.checkerframework.javacutil.TreeUtils;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeCastTree;
@@ -259,49 +258,82 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         return checker.getTypeUtils().isSameType(lht, rht);
     }
 
-
+    // Unbounded Wildcards can have its upper bounds incorrectly inferred to be
+    // TOP when a more specific type is available (eg Scalar)
+    // See tests/units/GenericsInferUnits test case
+    // Temporary solution:
+    // allow the passing of type argument checks whereby the parameterBound is
+    // Scalar, and the type argument is any units unit except bottom
+    // Developer note: keep in sync with super implementation
+    // TODO: remove once full solution is in place
     @Override
     protected void checkTypeArguments(Tree toptree,
             List<? extends AnnotatedTypeParameterBounds> paramBounds,
             List<? extends AnnotatedTypeMirror> typeargs,
             List<? extends Tree> typeargTrees) {
 
-//        if(! toptree.toString().startsWith("super")) {
-//            System.out.println();
-//            System.out.println("Check Type Args: ");
-//            System.out.println("Tree: " + toptree);
-//            System.out.println("ParamBounds: " + Arrays.toString(paramBounds.toArray()));
-//            System.out.println("typeargs: " + Arrays.toString(typeargs.toArray()));
-//            System.out.println("typeargTrees: " + Arrays.toString(typeargTrees.toArray()));
-//        }
-//
+        // If there are no type variables, do nothing.
+        if (paramBounds.isEmpty())
+            return;
 
-        super.checkTypeArguments(toptree, paramBounds, typeargs, typeargTrees);
-    }
+        assert paramBounds.size() == typeargs.size() :
+            "UnitsVisitor.checkTypeArguments: mismatch between type arguments: " +
+            typeargs + " and type parameter bounds" + paramBounds;
 
+        Iterator<? extends AnnotatedTypeParameterBounds> boundsIter = paramBounds.iterator();
+        Iterator<? extends AnnotatedTypeMirror> argIter = typeargs.iterator();
 
-    @Override
-    protected TypeValidator createTypeValidator() {
-        return new UnitsTypeValidator(checker, this, atypeFactory);
-    }
+        while (boundsIter.hasNext()) {
 
-    class UnitsTypeValidator extends BaseTypeValidator {
+            AnnotatedTypeParameterBounds bounds = boundsIter.next();
+            AnnotatedTypeMirror typeArg = argIter.next();
 
-        public UnitsTypeValidator(BaseTypeChecker checker, BaseTypeVisitor<?> visitor, AnnotatedTypeFactory atypeFactory) {
-            super(checker, visitor, atypeFactory);
+            // UnitsVisitor Code:
+            // if (shouldBeCaptureConverted(typeArg, bounds)) {
+            if (typeArg.getKind() == TypeKind.WILDCARD && bounds.getUpperBound().getKind() == TypeKind.WILDCARD) {
+                continue;
+            }
+
+            AnnotatedTypeMirror paramUpperBound = bounds.getUpperBound();
+            if (typeArg.getKind() == TypeKind.WILDCARD) {
+                paramUpperBound = atypeFactory.widenToUpperBound(paramUpperBound, (AnnotatedWildcardType) typeArg);
+            }
+
+            if (typeargTrees == null || typeargTrees.isEmpty()) {
+                // The type arguments were inferred and we mark the whole method.
+                // The inference fails if we provide invalid arguments,
+                // therefore issue an error for the arguments.
+                // I hope this is less confusing for users.
+                commonAssignmentCheck(paramUpperBound,
+                        typeArg, toptree,
+                        "type.argument.type.incompatible", false);
+            } else {
+                // UnitsVisitor Code:
+                // If the parameter's upperBound is Scalar, and the type
+                // argument is a wildcard with an upper bound of any unit except
+                // bottom, allow and pass, otherwise perform commonAssignmentCheck
+                if ( ! (typeArg.getKind() == TypeKind.WILDCARD
+                        && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar)
+                        && !UnitsRelationsTools.hasSpecificUnit(typeArg, BOTTOM))) {
+                    commonAssignmentCheck(paramUpperBound, typeArg,
+                            typeargTrees.get(typeargs.indexOf(typeArg)),
+                            "type.argument.type.incompatible", false);
+                }
+                // End UnitsVisitor Code
+            }
+
+            if (!atypeFactory.getTypeHierarchy().isSubtype(bounds.getLowerBound(), typeArg)) {
+                if (typeargTrees == null || typeargTrees.isEmpty()) {
+                    // The type arguments were inferred and we mark the whole method.
+                    checker.report(Result.failure("type.argument.type.incompatible",
+                                    typeArg, bounds),
+                            toptree);
+                } else {
+                    checker.report(Result.failure("type.argument.type.incompatible",
+                                    typeArg, bounds),
+                            typeargTrees.get(typeargs.indexOf(typeArg)));
+                }
+            }
         }
-
-        @Override
-        protected Void visitParameterizedType(AnnotatedDeclaredType type, ParameterizedTypeTree tree) {
-
-//            System.out.println();
-//            System.out.println("Visit Parameterized Type");
-//            System.out.println("declared type: " + type);
-//            System.out.println("param type tree: " + tree);
-
-
-            return super.visitParameterizedType(type, tree);
-        }
-
     }
 }

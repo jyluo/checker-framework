@@ -3,7 +3,7 @@ import java.util.Comparator;
 
 class List<K0> {}
 
-@SuppressWarnings({"javari", "units"})
+@SuppressWarnings({"javari"})
 abstract class Ordering<T> implements Comparator<T> {
     // Natural order
     public static <C extends Comparable> Ordering<C> natural() {
@@ -16,10 +16,10 @@ abstract class Ordering<T> implements Comparator<T> {
     }
 }
 
-@SuppressWarnings({"javari", "units"})
+@SuppressWarnings({"javari"})
 class PolyCollectorTypeVars {
-  //Both of these come from the extends Comparable on line 9
-  @SuppressWarnings({"rawtypes","type.argument.type.incompatible"})
+  //All three of these come from the extends Comparable on line 9
+  @SuppressWarnings({"rawtypes","type.argument.type.incompatible", "units"})
   public static List<Comparable> treeKeys2() {
       //See Limitation in DefaultTypeArgumentInference on interdependent methods
       return treeKeys(Ordering.natural());

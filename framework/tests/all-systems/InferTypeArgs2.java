@@ -1,5 +1,4 @@
 
-@SuppressWarnings({"units"})
 class CFAbstractValue<V extends CFAbstractValue<V>> {}
 
 //having a concrete extension of CFAbstractValue is the key difference between this and
@@ -11,9 +10,7 @@ class CFValue extends CFAbstractValue<CFValue> {
     }
 }
 
-@SuppressWarnings({"units"})
 class CFAbstractStore<V extends CFAbstractValue<V>, S extends CFAbstractStore<V, S>>{}
-@SuppressWarnings({"units"})
 class CFAbstractTransfer<V extends CFAbstractValue<V>,
         S extends CFAbstractStore<V, S>,
         T extends CFAbstractTransfer<V, S, T>> {}

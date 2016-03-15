@@ -26,7 +26,10 @@ import java.lang.annotation.Target;
 @SubtypeOf(UnknownUnits.class)
 @DefaultQualifierInHierarchy
 @DefaultQualifierInHierarchyInUncheckedCode
-// @DefaultFor({TypeUseLocation.EXPLICIT_UPPER_BOUND})
+//@DefaultFor({
+//    TypeUseLocation.IMPLICIT_UPPER_BOUND,       // <T>
+//    // TypeUseLocation.EXPLICIT_UPPER_BOUND     // <T extends Object>
+//})
 @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

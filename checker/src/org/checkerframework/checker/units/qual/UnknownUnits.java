@@ -13,8 +13,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.lang.model.type.TypeKind;
-
 /**
  * UnknownUnits is the top type of the type hierarchy.
  *
@@ -35,12 +33,12 @@ import javax.lang.model.type.TypeKind;
     TypeUseLocation.RESOURCE_VARIABLE,
     // Allows for the use of generic collections of boxed number types and
     // other classes
-    TypeUseLocation.IMPLICIT_UPPER_BOUND,
-    TypeUseLocation.EXPLICIT_UPPER_BOUND
+    TypeUseLocation.IMPLICIT_UPPER_BOUND,       // <T>
+    TypeUseLocation.EXPLICIT_UPPER_BOUND        // <T extends Object>
 })
 @DefaultInUncheckedCodeFor({ TypeUseLocation.UPPER_BOUND })
 @ImplicitFor(
-        types = { TypeKind.NONE },
+//        types = { TypeKind.NONE },
         // Exceptions are always TOP type, so Throwable must be as well
         typeNames = { java.lang.Throwable.class }
         )

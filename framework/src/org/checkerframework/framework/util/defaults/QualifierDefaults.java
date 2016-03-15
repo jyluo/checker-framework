@@ -1030,7 +1030,7 @@ public class QualifierDefaults {
         }
 
         if (type instanceof AnnotatedWildcardType) {
-            return getWilcardBoundType((AnnotatedWildcardType) type, typeFactory);
+            return getWildcardBoundType((AnnotatedWildcardType) type, typeFactory);
         }
 
         ErrorReporter.errorAbort("Unexpected type kind: type=" + type);
@@ -1090,7 +1090,7 @@ public class QualifierDefaults {
      * @return the BoundType of annotatedWildcard.  If it is unbounded, use the type parameter to
      * which its an argument
      */
-    public static BoundType getWilcardBoundType(final AnnotatedWildcardType annotatedWildcard,
+    public static BoundType getWildcardBoundType(final AnnotatedWildcardType annotatedWildcard,
                                                 final AnnotatedTypeFactory typeFactory) {
 
         final WildcardType wildcard = (WildcardType) annotatedWildcard.getUnderlyingType();

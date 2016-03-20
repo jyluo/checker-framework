@@ -1,0 +1,44 @@
+import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
+
+package java.sql;
+
+class Date extends Date {
+    Date(int arg0, int arg1, int arg2);
+    Date(long arg0);
+    void setTime(long arg0);
+    static Date valueOf(String arg0);
+    String toString();
+    int getHours();
+    int getMinutes();
+    int getSeconds();
+    void setHours(int arg0);
+    void setMinutes(int arg0);
+    void setSeconds(int arg0);
+    static Date valueOf(LocalDate arg0);
+    LocalDate toLocalDate();
+    Instant toInstant();
+}
+
+class Timestamp extends Date {
+    Timestamp(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
+    Timestamp(long arg0);
+    void setTime(long arg0);
+    long getTime();
+    static Timestamp valueOf(String arg0);
+    String toString();
+    int getNanos();
+    void setNanos(int arg0);
+    boolean equals(Timestamp arg0);
+    boolean equals(Object arg0);
+    boolean before(Timestamp arg0);
+    boolean after(Timestamp arg0);
+    int compareTo(Timestamp arg0);
+    int compareTo(Date arg0);
+    int hashCode();
+    static Timestamp valueOf(LocalDateTime arg0);
+    LocalDateTime toLocalDateTime();
+    static Timestamp from(Instant arg0);
+    Instant toInstant();
+}

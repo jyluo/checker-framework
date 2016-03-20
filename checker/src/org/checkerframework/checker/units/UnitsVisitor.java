@@ -258,14 +258,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         return checker.getTypeUtils().isSameType(lht, rht);
     }
 
-    // Unbounded Wildcards can have its upper bounds incorrectly inferred to be
-    // TOP when a more specific type is available (eg Scalar)
-    // See tests/units/GenericsInferUnits test case
-    // Temporary solution:
-    // allow the passing of type argument checks whereby the parameterBound is
-    // Scalar, and the type argument is any units unit except bottom
-    // Developer note: keep in sync with super implementation
-    // TODO: remove once full solution is in place
+
     @Override
     protected void checkTypeArguments(Tree toptree,
             List<? extends AnnotatedTypeParameterBounds> paramBounds,
@@ -309,12 +302,34 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                         "type.argument.type.incompatible", false);
             } else {
                 // UnitsVisitor Code:
-                // If the parameter's upperBound is Scalar, and the type
-                // argument is a wildcard with an upper bound of any unit except
-                // bottom, allow and pass, otherwise perform commonAssignmentCheck
+                // Unbounded Wildcards can have its upper bounds incorrectly inferred to be
+                // TOP when a more specific type is available (eg Scalar)
+                // See tests/units/GenericsInferUnits test case
+                // Temporary solution:
+                // allow the passing of type argument checks whereby the parameterBound is
+                // Scalar, and the type argument is any units unit except bottom
+                // Developer note: keep in sync with super implementation
+                // TODO: remove once full solution is in place
+
+//                // If the parameter's upperBound is Scalar, and the type
+//                // argument is a wildcard with an upper bound of any unit except
+//                // bottom, allow and pass, otherwise perform commonAssignmentCheck
+                // found ? extends anything not bottom
+                // required scalar
                 if ( ! (typeArg.getKind() == TypeKind.WILDCARD
-                        && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar)
-                        && !UnitsRelationsTools.hasSpecificUnit(typeArg, BOTTOM))) {
+                        && !UnitsRelationsTools.hasSpecificUnit(typeArg, BOTTOM)
+                        && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar))) {
+//
+//                  System.out.println("  arg: " + typeArg + " kind " + typeArg.getKind());
+//                  System.out.println("param: " + paramUpperBound);
+
+
+                // if the parameter is Scalar Object, and the type arg is a type
+                // variable with the extends bound of UnknownUnits, pass.
+//                if( ! (typeArg.getKind() == TypeKind.TYPEVAR
+//                        && UnitsRelationsTools.hasSpecificUnit(typeArg, TOP)
+//                        && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar))) {
+
                     commonAssignmentCheck(paramUpperBound, typeArg,
                             typeargTrees.get(typeargs.indexOf(typeArg)),
                             "type.argument.type.incompatible", false);
@@ -336,4 +351,28 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             }
         }
     }
+
+    // =========================================================
+    // Type Validator
+    // =========================================================
+
+//    @Override
+//    protected TypeValidator createTypeValidator() {
+//        // TODO Auto-generated method stub
+//        return super.createTypeValidator();
+//    }
+//
+//    protected class UnitsTypeValidator extends BaseTypeValidator {
+//
+//        public UnitsTypeValidator(BaseTypeChecker checker, BaseTypeVisitor<?> visitor, AnnotatedTypeFactory atypeFactory) {
+//            super(checker, visitor, atypeFactory);
+//        }
+//
+//        @Override
+//        public Void visitWildcard(AnnotatedWildcardType type, Tree tree) {
+//            // TODO Auto-generated method stub
+//            return super.visitWildcard(type, tree);
+//        }
+//
+//    }
 }

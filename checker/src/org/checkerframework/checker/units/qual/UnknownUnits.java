@@ -33,8 +33,8 @@ import java.lang.annotation.Target;
     TypeUseLocation.RESOURCE_VARIABLE,
     // Allows for the use of generic collections of boxed number types and
     // other classes
-    TypeUseLocation.IMPLICIT_UPPER_BOUND,       // <T>
-    TypeUseLocation.EXPLICIT_UPPER_BOUND        // <T extends Object>
+    // TypeUseLocation.IMPLICIT_UPPER_BOUND,       // <T>
+    // TypeUseLocation.EXPLICIT_UPPER_BOUND        // <T extends Object>
 })
 @DefaultInUncheckedCodeFor({ TypeUseLocation.UPPER_BOUND })
 @ImplicitFor(

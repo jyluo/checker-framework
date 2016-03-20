@@ -27,7 +27,7 @@ class ClassE<V extends ClassC<V>, S extends ClassE<V, S>> {}
 
 // Test 3:
 
-interface A<T> {
+interface A<T> {        // T is UnknownUnits
     public abstract int transformSuper(List<? super T> function);
     public abstract int transformExtend(List<? extends T> function);
 }

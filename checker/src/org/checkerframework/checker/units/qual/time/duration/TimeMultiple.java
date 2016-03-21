@@ -1,6 +1,9 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Defines the numeric relationship between a base time unit and the current
@@ -11,6 +14,8 @@ import java.lang.annotation.Annotation;
  *
  * E.g. minutes would be defined as 60 seconds.
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
 public @interface TimeMultiple {
     /**
      * @return The base time unit to use.

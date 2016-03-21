@@ -1,3 +1,5 @@
+import org.checkerframework.checker.units.qual.Prefix;
+import org.checkerframework.checker.units.qual.time.duration.*;
 import static org.checkerframework.checker.units.UnitsTools.s;
 import static org.checkerframework.checker.units.UnitsTools.ms;
 import static org.checkerframework.checker.units.UnitsTools.ns;
@@ -6,9 +8,9 @@ import java.util.Date;
 
 public class JavaThreadTest {
     void m() throws InterruptedException {
-        long start = System.currentTimeMillis( );
+        long start = System.currentTimeMillis();
 
-        System.out.println(new Date( ) + "\n");
+        System.out.println(new Date() + "\n");
 
         Thread.sleep(500 * ms);
         //:: error: (argument.type.incompatible)
@@ -18,11 +20,18 @@ public class JavaThreadTest {
         //:: error: (argument.type.incompatible)
         Thread.sleep(500 * ms, 300 * s);
 
-        System.out.println(new Date( ) + "\n");
+        System.out.println(new Date() + "\n");
 
-        long end = System.currentTimeMillis( );
+        long end = System.currentTimeMillis();
 
-        long diff = end - start;
+        @ms long diff = end - start;
+        @s(Prefix.milli) long diff2 = end - start;
+
+        //:: error: (assignment.type.incompatible)
+        @s long diffBad = end - start;
+
+        //:: error: (time.instant.addition.disallowed)
+        long addBad = end + start;
 
         System.out.println("Difference is : " + diff);
     }

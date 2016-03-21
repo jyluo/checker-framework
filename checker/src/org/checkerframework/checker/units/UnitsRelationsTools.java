@@ -2,6 +2,9 @@ package org.checkerframework.checker.units;
 
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.Scalar;
+import org.checkerframework.checker.units.qual.time.instant.DurationUnit;
+import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
+import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
@@ -18,6 +21,9 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.util.Elements;
 
+import com.sun.tools.javac.code.Attribute;
+import com.sun.tools.javac.util.List;
+
 /*>>>
 import org.checkerframework.checker.nullness.qual.Nullable;
  */
@@ -27,6 +33,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * process Annotations and Annotated Types representing various units
  */
 public class UnitsRelationsTools {
+    // Used to detect annotations that are subtypes of timeInstant
+    private static String timeInstantClassName = TimeInstant.class.getCanonicalName().intern();
 
     /**
      * Creates an AnnotationMirror representing a unit defined by annoClass,
@@ -134,9 +142,9 @@ public class UnitsRelationsTools {
 
         // if the Annotation has a value, then detect and match the string name
         // of the prefix, and return the matching Prefix
-        String prefixString = annotationValue.getValue().toString();
+        String prefixString = annotationValue.getValue().toString().intern();
         for (Prefix prefix : Prefix.values()) {
-            if (prefixString.equals(prefix.toString())) {
+            if (prefixString == prefix.toString().intern()) {
                 return prefix;
             }
         }
@@ -198,7 +206,7 @@ public class UnitsRelationsTools {
         Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = unitsAnnotation.getElementValues();
 
         for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : elementValues.entrySet()) {
-            if (entry.getKey().getSimpleName().toString().equals("value")) {
+            if (entry.getKey().getSimpleName().toString().intern() == "value".intern()) {
                 return entry.getValue();
             }
         }
@@ -354,14 +362,14 @@ public class UnitsRelationsTools {
     }
 
     /**
-     * Checks to see if the two Annotated Types passed in have the exact same
+     * Checks to see if the two Annotated Types passed in are the exact same
      * units
      *
      * @param t1 first annotated type
      * @param t2 second annotated type
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean hasSameUnits(/*@Nullable*/ final AnnotatedTypeMirror t1, /*@Nullable*/ final AnnotatedTypeMirror t2) {
+    public static boolean areSameUnits(/*@Nullable*/ final AnnotatedTypeMirror t1, /*@Nullable*/ final AnnotatedTypeMirror t2) {
         if (t1 == null || t2 == null) {
             return false;
         }
@@ -370,14 +378,14 @@ public class UnitsRelationsTools {
     }
 
     /**
-     * Checks to see if the two Annotated Types passed in have the exact same
+     * Checks to see if the two Annotated Types passed in are the exact same
      * base units
      *
      * @param t1 first annotated type
      * @param t2 second annotated type
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean hasSameUnitsIgnoringPrefix(/*@Nullable*/ final AnnotatedTypeMirror t1, /*@Nullable*/ final AnnotatedTypeMirror t2) {
+    public static boolean areSameUnitsIgnoringPrefix(/*@Nullable*/ final AnnotatedTypeMirror t1, /*@Nullable*/ final AnnotatedTypeMirror t2) {
         if (t1 == null || t2 == null) {
             return false;
         }
@@ -388,7 +396,7 @@ public class UnitsRelationsTools {
         if (c1.size() != c2.size())
             return false;
         if (c1.size() == 1)
-            return hasSameUnitsIgnoringPrefix(c1.iterator().next(), c2.iterator().next());
+            return areSameUnitsIgnoringPrefix(c1.iterator().next(), c2.iterator().next());
 
         Set<AnnotationMirror> s1 = AnnotationUtils.createAnnotationSet();
         Set<AnnotationMirror> s2 = AnnotationUtils.createAnnotationSet();
@@ -402,21 +410,21 @@ public class UnitsRelationsTools {
         while (iter1.hasNext()) {
             AnnotationMirror anno1 = iter1.next();
             AnnotationMirror anno2 = iter2.next();
-            if (!hasSameUnitsIgnoringPrefix(anno1, anno2))
+            if (!areSameUnitsIgnoringPrefix(anno1, anno2))
                 return false;
         }
         return true;
     }
 
     /**
-     * Checks to see if the two annotation mirrors passed in have the exact same
+     * Checks to see if the two annotation mirrors passed in are the exact same
      * units
      *
      * @param m1 first annotation mirror
      * @param m2 second annotation mirror
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean hasSameUnits(/*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
+    public static boolean areSameUnits(/*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
         if (m1 == null || m2 == null) {
             return false;
         }
@@ -425,18 +433,108 @@ public class UnitsRelationsTools {
     }
 
     /**
-     * Checks to see if the two annotation mirrors passed in have the exact same
+     * Checks to see if the two annotation mirrors passed in are the exact same
      * base units
      *
      * @param m1 first annotation mirror
      * @param m2 second annotation mirror
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean hasSameUnitsIgnoringPrefix(/*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
+    public static boolean areSameUnitsIgnoringPrefix(/*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
         if (m1 == null || m2 == null) {
             return false;
         }
 
         return AnnotationUtils.areSameIgnoringValues(m1, m2);
     }
+
+    /**
+     * Given an Annotated Type with a time instant unit, this method returns the
+     * Annotation representing the time duration unit that this Annotated Type
+     * is related to via {@link DurationUnit}. For any other Annotated Type,
+     * this method returns null.
+     *
+     * @param timeInstantAnnoType an Annotated Type with a time instant unit
+     * @return an AnnotationMirror representing the time duration unit that this
+     *         Annotated Type is related to, or null
+     */
+    public static /*@Nullable*/ AnnotationMirror getTimeDurationUnit(/*@Nullable*/ final ProcessingEnvironment env, /*@Nullable*/ final AnnotatedTypeMirror annotatedType) {
+        if (annotatedType == null || !isTimeInstant(annotatedType)) {
+            return null;
+        }
+
+        // get the time unit annotation
+        AnnotationMirror timeUnit = UnitsRelationsTools.getUnit(annotatedType);
+        // get the durationUnit meta annotation
+        AnnotationMirror durationUnitAnno = getDurationUnitMetaAnnotation(timeUnit);
+
+        if (durationUnitAnno != null) {
+            // retrieve the Class of the duration unit
+            Class<? extends Annotation> durationUnitAnnoClass = AnnotationUtils.getElementValueClass(durationUnitAnno, "unit", true).asSubclass(Annotation.class);
+            return UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(env, durationUnitAnnoClass);
+        }
+
+        return null;
+    }
+
+    private static boolean isTimeInstant(/*@Nullable*/ final AnnotatedTypeMirror annotatedType) {
+        if (annotatedType == null) {
+            return false;
+        }
+
+        boolean hasDurationUnitMetaAnno = false;
+        boolean isDirectSubtypeOfTimeInstant = false;
+
+        // loop through all of the annotations on the type
+        for (AnnotationMirror mirror : annotatedType.getEffectiveAnnotations()) {
+            // see if DurationUnit meta annotation is present
+            if (getDurationUnitMetaAnnotation(mirror) != null) {
+                hasDurationUnitMetaAnno = true;
+            }
+
+            // see if SubtypeOf meta annotation is present
+            AnnotationMirror subtypeOfMetaAnno = getSubtypeOfMetaAnnotation(mirror);
+            if (subtypeOfMetaAnno != null) {
+                // if Subtypeof meta annotation is present, check to see if it's
+                // value is TimeInstant
+                // obtain the classes declared in the SubtypeOf annotation
+                @SuppressWarnings("unchecked")
+                List<Attribute.Class> supertypes = AnnotationUtils.getElementValue(subtypeOfMetaAnno, "value", List.class, true);
+
+                // loop through those classes, check to see that it's name
+                // matches the TimeInstant class's canonical name
+                for(Attribute.Class supertype : supertypes) {
+                    String subtypeAnnoValue = supertype.getValue().asElement().getQualifiedName().toString().intern();
+                    if (subtypeAnnoValue == timeInstantClassName) {
+                        isDirectSubtypeOfTimeInstant = true;
+                    }
+                }
+            }
+        }
+
+        // return true if it has the DurationUnit meta annotation and is a
+        // direct subtype of TimeInstant
+        return hasDurationUnitMetaAnno && isDirectSubtypeOfTimeInstant;
+    }
+
+    private static /*@Nullable*/ AnnotationMirror getDurationUnitMetaAnnotation(AnnotationMirror anno) {
+        for (AnnotationMirror metaAnno : anno.getAnnotationType().asElement().getAnnotationMirrors()) {
+            // see if the meta annotation is UnitsMultiple
+            if (AnnotationUtils.areSameByClass(metaAnno, DurationUnit.class)) {
+                return metaAnno;
+            }
+        }
+        return null;
+    }
+
+    private static /*@Nullable*/ AnnotationMirror getSubtypeOfMetaAnnotation(AnnotationMirror anno) {
+        for (AnnotationMirror metaAnno : anno.getAnnotationType().asElement().getAnnotationMirrors()) {
+            // see if the meta annotation is UnitsMultiple
+            if (AnnotationUtils.areSameByClass(metaAnno, SubtypeOf.class)) {
+                return metaAnno;
+            }
+        }
+        return null;
+    }
+
 }

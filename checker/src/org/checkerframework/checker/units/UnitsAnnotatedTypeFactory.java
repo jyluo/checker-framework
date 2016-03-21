@@ -13,7 +13,6 @@ import org.checkerframework.checker.units.qual.m3;
 import org.checkerframework.checker.units.qual.mm2;
 import org.checkerframework.checker.units.qual.mm3;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
-import org.checkerframework.checker.units.qual.time.instant.DurationUnit;
 import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -396,40 +395,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return annotatedTypeIsSubtype(t, timeInstant);
     }
 
-    private /*@Nullable*/ AnnotationMirror getTimeDurationUnit(/*@Nullable*/ final AnnotatedTypeMirror t) {
-        if (t == null || !isTimeInstant(t)) {
-            return null;
-        }
-
-        // get the time unit annotation
-        AnnotationMirror timeUnit = UnitsRelationsTools.getUnit(t);
-        // get the durationUnit meta annotation
-        AnnotationMirror durationUnit = getDurationUnitMetaAnnotation(timeUnit);
-
-        if (durationUnit != null) {
-            // retrieve the Class of the duration unit
-            Class<? extends Annotation> durationUnitAnnoClass = AnnotationUtils.getElementValueClass(durationUnit, "unit", true).asSubclass(Annotation.class);
-
-            return UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, durationUnitAnnoClass);
-        }
-
-        return null;
-    }
-
-    private /*@Nullable*/ AnnotationMirror getDurationUnitMetaAnnotation(AnnotationMirror anno) {
-        for (AnnotationMirror metaAnno : anno.getAnnotationType().asElement().getAnnotationMirrors()) {
-            // see if the meta annotation is UnitsMultiple
-            if (isDurationUnitAnno(metaAnno)) {
-                return metaAnno;
-            }
-        }
-        return null;
-    }
-
-    private boolean isDurationUnitAnno(AnnotationMirror metaAnno) {
-        return AnnotationUtils.areSameByClass(metaAnno, DurationUnit.class);
-    }
-
     private AnnotationMirror removePrefix(AnnotationMirror anno) {
         return UnitsRelationsTools.removePrefix(elements, anno);
     }
@@ -556,7 +521,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 AnnotatedTypeMirror rht = getAnnotatedType(methodArguments.get(1));
                 // atan2 must be called with the same units for both of its
                 // arguments
-                if (!UnitsRelationsTools.hasSameUnits(lht, rht)) {
+                if (!UnitsRelationsTools.areSameUnits(lht, rht)) {
                     checker.report(Result.failure("two.parameter.method.arguments.unit.mismatch", lht.toString(), rht.toString()), node);
                 }
 
@@ -814,21 +779,21 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
          * If the time instant is based on the same unit as the duration, then
          * it will return the time instant unit
          *
-         * @param type the result unit
+         * @param resultType the result unit
          * @param instant the time instant unit
          * @param duration the time duration unit
          * @return type will be replaced with the time instant unit, or
          *         {@link TimeInstant} if the above criterion is not satisfied.
          */
-        private Void processInstantAndDurationMathOperation(AnnotatedTypeMirror type, AnnotatedTypeMirror instant, AnnotatedTypeMirror duration) {
-            if (UnitsRelationsTools.hasSameUnits(getTimeDurationUnit(instant), UnitsRelationsTools.getUnit(duration))) {
+        private Void processInstantAndDurationMathOperation(AnnotatedTypeMirror resultType, AnnotatedTypeMirror instant, AnnotatedTypeMirror duration) {
+            if (UnitsRelationsTools.areSameUnits(UnitsRelationsTools.getTimeDurationUnit(processingEnv, instant), UnitsRelationsTools.getUnit(duration))) {
                 // If the instant is based upon the same unit as the duration,
                 // then Time instant + or - time duration => time instant
-                type.replaceAnnotations(instant.getAnnotations());
+                resultType.replaceAnnotations(instant.getAnnotations());
             } else {
                 // if the instant isn't based upon the same unit however, then
                 // return @TimeInstant
-                type.replaceAnnotation(timeInstant);
+                resultType.replaceAnnotation(timeInstant);
             }
             return null;
         }
@@ -873,20 +838,32 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
                 switch (kind) {
                 case PLUS:
+                    // addition of two time instants is not allowed, otherwise
                     // plus is treated the same as minus
-                case MINUS:
-                    // Process time units first
                     if (isTimeInstant(lht) && isTimeInstant(rht)) {
                         // Time instant + time instant ==> error
                         // One cannot add the 4th month of a year to the 7th month of some other year
                         checker.report(Result.failure("time.instant.addition.disallowed", lht.toString(), rht.toString()), node);
+                    }
+                case MINUS:
+                    // Process time units first
+                    if (isTimeInstant(lht) && isTimeInstant(rht)) {
+                        if (UnitsRelationsTools.areSameUnits(lht, rht)) {
+                            // Time instant - time instant ==> timeDuration if they are the same units
+                            resultType.replaceAnnotation(UnitsRelationsTools.getTimeDurationUnit(processingEnv, lht));
+                        } else {
+                            // subtraction of two different time instant units results in the LUB of the two respective time duration units
+                            AnnotationMirror lhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(processingEnv, lht);
+                            AnnotationMirror rhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(processingEnv, rht);
+                            resultType.replaceAnnotation(getLUB(lhtDurationUnit, rhtDurationUnit));
+                        }
                     } else if(isTimeInstant(lht) && isTimeDuration(rht)) {
                         // instant +/- duration => instant
                         processInstantAndDurationMathOperation(resultType, lht, rht);
                     } else if(isTimeDuration(lht) && isTimeInstant(rht)) {
                         // duration +/- instant => instant
                         processInstantAndDurationMathOperation(resultType, rht, lht);
-                    } else if (UnitsRelationsTools.hasSameUnits(lht, rht)) {
+                    } else if (UnitsRelationsTools.areSameUnits(lht, rht)) {
                         // If both operands for sum or difference have the same
                         // units, we return the unit
                         // this includes duration +/- duration => duration
@@ -924,7 +901,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     if (UnitsRelationsTools.hasSpecificUnit(lht, TOP) && UnitsRelationsTools.hasSpecificUnit(rht, TOP)) {
                         // unknown / unknown = unknown
                         resultType.replaceAnnotation(TOP);
-                    } else if (UnitsRelationsTools.hasSameUnits(lht, rht)) {
+                    } else if (UnitsRelationsTools.areSameUnits(lht, rht)) {
                         // otherwise if the units of the division match, return
                         // scalar
                         resultType.replaceAnnotation(scalar);
@@ -996,7 +973,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             case LESS_THAN_EQUAL:
                 // if it is a comparison operation, check to see if it has the
                 // same units for both operands
-                if (UnitsRelationsTools.hasSameUnits(lht, rht)) {
+                if (UnitsRelationsTools.areSameUnits(lht, rht)) {
                     // if both operands of a comparison have the same unit, then
                     // the result boolean value has a unit of Scalar
                     type.replaceAnnotation(scalar);
@@ -1075,7 +1052,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         private AnnotationMirror getLUB(AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
             AnnotationMirror lhtMirror = lht.getAnnotations().iterator().next();
             AnnotationMirror rhtMirror = rht.getAnnotations().iterator().next();
-            return atypeFactory.getQualifierHierarchy().leastUpperBound(lhtMirror, rhtMirror);
+            return getLUB(lhtMirror, rhtMirror);
+        }
+
+        private AnnotationMirror getLUB(AnnotationMirror lht, AnnotationMirror rht) {
+            return atypeFactory.getQualifierHierarchy().leastUpperBound(lht, rht);
         }
     }
 
@@ -1129,8 +1110,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
 
             // if the two units have the same base SI unit
-            if (UnitsRelationsTools.hasSameUnitsIgnoringPrefix(a1, a2)) {
-                if (UnitsRelationsTools.hasSameUnits(a1, a2)) {
+            if (UnitsRelationsTools.areSameUnitsIgnoringPrefix(a1, a2)) {
+                if (UnitsRelationsTools.areSameUnits(a1, a2)) {
                     // and if they have the same Prefix, it means it is the same
                     // unit, so we return the unit
                     result = a1;

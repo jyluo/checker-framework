@@ -12,7 +12,7 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
     // Allocates a Date object and initializes it to represent the specified
     // number of milliseconds since the standard base time known as "the epoch",
     // namely January 1, 1970, 00:00:00 GMT.
-    Date(@ms long date);
+    Date(@CALms long date);
 
     // Deprecated
     // As of JDK version 1.1, replaced by Calendar.set(year + 1900, month, date)
@@ -45,13 +45,13 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
     // sec), using a UTC TimeZone, followed by Calendar.getTime().getTime().
     // Determines the time relative to UTC and returns it in milliseconds since
     // epoch
-    static @ms long UTC(@CALyear int year, @CALMonth int month, @CALday int date, @CALh int hrs, @CALmin int min, @CALs int sec);
+    static @CALms long UTC(@CALyear int year, @CALMonth int month, @CALday int date, @CALh int hrs, @CALmin int min, @CALs int sec);
 
     // Deprecated
     // Attempts to parse string s into a date and time, if successful returns
     // number of milliseconds since epoch.
     // IllegalArgumentException is thrown if unsuccessful.
-    static @ms long parse(String s);
+    static @CALms long parse(String s);
 
     // Deprecated
     // Gets and sets the year minus 1900
@@ -89,8 +89,8 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
     void setSeconds(@CALs int arg0);
 
     // Gets and sets the time in milliseconds since epoch
-    @ms long getTime();
-    void setTime(@ms long arg0);
+    @CALms long getTime();
+    void setTime(@CALms long arg0);
 
     boolean before(Date arg0);
     boolean after(Date arg0);
@@ -176,7 +176,7 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
     // The calendar field values for the currently set time for this calendar. This is an array of FIELD_COUNT integers, with index values ERA through DST_OFFSET.
     protected @AbstractTime int[] fields;
     protected boolean[] isSet;
-    protected @ms long time;
+    protected @CALms long time;
     protected boolean isTimeSet;
     protected boolean areFieldsSet;
 
@@ -203,8 +203,8 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
     void setTime(Date arg0);
 
     // get and set time in millis since epoch
-    @ms long getTimeInMillis();
-    void setTimeInMillis(@ms long arg0);
+    @CALms long getTimeInMillis();
+    void setTimeInMillis(@CALms long arg0);
 
     // Returns the value of the given calendar field. The fields are the fields of this class.
     @PolyUnit int get(@PolyUnit int field);
@@ -303,7 +303,7 @@ class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
 class Calendar$Builder {
     Builder();
 
-    Builder setInstant(@ms long instant);
+    Builder setInstant(@CALms long instant);
 
     Builder setInstant(Date arg0);
 

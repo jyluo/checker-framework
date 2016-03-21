@@ -16,9 +16,14 @@ class System {
     static void setSecurityManager(SecurityManager arg0);
     static SecurityManager getSecurityManager();
     // Returns the current time in milliseconds.
-    static @ms long currentTimeMillis();
-    // Returns the current value of the running Java Virtual Machine's high-resolution time source, in nanoseconds.
-    static @ns long nanoTime();
+    static @CALms long currentTimeMillis();
+    // Returns the current value of the running Java Virtual Machine's
+    // high-resolution time source, in nanoseconds.
+    // The values returned by this method become meaningful only when the
+    // difference between two such values, obtained within the same instance of
+    // a Java virtual machine, is computed.
+    // The value is technically a time instant since some "origin" time, but not Java Epoch.
+    static @CALns long nanoTime();
     static void arraycopy(Object arg0, int arg1, Object arg2, int arg3, int arg4);
     static int identityHashCode(Object arg0);
     static Properties getProperties();

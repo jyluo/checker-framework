@@ -31,8 +31,9 @@ public class Java8TimeTest {
         yd = yd - yd;
         yi = yi - yd;
         yi = yd - yi;
-        //:: error: (time.instant.addition.disallowed)
-        yi = yi - yi;
+        yd = yi - yi;
+        //:: error: (assignment.type.incompatible)
+        sd = yi - yi;
     }
 
     public static void main(String[] args) {

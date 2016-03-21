@@ -4,7 +4,7 @@ import org.checkerframework.checker.units.qual.time.instant.*;
 
 package java.util;
 
-class AbstractCollection<E> implements Collection<E> {
+class AbstractCollection<E extends @UnknownUnits Object> implements Collection<E> {
     protected AbstractCollection();
     Iterator<E> iterator();
     int size();
@@ -22,7 +22,7 @@ class AbstractCollection<E> implements Collection<E> {
     String toString();
 }
 
-class AbstractList<E> extends AbstractCollection<E> implements List<E> {
+class AbstractList<E extends @UnknownUnits Object> extends AbstractCollection<E> implements List<E> {
     protected int modCount;
     protected AbstractList();
     boolean add(E arg0);
@@ -83,7 +83,7 @@ class AbstractMap$SimpleImmutableEntry<K, V> implements Entry<K,V>, Serializable
     String toString();
 }
 
-class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
+class AbstractQueue<E extends @UnknownUnits Object> extends AbstractCollection<E extends @UnknownUnits Object> implements Queue<E extends @UnknownUnits Object> {
     protected AbstractQueue();
     boolean add(E arg0);
     E remove();
@@ -92,7 +92,7 @@ class AbstractQueue<E> extends AbstractCollection<E> implements Queue<E> {
     boolean addAll(Collection<? extends E> arg0);
 }
 
-class AbstractSequentialList<E> extends AbstractList<E> {
+class AbstractSequentialList<E extends @UnknownUnits Object> extends AbstractList<E extends @UnknownUnits Object> {
     protected AbstractSequentialList();
     E get(int arg0);
     E set(int arg0, E arg1);
@@ -103,14 +103,14 @@ class AbstractSequentialList<E> extends AbstractList<E> {
     ListIterator<E> listIterator(int arg0);
 }
 
-class AbstractSet<E> extends AbstractCollection<E> implements Set<E> {
+class AbstractSet<E extends @UnknownUnits Object> extends AbstractCollection<E extends @UnknownUnits Object> implements Set<E extends @UnknownUnits Object> {
     protected AbstractSet();
     boolean equals(Object arg0);
     int hashCode();
     boolean removeAll(Collection<?> arg0);
 }
 
-class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cloneable, Serializable {
+class ArrayDeque<E extends @UnknownUnits Object> extends AbstractCollection<E extends @UnknownUnits Object> implements Deque<E extends @UnknownUnits Object>, Cloneable, Serializable {
     ArrayDeque();
     ArrayDeque(int arg0);
     ArrayDeque(Collection<? extends E> arg0);
@@ -149,7 +149,7 @@ class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cloneable
     Spliterator<E> spliterator();
 }
 
-class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+class ArrayList<E extends @UnknownUnits Object> extends AbstractList<E extends @UnknownUnits Object> implements List<E extends @UnknownUnits Object>, RandomAccess, Cloneable, Serializable {
     ArrayList(int arg0);
     ArrayList();
     ArrayList(Collection<? extends E> arg0);
@@ -540,7 +540,7 @@ class Calendar$Builder {
     Calendar build();
 }
 
-interface Collection<E> extends Iterable<E> {
+interface Collection<E extends @UnknownUnits Object> extends Iterable<E extends @UnknownUnits Object> {
     int size();
     boolean isEmpty();
     boolean contains(Object arg0);
@@ -714,7 +714,7 @@ class Date implements Serializable, Cloneable, Comparable<Date> {
     Instant toInstant();
 }
 
-interface Deque<E> extends Queue<E> {
+interface Deque<E extends @UnknownUnits Object> extends Queue<E extends @UnknownUnits Object> {
     void addFirst(E arg0);
     void addLast(E arg0);
     boolean offerFirst(E arg0);
@@ -797,7 +797,7 @@ class EnumMap<K, V> extends AbstractMap<K,V> implements Serializable, Cloneable 
     EnumMap<K,V> clone();
 }
 
-class EnumSet<E> extends AbstractSet<E> implements Cloneable, Serializable {
+class EnumSet<E extends @UnknownUnits Object> extends AbstractSet<E extends @UnknownUnits Object> implements Cloneable, Serializable {
     static <E> EnumSet<E> noneOf(Class<E> arg0);
     static <E> EnumSet<E> allOf(Class<E> arg0);
     static <E> EnumSet<E> copyOf(EnumSet<E> arg0);
@@ -813,7 +813,7 @@ class EnumSet<E> extends AbstractSet<E> implements Cloneable, Serializable {
     EnumSet<E> clone();
 }
 
-interface Enumeration<E> {
+interface Enumeration<E extends @UnknownUnits Object> {
     boolean hasMoreElements();
     E nextElement();
 }
@@ -948,7 +948,7 @@ class HashMap<K, V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable, Ser
     Object clone();
 }
 
-class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, Serializable {
+class HashSet<E extends @UnknownUnits Object> extends AbstractSet<E extends @UnknownUnits Object> implements Set<E extends @UnknownUnits Object>, Cloneable, Serializable {
     HashSet();
     HashSet(Collection<? extends E> arg0);
     HashSet(int arg0, float arg1);
@@ -1088,7 +1088,7 @@ class InvalidPropertiesFormatException extends IOException {
     InvalidPropertiesFormatException(String arg0);
 }
 
-interface Iterator<E> {
+interface Iterator<E extends @UnknownUnits Object> {
     boolean hasNext();
     E next();
     void remove();
@@ -1113,7 +1113,7 @@ class LinkedHashMap<K, V> extends HashMap<K,V> implements Map<K,V> {
     void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
 }
 
-class LinkedHashSet<E> extends HashSet<E> implements Set<E>, Cloneable, Serializable {
+class LinkedHashSet<E extends @UnknownUnits Object> extends HashSet<E extends @UnknownUnits Object> implements Set<E extends @UnknownUnits Object>, Cloneable, Serializable {
     LinkedHashSet(int arg0, float arg1);
     LinkedHashSet(int arg0);
     LinkedHashSet();
@@ -1121,7 +1121,7 @@ class LinkedHashSet<E> extends HashSet<E> implements Set<E>, Cloneable, Serializ
     Spliterator<E> spliterator();
 }
 
-class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, Serializable {
+class LinkedList<E extends @UnknownUnits Object> extends AbstractSequentialList<E extends @UnknownUnits Object> implements List<E extends @UnknownUnits Object>, Deque<E extends @UnknownUnits Object>, Cloneable, Serializable {
     LinkedList();
     LinkedList(Collection<? extends E> arg0);
     E getFirst();
@@ -1166,7 +1166,7 @@ class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<
     Spliterator<E> spliterator();
 }
 
-interface List<E> extends Collection<E> {
+interface List<E extends @UnknownUnits Object> extends Collection<E extends @UnknownUnits Object> {
     int size();
     boolean isEmpty();
     boolean contains(Object arg0);
@@ -1197,7 +1197,7 @@ interface List<E> extends Collection<E> {
     Spliterator<E> spliterator();
 }
 
-interface ListIterator<E> extends Iterator<E> {
+interface ListIterator<E extends @UnknownUnits Object> extends Iterator<E extends @UnknownUnits Object> {
     boolean hasNext();
     E next();
     boolean hasPrevious();
@@ -1412,7 +1412,7 @@ interface NavigableMap<K, V> extends SortedMap<K,V> {
     SortedMap<K,V> tailMap(K arg0);
 }
 
-interface NavigableSet<E> extends SortedSet<E> {
+interface NavigableSet<E extends @UnknownUnits Object> extends SortedSet<E extends @UnknownUnits Object> {
     E lower(E arg0);
     E floor(E arg0);
     E ceiling(E arg0);
@@ -1549,7 +1549,7 @@ interface PrimitiveIterator$OfDouble extends PrimitiveIterator<Double,DoubleCons
     void forEachRemaining(Consumer<? super Double> arg0);
 }
 
-class PriorityQueue<E> extends AbstractQueue<E> implements Serializable {
+class PriorityQueue<E extends @UnknownUnits Object> extends AbstractQueue<E extends @UnknownUnits Object> implements Serializable {
     PriorityQueue();
     PriorityQueue(int arg0);
     PriorityQueue(Comparator<? super E> arg0);
@@ -1610,7 +1610,7 @@ class PropertyResourceBundle extends ResourceBundle {
     protected Set<String> handleKeySet();
 }
 
-interface Queue<E> extends Collection<E> {
+interface Queue<E extends @UnknownUnits Object> extends Collection<E extends @UnknownUnits Object> {
     boolean add(E arg0);
     boolean offer(E arg0);
     E remove();
@@ -1773,7 +1773,7 @@ class ServiceLoader<S> implements Iterable<S> {
     String toString();
 }
 
-interface Set<E> extends Collection<E> {
+interface Set<E extends @UnknownUnits Object> extends Collection<E extends @UnknownUnits Object> {
     int size();
     boolean isEmpty();
     boolean contains(Object arg0);
@@ -1835,7 +1835,7 @@ interface SortedMap<K, V> extends Map<K,V> {
     Set<Entry<K,V>> entrySet();
 }
 
-interface SortedSet<E> extends Set<E> {
+interface SortedSet<E extends @UnknownUnits Object> extends Set<E extends @UnknownUnits Object> {
     Comparator<? super E> comparator();
     SortedSet<E> subSet(E arg0, E arg1);
     SortedSet<E> headSet(E arg0);
@@ -1970,7 +1970,7 @@ class SplittableRandom {
     DoubleStream doubles(double arg0, double arg1);
 }
 
-class Stack<E> extends Vector<E> {
+class Stack<E extends @UnknownUnits Object> extends Vector<E extends @UnknownUnits Object> {
     Stack();
     E push(E arg0);
     E pop();
@@ -2104,7 +2104,7 @@ class TreeMap<K, V> extends AbstractMap<K,V> implements NavigableMap<K,V>, Clone
     void replaceAll(BiFunction<? super K,? super V,? extends V> arg0);
 }
 
-class TreeSet<E> extends AbstractSet<E> implements NavigableSet<E>, Cloneable, Serializable {
+class TreeSet<E extends @UnknownUnits Object> extends AbstractSet<E extends @UnknownUnits Object> implements NavigableSet<E extends @UnknownUnits Object>, Cloneable, Serializable {
     TreeSet();
     TreeSet(Comparator<? super E> arg0);
     TreeSet(Collection<? extends E> arg0);
@@ -2156,19 +2156,7 @@ class UUID implements Serializable, Comparable<UUID> {
     int compareTo(UUID arg0);
 }
 
-class UnknownFormatConversionException extends IllegalFormatException {
-    UnknownFormatConversionException(String arg0);
-    String getConversion();
-    String getMessage();
-}
-
-class UnknownFormatFlagsException extends IllegalFormatException {
-    UnknownFormatFlagsException(String arg0);
-    String getFlags();
-    String getMessage();
-}
-
-class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+class Vector<E extends @UnknownUnits Object> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
     protected Object[] elementData;
     protected int elementCount;
     protected int capacityIncrement;

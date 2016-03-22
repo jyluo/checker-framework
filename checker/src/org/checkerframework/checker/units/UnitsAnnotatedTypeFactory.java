@@ -798,6 +798,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             return null;
         }
 
+        // fall-through of PLUS case is intended
+        @SuppressWarnings("fallthrough")
         private Void processMathOperation(ExpressionTree node, Tree.Kind kind, AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
             // Remove Prefix.one
             if (UnitsRelationsTools.getPrefix(lht) == Prefix.one) {

@@ -1,11 +1,56 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 
+import java.lang.Iterable;
 import java.util.*;
 import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
-class CollectionsTests{
+class CollectionsTests {
+
+    // java.lang.Iterable tests
+    class MyCollection<E extends @UnknownUnits Object> implements Iterable<E> {
+        public Iterator<E> iterator() {
+            return new MyIterator<E>();
+        }
+    }
+
+    class MyIterator<T extends @UnknownUnits Object> implements Iterator<T> {
+        // dummy return values for testing purposes
+        public boolean hasNext() {
+            return true;
+        }
+
+        public T next() {
+            return null;
+        }
+
+        public void remove() {
+        }
+    }
+
+    void customIterableTest() {
+        MyCollection<@Length Integer> collection = new MyCollection<@Length Integer>();
+
+        for (@Length Integer len : collection) {
+            // do nothing
+        }
+
+        //:: error: (enhancedfor.type.incompatible)
+        for (@m Integer meter : collection) {
+
+        }
+    }
+
+    void iteratorTest() {
+        Vector<@Length Integer> v = new Vector<@Length Integer>();
+
+        Iterator<@Length Integer> itrLength = v.iterator();
+        Iterator<@UnknownUnits Integer> itrUU = v.iterator();
+        //:: error: (assignment.type.incompatible)
+        Iterator<@m Integer> itrMeter = v.iterator();
+    }
+
     void vectorTest(){
         @Length Integer e1 = new @Length Integer(5);
         @m Integer e2 = new @m Integer(20);
@@ -34,14 +79,11 @@ class CollectionsTests{
         i = v.elements().nextElement();
         // test toArray as well
 
-        // For cloning constructors, an explicit type argument needs to be
-        // supplied, otherwise it defaults to the declaration of the class
-        // ie it would default to new Vector<? extends @UnknownUnits Object>(v);
-        //:: error: (assignment.type.incompatible)
+        // Cloning constructors
         Vector<@Length Integer> v2 = new Vector(v);
         Vector<@Length Integer> v2ok = new Vector<@Length Integer>(v);
         // By default, type arguments have the unit of @Scalar
-        //:: error: (assignment.type.incompatible)
+        //:: error: (argument.type.incompatible)
         Vector<Integer> v2Scalar = new Vector(v);
         // The only reference that can accept the cloning constructor without
         // an explicity type argument is if it has @UnknownUnits as the unit of
@@ -91,9 +133,14 @@ class CollectionsTests{
 
     void setTest(){
         Set<@Length Integer> set = new HashSet<@Length Integer>();
-        
+
+        // TODO move to Collections test
+        Set<@m Integer> emptySet = Collections.EMPTY_SET;
+        emptySet = Collections.emptySet();
+
+
     }
-    
+
     void listTest(){
 
     }
@@ -113,6 +160,8 @@ class CollectionsTests{
         WeakHashMap<@UnknownUnits Integer, @UnknownUnits Double> whm2 = new WeakHashMap(whm);
 
         whm.put(key, val);
+        //:: error: (argument.type.incompatible)
+        whm.put(key2, val);
 
         @Area Double value = whm.get(key);
         //:: error: (assignment.type.incompatible)

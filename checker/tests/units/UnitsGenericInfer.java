@@ -51,3 +51,16 @@ class TypeVarsArrays<T> {
         array[index] = null;
     }
 }
+
+// Test 6:
+
+class Comp<T extends Object> {
+    static <T> Comp<T> method() {
+        return new Comp<T>();
+    }
+
+    <U> Comp<U> method2() {
+        return new Comp<U>();
+    }
+}
+

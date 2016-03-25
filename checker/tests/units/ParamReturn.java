@@ -80,13 +80,8 @@ public class ParamReturn {
         scalarParamScalarReturn(y);
 
         // scalar type converted to Unknown and passed into scalar
+        //:: error: (argument.type.incompatible)
         scalarParamScalarReturn( (@UnknownUnits int) 5 );
-
-        // scalar type converted to Unknown and passed into scalar
-        scalarParamScalarReturn( (@UnknownUnits int) (5 + 30 + 100) );
-
-        // 1 equation value is (scalar converted to Unknown), the result of the additions is Unknown and passed into scalar
-        scalarParamScalarReturn( (@UnknownUnits int) 5 + 30 + 100 );
     }
 
     void methodCalls() {
@@ -138,5 +133,56 @@ public class ParamReturn {
     void objectParameterTest(@m Object x, @s Object y) {
         //:: error: (operands.unit.mismatch)
         if(x == y);
+    }
+
+    void toDegree(@radians double x) {}
+
+    void inTop(@UnknownUnits double x) {}
+
+    void inScalar(@UnknownUnits double x) {}
+
+    void inBottom(@UnitsBottom double x) {}
+
+    void scalarLiteralMethodArgumentTest() {
+        // passing of scalar literals into methods that expect a unit is allowed
+        // as a convenience, since those literals cannot possibly take on any
+        // other unit
+
+        toDegree(5);
+        toDegree(5l);
+        toDegree(5.0f);
+        toDegree(5.0d);
+        toDegree(5 + 20d / 30f * 80l % (3 + 15));
+
+        // passing of scalar variables into methods that expect a unit will
+        // result in errors
+
+        int i = 5;
+        long l = 5l;
+        float f = 5.0f;
+        double d = 5.0d;
+
+        //:: error: (argument.type.incompatible)
+        toDegree(i);
+        //:: error: (argument.type.incompatible)
+        toDegree(l);
+        //:: error: (argument.type.incompatible)
+        toDegree(f);
+        //:: error: (argument.type.incompatible)
+        toDegree(d);
+
+        // passing literals or variables into a method that expects either
+        // UnknownUnits or Scalar will not cause errors
+        inTop(5);
+        inTop(i);
+        inScalar(5);
+        inScalar(i);
+
+        // passing literals into a method that can only accept bottom will still
+        // result in error
+        //:: error: (argument.type.incompatible)
+        inBottom(5);
+        //:: error: (argument.type.incompatible)
+        inBottom(i);
     }
 }

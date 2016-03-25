@@ -96,7 +96,13 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     }
 
     // Allow the passing of UnknownUnits number literals into Scalar method
-    // parameters. all parameters are scalar by default.
+    // parameters.
+
+    // Local variables are by default UnknownUnits. (is this still useful or needed?)
+
+    // allow the passing of scalar number literals into method parameters that require a unit
+
+    // all parameters are scalar by default.
     // Developer Notes: keep in sync with super implementation.
     @Override
     protected void checkArguments(List<? extends AnnotatedTypeMirror> requiredArgs, List<? extends ExpressionTree> passedArgs) {
@@ -113,14 +119,18 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 ExpressionTree passedExpression = passedArgs.get(i);
                 AnnotatedTypeMirror passedArg = atypeFactory.getAnnotatedType(passedExpression);
 
-                if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar)
-                        && UnitsRelationsTools.hasSpecificUnit(passedArg, TOP)
-                        && isPrimitiveNumberLiteralExpression(passedExpression)) {
-                    // if the method parameter is Scalar, and the passed in
-                    // argument is an UnknownUnits mathematical expression that
-                    // consists of only number literals pass the check
+                if (UnitsRelationsTools.hasSpecificUnit(passedArg, scalar) &&
+                        isPrimitiveNumberLiteralExpression(passedExpression) &&
+                        !UnitsRelationsTools.hasSpecificUnit(requiredArg, BOTTOM)) {
+                    // if the method argument is a scalar number literal, or a
+                    // numerical expression consisting only of scalar literals,
+                    // and the method parameter is has any unit other than
+                    // UnitsBottom, pass, as those literals are tied to
+                    // those method calls and can be safely assumed to take on
+                    // the unit of the parameter. Scalar variables passed to
+                    // such methods still result in errors.
 
-                    //} else if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && isSameUnderlyingType(requiredArg.getUnderlyingType(), objectType)) {
+                    // } else if (UnitsRelationsTools.hasSpecificUnit(requiredArg, scalar) && isSameUnderlyingType(requiredArg.getUnderlyingType(), objectType)) {
                     //    // if the method parameter is Scalar Object, pass regardless of what the argument is as Object accepts anything
                 } else {
                     // Developer note: keep in sync with super implementation
@@ -311,24 +321,24 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 // Developer note: keep in sync with super implementation
                 // TODO: remove once full solution is in place
 
-//                // If the parameter's upperBound is Scalar, and the type
-//                // argument is a wildcard with an upper bound of any unit except
-//                // bottom, allow and pass, otherwise perform commonAssignmentCheck
+                //                // If the parameter's upperBound is Scalar, and the type
+                //                // argument is a wildcard with an upper bound of any unit except
+                //                // bottom, allow and pass, otherwise perform commonAssignmentCheck
                 // found ? extends anything not bottom
                 // required scalar
                 if ( ! (typeArg.getKind() == TypeKind.WILDCARD
                         && !UnitsRelationsTools.hasSpecificUnit(typeArg, BOTTOM)
                         && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar))) {
-//
-//                  System.out.println("  arg: " + typeArg + " kind " + typeArg.getKind());
-//                  System.out.println("param: " + paramUpperBound);
+                    //
+                    //                  System.out.println("  arg: " + typeArg + " kind " + typeArg.getKind());
+                    //                  System.out.println("param: " + paramUpperBound);
 
 
-                // if the parameter is Scalar Object, and the type arg is a type
-                // variable with the extends bound of UnknownUnits, pass.
-//                if( ! (typeArg.getKind() == TypeKind.TYPEVAR
-//                        && UnitsRelationsTools.hasSpecificUnit(typeArg, TOP)
-//                        && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar))) {
+                    // if the parameter is Scalar Object, and the type arg is a type
+                    // variable with the extends bound of UnknownUnits, pass.
+                    //                if( ! (typeArg.getKind() == TypeKind.TYPEVAR
+                    //                        && UnitsRelationsTools.hasSpecificUnit(typeArg, TOP)
+                    //                        && UnitsRelationsTools.hasSpecificUnit(paramUpperBound, scalar))) {
 
                     commonAssignmentCheck(paramUpperBound, typeArg,
                             typeargTrees.get(typeargs.indexOf(typeArg)),
@@ -341,11 +351,11 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 if (typeargTrees == null || typeargTrees.isEmpty()) {
                     // The type arguments were inferred and we mark the whole method.
                     checker.report(Result.failure("type.argument.type.incompatible",
-                                    typeArg, bounds),
+                            typeArg, bounds),
                             toptree);
                 } else {
                     checker.report(Result.failure("type.argument.type.incompatible",
-                                    typeArg, bounds),
+                            typeArg, bounds),
                             typeargTrees.get(typeargs.indexOf(typeArg)));
                 }
             }
@@ -356,23 +366,23 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     // Type Validator
     // =========================================================
 
-//    @Override
-//    protected TypeValidator createTypeValidator() {
-//        // TODO Auto-generated method stub
-//        return super.createTypeValidator();
-//    }
-//
-//    protected class UnitsTypeValidator extends BaseTypeValidator {
-//
-//        public UnitsTypeValidator(BaseTypeChecker checker, BaseTypeVisitor<?> visitor, AnnotatedTypeFactory atypeFactory) {
-//            super(checker, visitor, atypeFactory);
-//        }
-//
-//        @Override
-//        public Void visitWildcard(AnnotatedWildcardType type, Tree tree) {
-//            // TODO Auto-generated method stub
-//            return super.visitWildcard(type, tree);
-//        }
-//
-//    }
+    //    @Override
+    //    protected TypeValidator createTypeValidator() {
+    //        // TODO Auto-generated method stub
+    //        return super.createTypeValidator();
+    //    }
+    //
+    //    protected class UnitsTypeValidator extends BaseTypeValidator {
+    //
+    //        public UnitsTypeValidator(BaseTypeChecker checker, BaseTypeVisitor<?> visitor, AnnotatedTypeFactory atypeFactory) {
+    //            super(checker, visitor, atypeFactory);
+    //        }
+    //
+    //        @Override
+    //        public Void visitWildcard(AnnotatedWildcardType type, Tree tree) {
+    //            // TODO Auto-generated method stub
+    //            return super.visitWildcard(type, tree);
+    //        }
+    //
+    //    }
 }

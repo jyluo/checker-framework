@@ -1,8 +1,9 @@
 package tests;
 
+import org.checkerframework.framework.test.CheckerFrameworkTest;
+
 import java.io.File;
 
-import org.checkerframework.framework.test.CheckerFrameworkTest;
 import org.junit.runners.Parameterized.Parameters;
 
 public class UnitsTest extends CheckerFrameworkTest {

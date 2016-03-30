@@ -1,5 +1,7 @@
-import org.checkerframework.checker.units.*;
 import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
+import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.framework.qual.PolyAll;
 
 public class PolyUnitTest {
@@ -33,4 +35,5 @@ public class PolyUnitTest {
         //:: error: (assignment.type.incompatible)
         @s int sec3 = triplePolyAll(m1);
     }
+
 }

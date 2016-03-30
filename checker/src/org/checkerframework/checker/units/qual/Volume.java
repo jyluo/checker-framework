@@ -5,12 +5,12 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import java.lang.annotation.*;
 
 /**
- * Area of square millimeter.
+ * Units of volume.
  *
  * @checker_framework.manual #units-checker Units Checker
  */
+@SubtypeOf(UnknownUnits.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(Area.class)
-public @interface mm2 {}
+public @interface Volume {}

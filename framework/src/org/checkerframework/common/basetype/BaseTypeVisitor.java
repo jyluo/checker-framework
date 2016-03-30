@@ -3122,8 +3122,34 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
     public boolean validateType(Tree tree, AnnotatedTypeMirror type) {
         // basic consistency checks
         if (!AnnotatedTypes.isValidType(atypeFactory.getQualifierHierarchy(), type)) {
-            checker.report(Result.failure("type.invalid", type.getAnnotations(),
-                    type.toString()), tree);
+            if (TypesUtils.isPrimitive(type.getUnderlyingType())) {
+                checker.report(Result.failure("type.invalid", type.getAnnotations(),
+                        type.deepCopy(false).toString()), tree);
+
+            } else if(type.getKind() == TypeKind.TYPEVAR) {
+                AnnotatedTypeVariable typeVariable = (AnnotatedTypeVariable) type;
+                checker.report(Result.failure("type.invalid", typeVariable.getAnnotations(),
+                        typeVariable.toString()), tree);
+
+            } else if(type.getKind() == TypeKind.DECLARED) {
+                AnnotatedDeclaredType declaredType = (AnnotatedDeclaredType) type;
+                checker.report(Result.failure("type.invalid", type.getAnnotations(),
+                        declaredType.getUnderlyingType().asElement().getSimpleName().toString()), tree);
+                //atypeFactory.fromElement(declaredType.getUnderlyingType().asElement()).toString(true)
+
+            } else if(type.getKind() == TypeKind.ARRAY) {
+                AnnotatedArrayType arrayType = (AnnotatedArrayType) type;
+                // create a copy with all annotations but without component types
+                AnnotatedArrayType arrayTypeCopy = arrayType.deepCopy();
+                arrayTypeCopy.setComponentType(null);
+                checker.report(Result.failure("type.invalid", arrayType.getComponentType().getAnnotations(),
+                        arrayTypeCopy.toString()), tree);
+
+            } else {
+                checker.report(Result.failure("type.invalid", type.getAnnotations(),
+                        type.toString()), tree);
+
+            }
             return false;
         }
 

@@ -299,11 +299,11 @@ public class DefaultAnnotatedTypeFormatter implements AnnotatedTypeFormatter {
         @Override
         public String visitTypeVariable(AnnotatedTypeVariable type, Set<AnnotatedTypeMirror> visiting) {
             StringBuilder sb = new StringBuilder();
-            sb.append(type.actualType);
+            sb.append(type.getUnderlyingType().asElement().getSimpleName().toString());
 
             if (!visiting.contains(type)) {
                 if (type.isDeclaration() && currentPrintInvisibleSetting) {
-                    sb.append("/*DECL*/ ");
+                    sb.append(" /*DECL*/");
                 }
 
                 try {

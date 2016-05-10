@@ -17,7 +17,7 @@ import org.checkerframework.framework.qual.SubtypeOf;
  * <p>
  *
  * Internal form is the same as the binary name, but with periods
- * (<tt>.</tt>) replaced by forward slashes (<tt>/</tt>).
+ * (<code>.</code>) replaced by forward slashes (<code>/</code>).
  * <p>
  *
  * Programmers more often use the binary name, leaving the internal form as
@@ -26,7 +26,7 @@ import org.checkerframework.framework.qual.SubtypeOf;
  * @see BinaryName
  * @checker_framework.manual #signature-checker Signature Checker
  */
-@SubtypeOf(UnannotatedString.class)
+@SubtypeOf(SignatureUnknown.class)
 @ImplicitFor(stringPatterns="^[A-Za-z_][A-Za-z_0-9]*(/[A-Za-z_][A-Za-z_0-9]*)*(\\$[A-Za-z_0-9]+)*(\\[\\])*$")
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 public @interface InternalForm {}

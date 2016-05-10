@@ -142,14 +142,14 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
     }
 
-    // loads and processes a single external units qualifier
+    /** Loads and processes a single external units qualifier. */
     private void loadExternalUnit(String annoName) {
         Class<? extends Annotation> annoClass = loader.loadExternalAnnotationClass(annoName);
 
         addUnitToExternalQualMap(annoClass);
     }
 
-    // loads and processes the units qualifiers from a single external directory
+    /** Loads and processes the units qualifiers from a single external directory. */
     private void loadExternalDirectory(String directoryName) {
         Set<Class<? extends Annotation>> annoClassSet = loader.loadExternalAnnotationClassesFromDirectory(directoryName);
 
@@ -158,8 +158,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
     }
 
-    // adds the annotation class to the external qualifier map if it is not an
-    // alias annotation
+    /** adds the annotation class to the external qualifier map if it is not an
+    alias annotation */
     private void addUnitToExternalQualMap(final Class<? extends Annotation> annoClass) {
         AnnotationMirror mirror = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, annoClass);
 

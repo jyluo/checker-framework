@@ -13,11 +13,9 @@ Copyright (c) 2015 University of Washington. All rights reserved.
 from release_vars  import *
 from release_utils import *
 
-debug = 0
-antdebug = ""
-# For debugging
-debug = 1
-ant_debug = "-debug"
+# Turned on by the --debug command-line option.
+debug = False
+ant_debug = ""
 
 
 def print_usage():
@@ -25,16 +23,15 @@ def print_usage():
     print "Usage:    python release_build.py [projects] [options]"
     print_projects(True, 1, 4)
     print "\n  --auto  accepts or chooses the default for all prompts"
+    print "\n  --debug  turns on debugging mode which produces verbose output"
     print "\n  --review-manual  review the documentation changes only; don't perform a full build"
 
-def delete_and_clone_repos(auto):
+def clone_or_update_repos(auto):
     """If the relevant repos do not exist, clone them, otherwise, update them."""
-    message = """Before building the release, we delete any old release repositories and then
-clone them again.  However, if you have had to run the script multiple times
-and no files have changed, you may skip this test.
-WARNING:IF THIS IS YOUR FIRST RUN OF THE RELEASE ON RELEASE DAY, DO NOT SKIP
-THIS STEP.
-The following repositories will be deleted then re-cloned from their origins:
+    message = """Before building the release, we update the release repositories (or clone them if they are not present).
+However, if you have had to run the script multiple times and no files have changed, you may skip this step.
+WARNING: IF THIS IS YOUR FIRST RUN OF THE RELEASE ON RELEASE DAY, DO NOT SKIP THIS STEP.
+The following repositories will be updated or cloned from their origins:
 """
     for live_to_interm in LIVE_TO_INTERM_REPOS:
         message += live_to_interm[1] + "\n"
@@ -45,21 +42,21 @@ The following repositories will be deleted then re-cloned from their origins:
     message += PLUME_LIB + "\n"
     message += PLUME_BIB + "\n\n"
 
-    message += "Delete and re-clone?"
+    message += "Clone/update repositories?"
 
     if not auto:
-        if not prompt_yes_no(message):
+        if not prompt_yes_no(message, True):
             print "WARNING: Continuing without refreshing repositories.\n"
             return
 
     for live_to_interm in LIVE_TO_INTERM_REPOS:
-        delete_and_clone(live_to_interm[0], live_to_interm[1], True)
+        clone_or_update(live_to_interm[0], live_to_interm[1], True)
 
     for interm_to_build in INTERM_TO_BUILD_REPOS:
-        delete_and_clone(interm_to_build[0], interm_to_build[1], False)
+        clone_or_update(interm_to_build[0], interm_to_build[1], False)
 
-    delete_and_clone(LIVE_PLUME_LIB, PLUME_LIB, False)
-    delete_and_clone(LIVE_PLUME_BIB, PLUME_BIB, False)
+    clone_or_update(LIVE_PLUME_LIB, PLUME_LIB, False)
+    clone_or_update(LIVE_PLUME_BIB, PLUME_BIB, False)
 
 def copy_cf_logo(cf_release_dir):
     dev_releases_png = os.path.join(cf_release_dir, "CFLogo.png")
@@ -92,18 +89,18 @@ def get_new_version(project_name, curr_version, auto):
 
     return (curr_version, new_version)
 
-def create_dev_website_release_version_dir(project_name, version, auto):
+def create_dev_website_release_version_dir(project_name, version):
     interm_dir = os.path.join(FILE_PATH_TO_DEV_SITE, project_name, "releases", version)
-    prompt_or_auto_delete(interm_dir, auto)
+    delete_path_if_exists(interm_dir)
 
     execute("mkdir -p %s" % interm_dir, True, False)
     return interm_dir
 
-def create_dirs_for_dev_website_release_versions(jsr308_version, afu_version, auto):
+def create_dirs_for_dev_website_release_versions(jsr308_version, afu_version):
     # these directories correspond to the /cse/www2/types/dev/<project_name>/releases/<version> dirs
-    jsr308_interm_dir = create_dev_website_release_version_dir("jsr308", jsr308_version, auto)
-    afu_interm_dir = create_dev_website_release_version_dir("annotation-file-utilities", afu_version, auto)
-    checker_framework_interm_dir = create_dev_website_release_version_dir("checker-framework", jsr308_version, auto)
+    jsr308_interm_dir = create_dev_website_release_version_dir("jsr308", jsr308_version)
+    afu_interm_dir = create_dev_website_release_version_dir("annotation-file-utilities", afu_version)
+    checker_framework_interm_dir = create_dev_website_release_version_dir("checker-framework", jsr308_version)
 
     return (jsr308_interm_dir, afu_interm_dir, checker_framework_interm_dir)
 
@@ -270,8 +267,8 @@ def commit_to_interm_projects(jsr308_version, afu_version, projects_to_release):
 
 def main(argv):
     # MANUAL Indicates a manual step
-    # SEMIAUTO Indicates a mostly automated step with possible prompts. Most of these steps become fully-automated when --auto is used.
-    # AUTO Indicates the step is fully-automated.
+    # SEMIAUTO Indicates a mostly automated step with possible prompts. Most of these steps become fully automated when --auto is used.
+    # AUTO Indicates the step is fully automated.
 
     delete_if_exists(RELEASE_BUILD_COMPLETED_FLAG_FILE)
 
@@ -282,9 +279,15 @@ def main(argv):
     # Check for a --auto
     # If --auto then no prompt and just build a full release
     # Otherwise provide all prompts
+    auto = read_command_line_option(argv, "--auto")
+    global debug
+    global ant_debug
+    debug = read_command_line_option(argv, "--debug")
+    if debug:
+        ant_debug = "-debug"
 
-    auto = read_auto(argv)
-    review_documentation = read_review_manual(argv) # Indicates whether to review documentation changes only and not perform a build.
+    # Indicates whether to review documentation changes only and not perform a build.
+    review_documentation = read_command_line_option(argv, "--review-manual")
     add_project_dependencies(projects_to_release)
 
     afu_date = get_afu_date(projects_to_release[AFU_OPT])
@@ -308,12 +311,13 @@ def main(argv):
     # Every time we run release_build, changes are committed to the intermediate repository from build but NOT to
     # the release repositories. If we are running the build script multiple times without actually committing the
     # release then these changes need to be cleaned before we run the release_build script again.
-    # Since the move to Git, cleaning can be error prone, so we have moved to deleting the repos entirely
-    # and cloning.
+    # The "Clone/update repositories" step updates the repositories with respect to the live repositories on
+    # GitHub/Bitbucket, but it is the "Verify repositories" step that ensures that they are clean,
+    # i.e. indistinguishable from a freshly cloned repository.
 
     # check we are cloning LIVE -> INTERM, INTERM -> RELEASE
-    print_step("\n1a: Clone repositories.") # SEMIAUTO
-    delete_and_clone_repos(auto)
+    print_step("\n1a: Clone/update repositories.") # SEMIAUTO
+    clone_or_update_repos(auto)
 
     # This step ensures the previous step worked. It checks to see if we have any modified files, untracked files,
     # or outgoing changesets. If so, it fails.
@@ -350,8 +354,7 @@ def main(argv):
               "in the release scripts that they would become unusable.\n")
         prompt_until_yes()
 
-    anno_html = os.path.join(ANNO_FILE_UTILITIES, "annotation-file-utilities.html")
-    old_afu_version = get_afu_version_from_html(anno_html)
+    old_afu_version = get_afu_version_from_html(AFU_MANUAL)
     (old_afu_version, afu_version) = get_new_version("Annotation File Utilities", old_afu_version, auto)
 
     if old_afu_version == afu_version:
@@ -419,9 +422,9 @@ def main(argv):
 
         return
 
-    print_step("Build Step 4: Copy entire live site to dev site (~22 minutes).") # AUTO
+    print_step("Build Step 4: Copy entire live site to dev site (~22 minutes).") # SEMIAUTO
 
-    if auto or prompt_yes_no("Proceed with copy of live site to dev site?"):
+    if auto or prompt_yes_no("Proceed with copy of live site to dev site?", True):
         # ************************************************************************************************
         # WARNING: BE EXTREMELY CAREFUL WHEN MODIFYING THIS COMMAND.  The --delete option is destructive
         # and its work cannot be undone.  If, for example, this command were modified to accidentally make
@@ -429,9 +432,9 @@ def main(argv):
         execute("rsync --omit-dir-times --recursive --links --delete --quiet --exclude=dev --exclude=sparta/release/versions /cse/www2/types/ /cse/www2/types/dev")
         # ************************************************************************************************
 
-    print_step("Build Step 5: Create directories for the current release on the dev site.") # SEMIAUTO
+    print_step("Build Step 5: Create directories for the current release on the dev site.") # AUTO
 
-    version_dirs = create_dirs_for_dev_website_release_versions(jsr308_version, afu_version, auto)
+    version_dirs = create_dirs_for_dev_website_release_versions(jsr308_version, afu_version)
     jsr308_interm_dir = version_dirs[0]
     afu_interm_dir = version_dirs[1]
     checker_framework_interm_dir = version_dirs[2]
@@ -457,7 +460,7 @@ def main(argv):
         build_checker_framework_release(jsr308_version, afu_version, afu_date, checker_framework_interm_dir)
 
 
-    print_step("Build Step 7: Overwrite .htaccess.") # SEMIAUTO
+    print_step("Build Step 7: Overwrite .htaccess.") # AUTO
 
     # Not "cp -p" because that does not work across filesystems whereas rsync does
     execute("rsync --times %s %s" % (RELEASE_HTACCESS, DEV_HTACCESS))

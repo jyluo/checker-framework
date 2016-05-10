@@ -61,7 +61,7 @@
 </div>
 
 <div class="container">
-<div class="row"  style="width: 1170px;">
+<div class="row" style="width: 100%">
 <div class="col-md-9 col-md-offset" id="content">
 <p>
   This document explains how to make a release of the Checker Framework, the Type Annotations Compiler,
@@ -88,13 +88,15 @@ the steps a release person should follow over the course of an entire developmen
   and <code>release_push</code> scripts. Please read those comments if you have never done so before.
 </p>
 
+<p>
+Answering 'no' to a prompt does not exit the script unless otherwise indicated.
+</p>
 
-<b>Note that some prompts will cause scripts to exit if you say 'no'.</b> This will require you to re-run
-the script from the beginning, which may take a long time.  It is better to say 'yes' to
-the script prompts and follow the indicated steps even if they are redundant/you have done them
-already. Also, be sure to carefully read all instructions on the command-line before typing yes.
+<p>
+Be sure to carefully read all instructions on the command-line before answering 'yes' to a prompt.
 This is because the scripts do not ask you to say 'yes' after each step, so you may
 miss a step if you only read the paragraph asking you to say 'yes'.
+</p>
 
 <ol>
   <li>If you have never made a release before, follow the instructions in the
@@ -113,13 +115,16 @@ miss a step if you only read the paragraph asking you to say 'yes'.
   </li>
   <li><strong>Review the changelogs and documentation</strong><br/>
       Ensure that the changelogs and documentation for the Checker Framework, Type Annotations Compiler and
-      AFU are complete by running release_build in a mode that reviews the documentation only:
+      AFU are complete.  First follow the instructions at <a href="#content_guidelines">content guidelines</a>.  Then,
+      run release_build in a mode that reviews the documentation only:
+      <code>cd /scratch/$USER/jsr308-release/checker-framework/release<br/></code>
       <code>python release_build.py all --review-manual</code><br/><br/>
       <strong>Note:</strong> This step can be performed in advance of the release day. It is recommended
       that this be done the work morning after Feature Freeze.
   </li>
   <li><strong>Run release_build</strong><br/>
       <code>python release_build.py all --auto</code><br/><br/>
+      For verbose debugging output, use the <code>--debug</code> option.<br/><br/>
       <strong>Note:</strong> The &quot;all&quot; argument specifies that all projects should be built.
       There has been some work done in order to select only specific projects (JSR 308 compiler, AFU, Checker Framework)
       to be built but more work still needs to be done.  Just pass &quot;all&quot; for now.
@@ -285,9 +290,9 @@ miss a step if you only read the paragraph asking you to say 'yes'.
   <section id="file_layout">
     <h3>File Layout</h3>
     <table class="table table-bordered file_layout_table">
-      <tr><th colspan="4">Release Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
+      <tr><th colspan="2">Release Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
       <tr>
-        <td colspan="3" class="top_file">/scratch/$USER/jsr308-release</td>
+        <td colspan="2" class="top_file">/scratch/$USER/jsr308-release</td>
         <td>Contains repositories and scripts to perform a release</td>
       </tr>
       <tr>
@@ -326,10 +331,10 @@ miss a step if you only read the paragraph asking you to say 'yes'.
 
     </table>
     <table class="table table-bordered file_layout_table">
-      <tr><th colspan="4">Jenkins Tools Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
+      <tr><th colspan="2">Jenkins Tools Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
 
       <tr>
-        <td colspan="3" class="top_file">/scratch/secs-jenkins</td>
+        <td colspan="2" class="top_file">/scratch/secs-jenkins</td>
         <td>Contains files used to run Jenkins including versions of Java.</td>
       </tr>
       <tr>
@@ -345,10 +350,10 @@ miss a step if you only read the paragraph asking you to say 'yes'.
 
     </table>
     <table class="table table-bordered file_layout_table">
-      <tr><th colspan="4">Live Website Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
+      <tr><th colspan="2">Live Website Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
 
       <tr>
-        <td colspan="3" class="top_file">/cse/www2/types</td>
+        <td colspan="2" class="top_file">/cse/www2/types</td>
         <td>The file system location of the website: <br/><a href="http://types.cs.washington.edu/">http://types.cs.washington.edu/</a>.</td>
       </tr>
       <tr>
@@ -369,10 +374,10 @@ miss a step if you only read the paragraph asking you to say 'yes'.
 
     </table>
     <table class="table table-bordered file_layout_table">
-      <tr><th colspan="4">Staging (Development) Website Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
+      <tr><th colspan="2">Staging (Development) Website Directory <span class="glyphicon glyphicon-folder-open" style="float:right;"></span></th></tr>
 
       <tr>
-        <td colspan="3" class="top_file">/cse/www2/types/dev</td>
+        <td colspan="2" class="top_file">/cse/www2/types/dev</td>
         <td>The file system location of the development staging website: <br/><a href="http://types.cs.washington.edu/">http://types.cs.washington.edu/dev</a>.</td>
       </tr>
       <tr>
@@ -477,9 +482,9 @@ miss a step if you only read the paragraph asking you to say 'yes'.
 	  <li>
 	    Examine the version control logs since the last release tag to ensure they are reflected in the changelogs when appropriate.
         This can be done from the command-line with:<br/>
-	    <code>cd $CHECKERFRAMEWORK && git log --name-status checker-framework-1.9.10..</code><br/>
-	    <code>cd $CHECKERFRAMEWORK/../annotation-tools && git log --name-status 3.6.24..</code><br/>
-	    <code>cd $CHECKERFRAMEWORK/../jsr308-langtools && hg log -r jsr308-1.9.10:</code><br/>
+	    <code>cd $CHECKERFRAMEWORK && git log --name-status `git describe --abbrev=0 --tags`..</code><br/>
+	    <code>cd $CHECKERFRAMEWORK/../annotation-tools && git log --name-status `git describe --abbrev=0 --tags`..</code><br/>
+	    <code>cd $CHECKERFRAMEWORK/../jsr308-langtools && hg log -r `hg log -r "." --template "{latesttag}\n"`:</code><br/>
         or by opening the following commit queries for <a href="https://bitbucket.org/typetools/jsr308-langtools/commits/all">jsr308-langtools</a>,
         the <a href="https://github.com/typetools/annotation-tools/commits/master">Annotation File Utilities</a> and the
             <a href="https://github.com/typetools/checker-framework/commits/master">Checker Framework</a>.
@@ -541,7 +546,7 @@ miss a step if you only read the paragraph asking you to say 'yes'.
         the Sonatypes OSS Repository Usage Guidelines.
       </a>
     </li>
-    <li><strong>Drop the Maven Artifacts from our Maven repo *** currently unneeded ***</strong>
+    <!-- <li><strong>Drop the Maven Artifacts from our Maven repo *** currently unneeded ***</strong>
       <p class="alert alert-warning"><strong>Note:</strong> The procedure below is NOT recommended
         by the Maven developers guide.  However, if done carefully and quickly no harm will likely
         come.  If people end up with out-of-date artifacts, recommend to them that they use the -U option
@@ -560,7 +565,7 @@ miss a step if you only read the paragraph asking you to say 'yes'.
       </ul>
       Furthermore, I would grep the files in the parents of these directories and ensure the version number
       does not appear in any metadata.  If so, fix up the metadata.
-    </li>
+    </li> -->
   </ul>
 
   <p class="alert alert-danger"><strong>Note:</strong> You may find yourself copying release directories for some
@@ -702,6 +707,7 @@ miss a step if you only read the paragraph asking you to say 'yes'.
     <ul class="nav bs-docs-sidenav" id="right-nav">
       <li class="toc_header"><a href="#"><strong>Table Of Contents</strong></a></li>
       <li><a href="#step_by_step">Step by Step</a></li>
+      <li><a href="#continuous-integration">Continuous integration tests</a></li>
       <li><a href="#pre_release_checklist">Pre-release checklist</a></li>
       <li><a href="#release_process_overview">Release Process Overview</a>
         <ul class="nav">
@@ -719,10 +725,9 @@ miss a step if you only read the paragraph asking you to say 'yes'.
       <li><a href="#backing_out">Backing Out an Uncommitted Release</a></li>
       <li><a href="#future_improvements">Future Improvements</a>
         <ul class="nav">
-          <li><a href="#fi_bug_fixes">Bug Fixes</a></li>
           <li><a href="#fi_jdk-api_fixup">Open JDK/JSR308 Javadoc</a></li>
-          <li><a href="#fi_buffalo_integeration">Buffalo Integration</a></li>
           <li><a href="#fi_more_sanity_checks">More Sanity Checks</a></li>
+          <li><a href="#fi_buffalo_integeration">Buffalo Integration</a></li>
           <li><a href="#fi_auto-copy_release_scripts">Auto-copy Release Scripts</a></li>
           <li><a href="#fi_option_parsing">Option Parsing</a></li>
           <li><a href="#fi_option_projects">Optional Projects</a></li>

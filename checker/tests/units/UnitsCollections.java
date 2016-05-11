@@ -55,7 +55,7 @@ class CollectionsTests {
         Iterator<@m Integer> itrMeter = v.iterator();
     }
 
-    void hashSetTest(){
+    void hashSetTest() {
         @Length Integer x = new @Length Integer(5);
         HashSet<@Length Integer> set = new HashSet<@Length Integer>();
 
@@ -84,7 +84,7 @@ class CollectionsTests {
         set.toString();
     }
 
-    void linkedListTest(){
+    void linkedListTest() {
         @Length Integer x = new @Length Integer(5);
         LinkedList<@Length Integer> list = new LinkedList<@Length Integer>();
 
@@ -221,7 +221,7 @@ class CollectionsTests {
         ad.hashCode();
     }
 
-    void weakHashMapTest(){
+    void weakHashMapTest() {
         @m Integer key = new @m Integer(5);
         Integer key2 = new Integer(39);
         @m2 Double val = new @m2 Double(23.5);
@@ -265,7 +265,7 @@ class CollectionsTests {
         Set<Entry<Integer, Double>> entrySetBad = whm.entrySet();
     }
 
-    void vectorTest(){
+    void vectorTest() {
         @Length Integer e1 = new @Length Integer(5);
         @m Integer e2 = new @m Integer(20);
         @s Integer e3 = new @s Integer(30);

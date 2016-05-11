@@ -19,7 +19,7 @@ public class Java7StrictMath {
     @m double piM = StrictMath.PI;
     @m double piM2 = StrictMath.PI * UnitsTools.m;
 
-    void absoluteValueTest(){
+    void absoluteValueTest() {
         @m double mD = 20.0d * UnitsTools.m;
         @g float gF = 30.0f * UnitsTools.g;
         @C int cI = 20 * UnitsTools.C;

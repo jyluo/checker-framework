@@ -639,7 +639,7 @@ public class UnitsRelationsTools {
 
                 // loop through those classes, check to see that it's name
                 // matches the TimePoint class's canonical name
-                for(Attribute.Class supertype : supertypes) {
+                for (Attribute.Class supertype : supertypes) {
                     String subtypeAnnoValue = supertype.getValue().asElement().getQualifiedName().toString().intern();
                     if (subtypeAnnoValue == timeInstantClassName) {
                         isDirectSubtypeOfTimePoint = true;

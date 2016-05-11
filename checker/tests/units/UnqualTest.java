@@ -25,7 +25,7 @@ public class UnqualTest {
     //:: error: (assignment.type.incompatible)
     @kg int alsokg2 = notKg;
 
-    void m(){
+    void m() {
         // Local Variables are by default @UnknownUnits, inference should transfer units for UnknownUnits
 
         // primitive number literals are by default @Scalar

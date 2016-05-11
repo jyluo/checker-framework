@@ -8,45 +8,45 @@ public class Comparison {
     @s int second = 30 * UnitsTools.s;
 
     void basicComparison() {
-        if(meter == meter);
-        if(meter != meter);
-        if(meter > meter);
-        if(meter >= meter);
-        if(meter < meter);
-        if(meter <= meter);
+        if (meter == meter);
+        if (meter != meter);
+        if (meter > meter);
+        if (meter >= meter);
+        if (meter < meter);
+        if (meter <= meter);
 
         // comparisons can only be performed on operands that have matching units
         //:: error: (operands.unit.mismatch)
-        if(meter == second);
+        if (meter == second);
         //:: error: (operands.unit.mismatch)
-        if(meter != second);
+        if (meter != second);
         //:: error: (operands.unit.mismatch)
-        if(meter > second);
+        if (meter > second);
         //:: error: (operands.unit.mismatch)
-        if(meter >= second);
+        if (meter >= second);
         //:: error: (operands.unit.mismatch)
-        if(meter < second);
+        if (meter < second);
         //:: error: (operands.unit.mismatch)
-        if(meter <= second);
+        if (meter <= second);
     }
 
     void undeclaredComparison(int x, int y) {
         // comparison of two Scalar variables
-        if(x == y);
-        if(x != y);
-        if(x > y);
-        if(x >= y);
-        if(x < y);
-        if(x <= y);
+        if (x == y);
+        if (x != y);
+        if (x > y);
+        if (x >= y);
+        if (x < y);
+        if (x <= y);
 
         // comparison of Scalar variable to Scalar constant
         // might have to override and allow as parameters need to be unknown
-        if(x == 30);
-        if(x != 30);
-        if(x > 30);
-        if(x >= 30);
-        if(x < 30);
-        if(x <= 30);
+        if (x == 30);
+        if (x != 30);
+        if (x > 30);
+        if (x >= 30);
+        if (x < 30);
+        if (x <= 30);
     }
 
     void ternaryComparison() {
@@ -78,10 +78,10 @@ public class Comparison {
     // units checker's comparison rules need to be checked here as well
     void foreachLoopIndexComparison() {
         int [] x = new int[5];
-        for(int i : x);
+        for (int i : x);
     }
 
     <T> void typeVarLoop(T[] x) {
-        for(T i : x);
+        for (T i : x);
     }
 }

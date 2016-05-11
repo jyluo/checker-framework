@@ -133,7 +133,7 @@ public class ParamReturn {
 
     void objectParameterTest(@m Object x, @s Object y) {
         //:: error: (operands.unit.mismatch)
-        if(x == y);
+        if (x == y);
     }
 
     void toDegree(@radians double x) {}

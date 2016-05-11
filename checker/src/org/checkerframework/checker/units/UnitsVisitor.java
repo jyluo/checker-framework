@@ -106,14 +106,14 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                         && !UnitsRelationsTools.hasSpecificUnit(requiredArg, atypeFactory.BOTTOM)) {
                     // if the method argument is a scalar number literal, or a
                     // numerical expression consisting only of scalar literals,
-                    // and the method parameter is has any unit other than
+                    // and the method parameter has any unit other than
                     // UnitsBottom, pass, as those literals are tied to
                     // those method calls and can be safely assumed to take on
                     // the unit of the parameter. Scalar variables passed to
                     // such methods still result in errors.
                 } else {
                     // Developer note: keep in sync with super implementation
-                    commonAssignmentCheck(requiredArg, passedExpression, "argument.type.incompatible", false);
+                    commonAssignmentCheck(requiredArg, passedExpression, "argument.type.incompatible");
                 }
                 // End Units Checker Code ===================
 

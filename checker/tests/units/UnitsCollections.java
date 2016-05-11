@@ -227,6 +227,8 @@ class CollectionsTests {
         @m2 Double val = new @m2 Double(23.5);
 
         WeakHashMap<@Length Integer, @Area Double> whm = new WeakHashMap<@Length Integer, @Area Double>();
+        // Raw Types are defaulted to their upper bounds
+        //:: error: (assignment.type.incompatible)
         whm = new WeakHashMap(whm);
         whm = new WeakHashMap<@Length Integer, @Area Double>(whm);
         WeakHashMap<@UnknownUnits Integer, @UnknownUnits Double> whm2 = new WeakHashMap(whm);
@@ -292,10 +294,11 @@ class CollectionsTests {
         // test toArray as well
 
         // Cloning constructors
+        // Raw Types are defaulted to their upper bounds
+        //:: error: (assignment.type.incompatible)
         Vector<@Length Integer> v2 = new Vector(v);
         Vector<@Length Integer> v2ok = new Vector<@Length Integer>(v);
-        // By default, type arguments have the unit of @Scalar
-        //:: error: (argument.type.incompatible)
+        //:: error: (assignment.type.incompatible)
         Vector<Integer> v2Scalar = new Vector(v);
         // The only reference that can accept the cloning constructor without
         // an explicity type argument is if it has @UnknownUnits as the unit of

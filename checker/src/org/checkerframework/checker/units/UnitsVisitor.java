@@ -170,7 +170,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             checker.report(Result.failure("method.invocation.invalid", TreeUtils.elementFromUse(node), treeReceiver.toString(), methodReceiver.toString()), node);
         }
     }
-    
+
     // allow overriding of any Object class methods
     @Override
     protected boolean checkOverride(MethodTree overriderTree, AnnotatedDeclaredType overridingType, AnnotatedExecutableType overridden, AnnotatedDeclaredType overriddenType, Void p) {

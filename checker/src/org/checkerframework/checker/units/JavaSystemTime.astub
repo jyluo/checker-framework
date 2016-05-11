@@ -5,6 +5,7 @@ import org.checkerframework.checker.units.qual.time.point.*;
 package java.lang;
 
 // Object methods should be invokable by objects with any unit
+// However, any class which overrides these methods current runs into an error
 class Object {
     Object();
     Class<?> getClass() @UnknownUnits;

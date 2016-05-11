@@ -8,8 +8,7 @@ import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
-import org.checkerframework.javacutil.Pair;
-import org.checkerframework.javacutil.TreeUtils;
+import org.checkerframework.javacutil.*;
 
 import java.util.List;
 
@@ -158,10 +157,12 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
 
         // Units Checker Code =======================
-        // if the method receiver is Scalar and the receiving object is
-        // UnknownUnits, pass
+        // if the method's declared receiver is Scalar and the receiving object is
+        // UnknownUnits, or if the method's class is Object, pass
         if (UnitsRelationsTools.hasSpecificUnit(methodReceiver, atypeFactory.scalar)
-                && UnitsRelationsTools.hasSpecificUnit(treeReceiver, atypeFactory.TOP)) {
+                && UnitsRelationsTools.hasSpecificUnit(treeReceiver, atypeFactory.TOP) ||
+                TypesUtils.isObject(methodReceiver.getUnderlyingType())
+                ) {
             return;
         }
         // End Units Checker Code ===================
@@ -169,12 +170,5 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         if (!atypeFactory.getTypeHierarchy().isSubtype(treeReceiver, methodReceiver)) {
             checker.report(Result.failure("method.invocation.invalid", TreeUtils.elementFromUse(node), treeReceiver.toString(), methodReceiver.toString()), node);
         }
-    }
-
-    // allow overriding of any Object class methods
-    @Override
-    protected boolean checkOverride(MethodTree overriderTree, AnnotatedDeclaredType overridingType, AnnotatedExecutableType overridden, AnnotatedDeclaredType overriddenType, Void p) {
-        // TODO Auto-generated method stub
-        return super.checkOverride(overriderTree, overridingType, overridden, overriddenType, p);
     }
 }

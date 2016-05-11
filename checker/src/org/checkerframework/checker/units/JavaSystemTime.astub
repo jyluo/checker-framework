@@ -8,17 +8,17 @@ package java.lang;
 // However, any class which overrides these methods current runs into an error
 class Object {
     Object();
-    Class<?> getClass() @UnknownUnits;
-    int hashCode() @UnknownUnits;
-    boolean equals(@UnknownUnits Object arg0) @UnknownUnits;
+    Class<?> getClass();
+    int hashCode();
+    boolean equals(@UnknownUnits Object arg0);
     protected @PolyUnit Object clone() @PolyUnit throws CloneNotSupportedException;
-    String toString() @UnknownUnits;
-    void notify() @UnknownUnits;
-    void notifyAll() @UnknownUnits;
-    void wait(@ms long arg0) @UnknownUnits throws InterruptedException;
-    void wait(@ms long arg0, @ns int arg1) @UnknownUnits throws InterruptedException;
-    void wait() @UnknownUnits throws InterruptedException;
-    protected void finalize() @UnknownUnits throws Throwable;
+    String toString();
+    void notify();
+    void notifyAll();
+    void wait(@ms long arg0) throws InterruptedException;
+    void wait(@ms long arg0, @ns int arg1) throws InterruptedException;
+    void wait() throws InterruptedException;
+    protected void finalize() throws Throwable;
 }
 
 class System {

@@ -24,7 +24,8 @@ import javax.annotation.processing.SupportedOptions;
 @StubFiles({
     "Math.astub", "StrictMath.astub", "PrintStream.astub",
     "JavaSystemTime.astub", "JavaThread.astub",
-    "JavaBoxedPrimitives.astub", "JavaGenerics.astub"
+    "JavaBoxedPrimitives.astub", "JavaGenerics.astub",
+    "Java8Time.astub", "Java8TemporalTime.astub", "JavaUtilTime.astub"
 })
 public class UnitsChecker extends BaseTypeChecker {
     /**

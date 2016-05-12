@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar month.
  *
- * This unit is used to denote a time point in months, such as the month
+ * This unit is used to denote a time instant in months, such as the month
  * within the current year.
  *
  * The variables with this unit has its values bounded between 1 to 12 by the

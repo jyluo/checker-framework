@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar era.
  *
- * This unit is used to denote a time point in eras, such as BCE and CE.
+ * This unit is used to denote a time instant in eras, such as BCE and CE.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar week.
  *
- * This unit is used to denote a time point in weeks, such as the week within
+ * This unit is used to denote a time instant in weeks, such as the week within
  * the current month or year.
  *
  * The variables with this unit has its values bounded between 1 to 5 depending

@@ -6,7 +6,7 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import java.lang.annotation.*;
 
 /**
- * A conceptual time point of forever in the past or future, artificially
+ * A conceptual time instant of forever in the past or future, artificially
  * defined in Java 8 as {@linkplain Long#MAX_VALUE} seconds + 999999999
  * nanoseconds.
  *

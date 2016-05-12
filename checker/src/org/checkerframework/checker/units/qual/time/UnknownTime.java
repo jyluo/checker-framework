@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 
 /**
  * An unknown unit of time. Subtypes of this type are split into two
- * categories, either time points or time durations. See {@link TimeInstant}
+ * categories, either time instants or time durations. See {@link TimeInstant}
  * and {@link TimeDuration}.
  *
  * @checker_framework.manual #units-checker Units Checker

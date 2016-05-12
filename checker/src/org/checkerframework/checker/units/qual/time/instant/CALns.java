@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar nanosecond.
  *
- * This unit is used to denote a time point in nanoseconds, such as the number
+ * This unit is used to denote a time instant in nanoseconds, such as the number
  * of nanoseconds within the current millisecond.
  *
  * @checker_framework.manual #units-checker Units Checker

@@ -30,7 +30,7 @@ public class JavaThreadTest {
         //:: error: (assignment.type.incompatible)
         @s long diffBad = end - start;
 
-        //:: error: (time.point.addition.disallowed)
+        //:: error: (time.instant.addition.disallowed)
         long addBad = end + start;
 
         System.out.println("Difference is : " + diff);

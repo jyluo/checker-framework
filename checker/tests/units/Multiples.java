@@ -142,11 +142,11 @@ public class Multiples {
         // TimePoint
         @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
         @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
-        //:: error: (time.point.multiplication.disallowed)
+        //:: error: (time.instant.multiplication.disallowed)
         @UnknownUnits int junk = aTimePt * bTimePt;
-        //:: error: (time.point.multiplication.disallowed)
+        //:: error: (time.instant.multiplication.disallowed)
         junk = aTimePt * s;
-        //:: error: (time.point.multiplication.disallowed)
+        //:: error: (time.instant.multiplication.disallowed)
         junk = s * bTimePt;
     }
 }

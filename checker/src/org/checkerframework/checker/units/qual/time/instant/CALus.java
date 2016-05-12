@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar microsecond.
  *
- * This unit is used to denote a time point in microseconds.
+ * This unit is used to denote a time instant in microseconds.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

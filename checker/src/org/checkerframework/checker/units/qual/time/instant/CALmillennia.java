@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar millennium.
  *
- * This unit is used to denote a time point in millennia, where the first
+ * This unit is used to denote a time instant in millennia, where the first
  * millennia spans 1 CE to 1000 CE.
  *
  * @checker_framework.manual #units-checker Units Checker

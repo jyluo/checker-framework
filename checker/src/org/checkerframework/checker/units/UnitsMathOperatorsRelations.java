@@ -160,10 +160,10 @@ public class UnitsMathOperatorsRelations {
             resultType.replaceAnnotations(getLUBs(lht, rht));
             return;
         } else if (isTimeInstant(lht) && isTimeInstant(rht)) {
-            // Time point + time point ==> error
+            // Time instant + time instant ==> error
             // One cannot add the 4th month of a year to the 7th month of some
             // other year
-            checker.report(Result.failure("time.point.addition.disallowed", lht.toString(), rht.toString()), node);
+            checker.report(Result.failure("time.instant.addition.disallowed", lht.toString(), rht.toString()), node);
         } else {
             // addition of other units is the same as subtraction in terms of
             // rules
@@ -189,21 +189,21 @@ public class UnitsMathOperatorsRelations {
             resultType.replaceAnnotation(factory.TOP);
         } else if (isTimeInstant(lht) && isTimeInstant(rht)) {
             if (UnitsRelationsTools.areSameUnits(lht, rht)) {
-                // Time point - time point ==> timeDuration if they are the
+                // Time instant - time instant ==> timeDuration if they are the
                 // same units
                 resultType.replaceAnnotation(UnitsRelationsTools.getTimeDurationUnit(factory, lht));
             } else {
-                // subtraction of two different time point units results in
+                // subtraction of two different time instant units results in
                 // the LUB of the two respective time duration units
                 AnnotationMirror lhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(factory, lht);
                 AnnotationMirror rhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(factory, rht);
                 resultType.replaceAnnotation(getLUB(lhtDurationUnit, rhtDurationUnit));
             }
         } else if (isTimeInstant(lht) && isTimeDuration(rht)) {
-            // point +/- duration => point
+            // instant +/- duration => instant
             processInstantAndDurationMathOperation(resultType, lht, rht);
         } else if (isTimeDuration(lht) && isTimeInstant(rht)) {
-            // duration +/- point => point
+            // duration +/- instant => instant
             processInstantAndDurationMathOperation(resultType, rht, lht);
         } else if (UnitsRelationsTools.areSameUnits(lht, rht)) {
             // If both operands for sum or difference have the same
@@ -239,10 +239,10 @@ public class UnitsMathOperatorsRelations {
         } else if ((isTimeDuration(lht) && isTimeInstant(rht)) ||
                 (isTimeInstant(lht) && isTimeDuration(rht)) ||
                 (isTimeInstant(lht) && isTimeInstant(rht))) {
-            // duration * time point = invalid
-            // time point * duration = invalid
-            // time point * time point = invalid
-            checker.report(Result.failure("time.point.multiplication.disallowed", lht.toString(), rht.toString()), node);
+            // duration * time instant = invalid
+            // time instant * duration = invalid
+            // time instant * time instant = invalid
+            checker.report(Result.failure("time.instant.multiplication.disallowed", lht.toString(), rht.toString()), node);
         } else if (UnitsRelationsTools.hasNoUnits(lht)) {
             // any unit multiplied by a scalar keeps the unit
             // also unknown * scalar = unknown
@@ -282,10 +282,10 @@ public class UnitsMathOperatorsRelations {
         } else if ((isTimeDuration(lht) && isTimeInstant(rht)) ||
                 (isTimeInstant(lht) && isTimeDuration(rht)) ||
                 (isTimeInstant(lht) && isTimeInstant(rht))) {
-            // duration / time point = invalid
-            // time point / duration = invalid
-            // time point / time point = invalid
-            checker.report(Result.failure("time.point.division.disallowed", lht.toString(), rht.toString()), node);
+            // duration / time instant = invalid
+            // time instant / duration = invalid
+            // time instant / time instant = invalid
+            checker.report(Result.failure("time.instant.division.disallowed", lht.toString(), rht.toString()), node);
         } else if (UnitsRelationsTools.areSameUnits(lht, rht)) {
             // if the units of the division match, return scalar
             resultType.replaceAnnotation(factory.scalar);
@@ -463,22 +463,22 @@ public class UnitsMathOperatorsRelations {
 
     /**
      * This helper method encodes the rules for adding a time duration to a time
-     * point. E.g. 5 am + 5 hours = 10 am
+     * instant. E.g. 5 am + 5 hours = 10 am
      *
-     * If the time point is based on the same unit as the duration, then it
+     * If the time instant is based on the same unit as the duration, then it
      * will return the {@link TimeInstant} unit.
      *
      * @param resultType the result unit
-     * @param instant the time point unit
+     * @param instant the time instant unit
      * @param duration the time duration unit
      */
     private void processInstantAndDurationMathOperation(AnnotatedTypeMirror resultType, AnnotatedTypeMirror instant, AnnotatedTypeMirror duration) {
         if (UnitsRelationsTools.areSameUnits(UnitsRelationsTools.getTimeDurationUnit(factory, instant), UnitsRelationsTools.getUnit(duration))) {
-            // If the point is based upon the same unit as the duration,
-            // then Time point + or - time duration => time point
+            // If the instant is based upon the same unit as the duration,
+            // then Time instant + or - time duration => time instant
             resultType.replaceAnnotations(instant.getAnnotations());
         } else {
-            // if the point isn't based upon the same unit however, then
+            // if the instant isn't based upon the same unit however, then
             // return @TimeInstant
             resultType.replaceAnnotation(factory.timeInstant);
         }

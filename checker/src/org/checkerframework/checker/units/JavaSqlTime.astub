@@ -7,9 +7,9 @@ package java.sql;
 class Date extends Date {
     // Deprecated
     Date(@CALyear int year, @CALmonth int month, @CALday int day);
-    // Time point: # ms since Java Epoch
+    // Time instant: # ms since Java Epoch
     Date(@CALms long date);
-    // Time point: # ms since Java Epoch
+    // Time instant: # ms since Java Epoch
     void setTime(@CALms long arg0);
     @CALh int getHours();
     @CALmin int getMinutes();

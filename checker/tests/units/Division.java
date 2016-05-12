@@ -111,11 +111,11 @@ public class Division {
         // TimePoint
         @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
         @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
-        //:: error: (time.point.division.disallowed)
+        //:: error: (time.instant.division.disallowed)
         @UnknownUnits int junk = aTimePt / bTimePt;
-        //:: error: (time.point.division.disallowed)
+        //:: error: (time.instant.division.disallowed)
         junk = aTimePt / s;
-        //:: error: (time.point.division.disallowed)
+        //:: error: (time.instant.division.disallowed)
         junk = s / bTimePt;
     }
 

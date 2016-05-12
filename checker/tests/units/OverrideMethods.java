@@ -5,6 +5,12 @@ public class OverrideMethods {
     public String toString() {
         return "blah";
     }
+
+    @Override
+    public boolean equals(@UnknownUnits Object obj) {
+        // TODO Auto-generated method stub
+        return super.equals(obj);
+    }
 }
 
 class Test {

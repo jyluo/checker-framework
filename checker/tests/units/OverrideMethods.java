@@ -37,7 +37,7 @@ class Test {
         @m Object z = new @m Object();
         z.toString();
     }
-    
+
     void test2(Map<String, List<Integer>> x) {
         x.values().forEach(
                 (c) -> Collections.sort((List<Integer>) List.class.cast(c))

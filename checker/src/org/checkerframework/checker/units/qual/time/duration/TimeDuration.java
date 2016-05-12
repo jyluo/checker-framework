@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 /**
  * Units of time duration. A time duration represents the duration of a single
  * event or the interval between two events, or more formally a length in a time
- * scale between two time points.
+ * scale between two time instants.
  *
  * Subtypes of this type represent units of specific time durations, such as
  * hours, mins, seconds, etc.

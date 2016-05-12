@@ -26,7 +26,7 @@ class System {
     static @CALms long currentTimeMillis();
     // Returns the current value of the running Java Virtual Machine's
     // high-resolution time source, in nanoseconds.
-    // The value is technically a time point since some "origin" time, but not
+    // The value is technically a time instant since some "origin" time, but not
     // Java Epoch.
     static @CALns long nanoTime();
     // Future TODO: units checker array support

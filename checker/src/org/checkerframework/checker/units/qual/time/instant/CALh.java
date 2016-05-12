@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar hour.
  *
- * This unit is used to denote a time point in hours, such as 5am.
+ * This unit is used to denote a time instant in hours, such as 5am.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

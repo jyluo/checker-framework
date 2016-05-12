@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar quarter-year.
  *
- * This unit is used to denote a time point in quarter-year, such as the 4
+ * This unit is used to denote a time instant in quarter-year, such as the 4
  * different seasons of the year.
  *
  * The variables with this unit has its values bounded between 1 to 4 by the

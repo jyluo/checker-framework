@@ -208,7 +208,7 @@ public class Addition {
         // TimePoint
         @TimeInstant int cTimePt = aTimePt + bTimeDur;
         cTimePt = aTimeDur + bTimePt;
-        //:: error: (time.point.addition.disallowed)
+        //:: error: (time.instant.addition.disallowed)
         cTimePt = aTimePt + bTimePt;
 
         // Volume
@@ -332,7 +332,7 @@ public class Addition {
         sSecond = aSecond + bSquareKilometer;
 
         // CALh
-        //:: error: (time.point.addition.disallowed)
+        //:: error: (time.instant.addition.disallowed)
         @CALh int sCALhr = aTimePt + aTimePt;
     }
 }

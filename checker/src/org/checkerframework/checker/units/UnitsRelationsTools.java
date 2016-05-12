@@ -526,13 +526,13 @@ public class UnitsRelationsTools {
     }
 
     /**
-     * Given an Annotated Type with a time point unit, this method returns the
+     * Given an Annotated Type with a time instant unit, this method returns the
      * Annotation representing the time duration unit that this Annotated Type
      * is related to via {@link DurationUnit}. For any other Annotated Type,
      * this method returns null.
      *
      * @param atf Units Annotated Type Factory
-     * @param annoType an Annotated Type with a time point unit
+     * @param annoType an Annotated Type with a time instant unit
      * @return an AnnotationMirror representing the time duration unit that this
      *         Annotated Type is related to, or null
      */
@@ -543,12 +543,12 @@ public class UnitsRelationsTools {
         }
         if (annoType == null) {
             ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time point unit");
+                    " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time instant unit");
         }
         if (!isTimeInstant(annoType)) {
             ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) the" +
-                    " AnnotatedTypeMirror passed in is not a time point unit, the method must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time point unit");
+                    " AnnotatedTypeMirror passed in is not a time instant unit, the method must be" +
+                    " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time instant unit");
         }
 
         // get the time unit annotation
@@ -606,7 +606,7 @@ public class UnitsRelationsTools {
      * Specifically, it checks to see if the {@link DurationUnit}
      * meta-annotation is present, and that it is a direct subtype of
      * {@link TimeInstant} through the {@link SubtypeOf} meta-annotation. Every
-     * time point unit must be defined with both of these meta-annotations.
+     * time instant unit must be defined with both of these meta-annotations.
      *
      * @param annotatedType annotated type mirror with a units annotation
      * @return true if it is a subtype of {@link TimeInstant}, false otherwise

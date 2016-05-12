@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar second.
  *
- * This unit is used to denote a time point in seconds, such as the seconds
+ * This unit is used to denote a time instant in seconds, such as the seconds
  * within the current minute.
  *
  * The variables with this unit has its values bounded between 1 to 60 by the

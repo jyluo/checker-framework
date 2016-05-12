@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar century.
  *
- * This unit is used to denote a time point in centuries, such as 21st century.
+ * This unit is used to denote a time instant in centuries, such as 21st century.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

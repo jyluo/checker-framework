@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar decade.
  *
- * This unit is used to denote a time point in decades, such as the 20s and
+ * This unit is used to denote a time instant in decades, such as the 20s and
  * 50s.
  *
  * @checker_framework.manual #units-checker Units Checker

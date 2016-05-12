@@ -7,15 +7,15 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import java.lang.annotation.*;
 
 /**
- * Units of time points. A time point is the precise time at which an event
+ * Units of time instants. A time instant is the precise time at which an event
  * occurs, or more formally a point in a time scale.
  *
- * Subtypes of this type represent units of specific time points, such as
+ * Subtypes of this type represent units of specific time instants, such as
  * calendar years, calendar day, calendar hour, etc.
  *
- * Subtraction of two time points yields a time duration, which is in a unit of
- * time (seconds, year, etc). Addition of two time points results in error.
- * Adding a time duration to a time point yields another time point.
+ * Subtraction of two time instants yields a time duration, which is in a unit of
+ * time (seconds, year, etc). Addition of two time instants results in error.
+ * Adding a time duration to a time instant yields another time instant.
  * Conceptually this is equivalent to "5 am + 5 hours = 10 am".
  *
  * @checker_framework.manual #units-checker Units Checker

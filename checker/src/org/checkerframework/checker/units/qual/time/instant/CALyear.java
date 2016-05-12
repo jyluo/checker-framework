@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar year.
  *
- * This unit is used to denote a time point in years, such as the year 2000.
+ * This unit is used to denote a time instant in years, such as the year 2000.
  *
  * The variables with this unit has its values bounded between
  * {@literal java.time.Year.MIN_VALUE} and {@literal java.time.Year.MAX_VALUE}

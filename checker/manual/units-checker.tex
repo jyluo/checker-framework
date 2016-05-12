@@ -65,7 +65,7 @@ The following kind annotations are defined:
 \item[\refqualclass{checker/units/qual/time/duration}{TimeDuration}]
   which represents a length on a time scale, or simply the elapsed time between two events. For example, 5 hours, 3 months, or 12 years.
 
-\item[\refqualclass{checker/units/qual/time/point}{TimePoint}]
+\item[\refqualclass{checker/units/qual/time/instant}{TimePoint}]
   which represents a point on a time scale relative to some reference point denoted as zero point of this time scale, or simply the precise time at which some event occurs.
   For example, 5am (relative to midnight), March (relative to beginning of a year), or 2012 (relative to 0 BCE).
 
@@ -181,40 +181,40 @@ measurement is defined:
 
   the units
 
-  calendar seconds \refqualclass{checker/units/qual/time/point}{CALs},
+  calendar seconds \refqualclass{checker/units/qual/time/instant}{CALs},
 
-  calendar nanoseconds \refqualclass{checker/units/qual/time/point}{CALns},
+  calendar nanoseconds \refqualclass{checker/units/qual/time/instant}{CALns},
 
-  calendar microseconds \refqualclass{checker/units/qual/time/point}{CALus},
+  calendar microseconds \refqualclass{checker/units/qual/time/instant}{CALus},
 
-  calendar milliseconds \refqualclass{checker/units/qual/time/point}{CALms},
+  calendar milliseconds \refqualclass{checker/units/qual/time/instant}{CALms},
 
-  calendar minutes \refqualclass{checker/units/qual/time/point}{CALmin},
+  calendar minutes \refqualclass{checker/units/qual/time/instant}{CALmin},
 
-  calendar hours \refqualclass{checker/units/qual/time/point}{CALh},
+  calendar hours \refqualclass{checker/units/qual/time/instant}{CALh},
 
-  calendar half-days \refqualclass{checker/units/qual/time/point}{CALhalfday},
+  calendar half-days \refqualclass{checker/units/qual/time/instant}{CALhalfday},
 
-  calendar days \refqualclass{checker/units/qual/time/point}{CALday},
+  calendar days \refqualclass{checker/units/qual/time/instant}{CALday},
 
-  calendar weeks \refqualclass{checker/units/qual/time/point}{CALweek},
+  calendar weeks \refqualclass{checker/units/qual/time/instant}{CALweek},
 
-  calendar months \refqualclass{checker/units/qual/time/point}{CALmonth},
+  calendar months \refqualclass{checker/units/qual/time/instant}{CALmonth},
 
-  calendar quarter-years \refqualclass{checker/units/qual/time/point}{CALquarteryear},
+  calendar quarter-years \refqualclass{checker/units/qual/time/instant}{CALquarteryear},
 
-  calendar years \refqualclass{checker/units/qual/time/point}{CALyear},
+  calendar years \refqualclass{checker/units/qual/time/instant}{CALyear},
 
-  calendar decades \refqualclass{checker/units/qual/time/point}{CALdecade},
+  calendar decades \refqualclass{checker/units/qual/time/instant}{CALdecade},
 
-  calendar centuries \refqualclass{checker/units/qual/time/point}{CALcentury},
+  calendar centuries \refqualclass{checker/units/qual/time/instant}{CALcentury},
 
-  calendar millennia \refqualclass{checker/units/qual/time/point}{CALmillennia},
+  calendar millennia \refqualclass{checker/units/qual/time/instant}{CALmillennia},
 
-  calendar era \refqualclass{checker/units/qual/time/point}{CALera},
+  calendar era \refqualclass{checker/units/qual/time/instant}{CALera},
 
   as well as an artificially defined conceptual unit of
-  calendar forever \refqualclass{checker/units/qual/time/point}{CALforever}
+  calendar forever \refqualclass{checker/units/qual/time/instant}{CALforever}
 
 \item For \code{@Volume}:
 
@@ -364,16 +364,16 @@ and comparison rules.
 \item
 Arithmetic rules:
 
-Time durations and time points have a special logic between them.
+Time durations and time instants have a special logic between them.
 
-The definition of a duration is the differece between two time points, thus
-the subtraction of one time point to another results in a duration.
+The definition of a duration is the differece between two time instants, thus
+the subtraction of one time instant to another results in a duration.
 For example 10 am - 5 am = 5 hours.
 
-By the same logic, adding a time duration to a time point results in a time
+By the same logic, adding a time duration to a time instant results in a time
 point. For example 2015 + 5 years = 2020.
 
-The addition, multiplication, division, and modulo of two time points is
+The addition, multiplication, division, and modulo of two time instants is
 scientifically undefined, and is disallowed by the checker.
 
 The rules for arithmetic operations between two duration units is the same as

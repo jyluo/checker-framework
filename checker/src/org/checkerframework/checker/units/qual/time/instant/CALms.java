@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar millisecond.
  *
- * This unit is used to denote a time point in milliseconds, such as the
+ * This unit is used to denote a time instant in milliseconds, such as the
  * amount of milliseconds since Java Epoch, or the amount of milliseconds of the
  * current second of some particular time.
  *

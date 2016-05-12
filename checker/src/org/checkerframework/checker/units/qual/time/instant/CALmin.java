@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar minute.
  *
- * This unit is used to denote a time point in minutes, such as the minute
+ * This unit is used to denote a time instant in minutes, such as the minute
  * of the current hour.
  *
  * The variables with this unit has its values bound between 0-59 or

@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Calendar day.
  *
- * This unit is used to denote a time point in days, such as the 15th day of
+ * This unit is used to denote a time instant in days, such as the 15th day of
  * some month.
  *
  * The variables with this unit has its values bounded between 1 to 7 depending

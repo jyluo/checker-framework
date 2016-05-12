@@ -61,9 +61,9 @@ public class UnitsMathOperatorsRelations {
      * checking operators.
      *
      * It is also designed to support arithmetic or comparison behavior in
-     * various methods such as {@link Integer#sum(int, int)},
-     * {@link Math#multiplyExact(int, int)}, and
-     * {@link Double#compareTo(Double)}.
+     * various methods such as {@code Integer.sum(int, int)},
+     * {@code Math.multiplyExact(int, int)}, and
+     * {@code Double.compareTo(Double)}.
      *
      * @param node the AST node of the arithmetic or comparison operation
      * @param kind the kind of the operation

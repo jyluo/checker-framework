@@ -1,4 +1,4 @@
-package org.checkerframework.checker.units.qual.time.point;
+package org.checkerframework.checker.units.qual.time.instant;
 
 import org.checkerframework.checker.units.qual.time.duration.ns;
 import org.checkerframework.framework.qual.SubtypeOf;
@@ -16,6 +16,6 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
-@SubtypeOf(TimePoint.class)
+@SubtypeOf(TimeInstant.class)
 @DurationUnit(unit = ns.class)
 public @interface CALns {}

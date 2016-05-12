@@ -2,7 +2,7 @@ package org.checkerframework.checker.units;
 
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
-import org.checkerframework.checker.units.qual.time.point.TimePoint;
+import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.*;
@@ -54,7 +54,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     protected final AnnotationMirror mm3 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, mm3.class);
 
     protected final AnnotationMirror timeDuration = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimeDuration.class);;
-    protected final AnnotationMirror timeInstant = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimePoint.class);;
+    protected final AnnotationMirror timeInstant = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimeInstant.class);;
 
     // used to detect and skip string addition processing
     protected final TypeMirror stringType = getTypeMirror(java.lang.String.class);
@@ -310,7 +310,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
 
     private AnnotationMirror removePrefix(AnnotationMirror anno) {
-        return UnitsRelationsTools.removePrefix(elements, anno);
+        if (anno != null) {
+            return UnitsRelationsTools.removePrefix(elements, anno);
+        } else {
+            return anno;
+        }
     }
 
     protected UnitsRelationsManager getUnitsRelationsManager() {

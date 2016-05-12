@@ -1,14 +1,19 @@
 import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.checker.units.qual.Scalar;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.checkerframework.framework.qual.DefaultQualifiers;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
 package java.lang;
 
-interface Iterable<T extends @UnknownUnits Object> {}
+interface Iterable<T extends @UnknownUnits Object> {
+    Iterator<T> iterator();
+    void forEach(Consumer<? super T> arg0);
+    Spliterator<T> spliterator();
+}
+
 
 package java.util;
 

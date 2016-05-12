@@ -1,7 +1,7 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
 import org.checkerframework.checker.units.qual.time.UnknownTime;
-import org.checkerframework.checker.units.qual.time.point.TimePoint;
+import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 import java.lang.annotation.*;
@@ -14,7 +14,7 @@ import java.lang.annotation.*;
  * Subtypes of this type represent units of specific time durations, such as
  * hours, mins, seconds, etc.
  *
- * Also see {@link TimePoint}
+ * Also see {@link TimeInstant}
  *
  * @checker_framework.manual #units-checker Units Checker
  */

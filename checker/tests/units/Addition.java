@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
 
 public class Addition {
@@ -47,8 +47,8 @@ public class Addition {
     @TimeDuration int bTimeDur = 5 * UnitsTools.h;
 
     // TimePoint
-    @TimePoint int aTimePt = 5 * UnitsTools.CALmin;
-    @TimePoint int bTimePt = 5 * UnitsTools.CALh;
+    @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
+    @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
 
     // Volume
     @Volume int aVolume = 5 * UnitsTools.m3;
@@ -206,7 +206,7 @@ public class Addition {
         cTimeDur = aTimeDur + bVolume;
 
         // TimePoint
-        @TimePoint int cTimePt = aTimePt + bTimeDur;
+        @TimeInstant int cTimePt = aTimePt + bTimeDur;
         cTimePt = aTimeDur + bTimePt;
         //:: error: (time.point.addition.disallowed)
         cTimePt = aTimePt + bTimePt;

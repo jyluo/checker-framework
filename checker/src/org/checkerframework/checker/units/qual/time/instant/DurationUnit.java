@@ -1,4 +1,4 @@
-package org.checkerframework.checker.units.qual.time.point;
+package org.checkerframework.checker.units.qual.time.instant;
 
 import java.lang.annotation.*;
 

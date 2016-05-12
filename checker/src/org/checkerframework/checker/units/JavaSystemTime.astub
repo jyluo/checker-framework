@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 
 package java.lang;
 
@@ -32,3 +32,58 @@ class System {
     // Future TODO: units checker array support
     static void arraycopy(Object arg0, int arg1, Object arg2, int arg3, int arg4);
 }
+
+interface Comparable<T extends @UnknownUnits Object> {
+    int compareTo(T arg0);
+}
+
+class Class<T extends @UnknownUnits Object> implements Serializable, GenericDeclaration, Type, AnnotatedElement {
+    static Class<? extends @UnknownUnits Object> forName(String arg0) throws ClassNotFoundException;
+    static Class<? extends @UnknownUnits Object> forName(String arg0, boolean arg1, ClassLoader arg2) throws ClassNotFoundException;
+    boolean isInstance(@UnknownUnits Object arg0);
+    Class<? extends @UnknownUnits Object>[] getInterfaces();
+    Class<? extends @UnknownUnits Object> getComponentType();
+    Constructor<? extends @UnknownUnits Object> getEnclosingConstructor() throws SecurityException;
+    Class<? extends @UnknownUnits Object> getDeclaringClass() throws SecurityException;
+    Class<? extends @UnknownUnits Object> getEnclosingClass() throws SecurityException;
+    Class<? extends @UnknownUnits Object>[] getClasses();
+    Constructor<? extends @UnknownUnits Object>[] getConstructors() throws SecurityException;
+    Method getMethod(String arg0, Class<? extends @UnknownUnits Object>[] arg1) throws NoSuchMethodException,SecurityException;
+    Constructor<T> getConstructor(Class<? extends @UnknownUnits Object>[] arg0) throws NoSuchMethodException,SecurityException;
+    Class<? extends @UnknownUnits Object>[] getDeclaredClasses() throws SecurityException;
+    Constructor<? extends @UnknownUnits Object>[] getDeclaredConstructors() throws SecurityException;
+    Method getDeclaredMethod(String arg0, Class<? extends @UnknownUnits Object>[] arg1) throws NoSuchMethodException,SecurityException;
+    Constructor<T> getDeclaredConstructor(Class<? extends @UnknownUnits Object>[] arg0) throws NoSuchMethodException,SecurityException;
+    T cast(@UnknownUnits Object arg0);
+    <U extends @UnknownUnits Object> Class<? extends U> asSubclass(Class<U> arg0);
+    <A extends @UnknownUnits Object> A getAnnotation(Class<A> arg0);
+    boolean isAnnotationPresent(Class<? extends Annotation> arg0);
+    <A extends @UnknownUnits Object> A[] getAnnotationsByType(Class<A> arg0);
+    <A extends @UnknownUnits Object> A getDeclaredAnnotation(Class<A> arg0);
+    <A extends @UnknownUnits Object> A[] getDeclaredAnnotationsByType(Class<A> arg0);
+}
+
+package java.util;
+
+class Objects {
+    static boolean equals(@UnknownUnits Object arg0, @UnknownUnits Object arg1);
+    static boolean deepEquals(@UnknownUnits Object arg0, @UnknownUnits Object arg1);
+    static int hashCode(@UnknownUnits Object arg0);
+    static int hash(@UnknownUnits Object[] arg0);
+    static String toString(@UnknownUnits Object arg0);
+    static String toString(@UnknownUnits Object arg0, String arg1);
+    static <T extends @UnknownUnits Object> int compare(T arg0, T arg1, Comparator<? super T> arg2);
+    static <T extends @UnknownUnits Object> T requireNonNull(T arg0);
+    static <T extends @UnknownUnits Object> T requireNonNull(T arg0, String arg1);
+    static boolean isNull(@UnknownUnits Object arg0);
+    static boolean nonNull(@UnknownUnits Object arg0);
+    static <T extends @UnknownUnits Object> T requireNonNull(T arg0, Supplier<String> arg1);
+}
+
+package java.util.function;
+
+interface Consumer<T extends @UnknownUnits Object> {
+    void accept(T arg0);
+    Consumer<T> andThen(Consumer<? super T> arg0);
+}
+

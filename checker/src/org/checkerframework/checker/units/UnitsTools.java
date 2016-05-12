@@ -2,7 +2,7 @@ package org.checkerframework.checker.units;
 
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 
 /**
  * Utility constants to assign units to types and methods to convert between them.

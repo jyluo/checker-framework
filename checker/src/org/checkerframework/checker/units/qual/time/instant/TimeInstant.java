@@ -1,4 +1,4 @@
-package org.checkerframework.checker.units.qual.time.point;
+package org.checkerframework.checker.units.qual.time.instant;
 
 import org.checkerframework.checker.units.qual.time.UnknownTime;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
@@ -25,4 +25,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
 @DurationUnit(unit = TimeDuration.class)
-public @interface TimePoint {}
+public @interface TimeInstant {}

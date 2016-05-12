@@ -2,7 +2,7 @@ package org.checkerframework.checker.units;
 
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
-import org.checkerframework.checker.units.qual.time.point.TimePoint;
+import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 /*>>>
@@ -159,7 +159,7 @@ public class UnitsMathOperatorsRelations {
             // scalar
             resultType.replaceAnnotations(getLUBs(lht, rht));
             return;
-        } else if (isTimePoint(lht) && isTimePoint(rht)) {
+        } else if (isTimeInstant(lht) && isTimeInstant(rht)) {
             // Time point + time point ==> error
             // One cannot add the 4th month of a year to the 7th month of some
             // other year
@@ -187,22 +187,22 @@ public class UnitsMathOperatorsRelations {
             // unknown + or - anything = unknown
             // anything + or - unknown = unknown
             resultType.replaceAnnotation(factory.TOP);
-        } else if (isTimePoint(lht) && isTimePoint(rht)) {
+        } else if (isTimeInstant(lht) && isTimeInstant(rht)) {
             if (UnitsRelationsTools.areSameUnits(lht, rht)) {
                 // Time point - time point ==> timeDuration if they are the
                 // same units
-                resultType.replaceAnnotation(UnitsRelationsTools.getTimeDurationUnit(processingEnv, lht));
+                resultType.replaceAnnotation(UnitsRelationsTools.getTimeDurationUnit(factory, lht));
             } else {
                 // subtraction of two different time point units results in
                 // the LUB of the two respective time duration units
-                AnnotationMirror lhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(processingEnv, lht);
-                AnnotationMirror rhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(processingEnv, rht);
+                AnnotationMirror lhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(factory, lht);
+                AnnotationMirror rhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(factory, rht);
                 resultType.replaceAnnotation(getLUB(lhtDurationUnit, rhtDurationUnit));
             }
-        } else if (isTimePoint(lht) && isTimeDuration(rht)) {
+        } else if (isTimeInstant(lht) && isTimeDuration(rht)) {
             // point +/- duration => point
             processInstantAndDurationMathOperation(resultType, lht, rht);
-        } else if (isTimeDuration(lht) && isTimePoint(rht)) {
+        } else if (isTimeDuration(lht) && isTimeInstant(rht)) {
             // duration +/- point => point
             processInstantAndDurationMathOperation(resultType, rht, lht);
         } else if (UnitsRelationsTools.areSameUnits(lht, rht)) {
@@ -236,9 +236,9 @@ public class UnitsMathOperatorsRelations {
             // unknown * anything = unknown
             // anything * unknown = unknown
             resultType.replaceAnnotation(factory.TOP);
-        } else if ((isTimeDuration(lht) && isTimePoint(rht)) ||
-                (isTimePoint(lht) && isTimeDuration(rht)) ||
-                (isTimePoint(lht) && isTimePoint(rht))) {
+        } else if ((isTimeDuration(lht) && isTimeInstant(rht)) ||
+                (isTimeInstant(lht) && isTimeDuration(rht)) ||
+                (isTimeInstant(lht) && isTimeInstant(rht))) {
             // duration * time point = invalid
             // time point * duration = invalid
             // time point * time point = invalid
@@ -279,9 +279,9 @@ public class UnitsMathOperatorsRelations {
             // unknown / anything = unknown
             // anything / unknown = unknown
             resultType.replaceAnnotation(factory.TOP);
-        } else if ((isTimeDuration(lht) && isTimePoint(rht)) ||
-                (isTimePoint(lht) && isTimeDuration(rht)) ||
-                (isTimePoint(lht) && isTimePoint(rht))) {
+        } else if ((isTimeDuration(lht) && isTimeInstant(rht)) ||
+                (isTimeInstant(lht) && isTimeDuration(rht)) ||
+                (isTimeInstant(lht) && isTimeInstant(rht))) {
             // duration / time point = invalid
             // time point / duration = invalid
             // time point / time point = invalid
@@ -466,20 +466,20 @@ public class UnitsMathOperatorsRelations {
      * point. E.g. 5 am + 5 hours = 10 am
      *
      * If the time point is based on the same unit as the duration, then it
-     * will return the {@link TimePoint} unit.
+     * will return the {@link TimeInstant} unit.
      *
      * @param resultType the result unit
-     * @param point the time point unit
+     * @param instant the time point unit
      * @param duration the time duration unit
      */
-    private void processInstantAndDurationMathOperation(AnnotatedTypeMirror resultType, AnnotatedTypeMirror point, AnnotatedTypeMirror duration) {
-        if (UnitsRelationsTools.areSameUnits(UnitsRelationsTools.getTimeDurationUnit(processingEnv, point), UnitsRelationsTools.getUnit(duration))) {
+    private void processInstantAndDurationMathOperation(AnnotatedTypeMirror resultType, AnnotatedTypeMirror instant, AnnotatedTypeMirror duration) {
+        if (UnitsRelationsTools.areSameUnits(UnitsRelationsTools.getTimeDurationUnit(factory, instant), UnitsRelationsTools.getUnit(duration))) {
             // If the point is based upon the same unit as the duration,
             // then Time point + or - time duration => time point
-            resultType.replaceAnnotations(point.getAnnotations());
+            resultType.replaceAnnotations(instant.getAnnotations());
         } else {
             // if the point isn't based upon the same unit however, then
-            // return @TimePoint
+            // return @TimeInstant
             resultType.replaceAnnotation(factory.timeInstant);
         }
     }
@@ -495,7 +495,7 @@ public class UnitsMathOperatorsRelations {
         return annotatedTypeIsSubtype(atm, factory.timeDuration);
     }
 
-    // There is also a version of isTimePoint in UnitsRelationsTools. The
+    // There is also a version of isTimeInstant in UnitsRelationsTools. The
     // version here is dependent on the type factory and qualifier
     // hierarchy, and cannot be statically called by external developers who
     // wish to provide units extensions. The UnitsRelationsTools version checks
@@ -505,12 +505,12 @@ public class UnitsMathOperatorsRelations {
     // TODO: possible to unify the two designs?
     /**
      * Checks to see if the units annotation in the annotated type mirror is a
-     * subtype of {@link TimePoint}
+     * subtype of {@link TimeInstant}
      *
      * @param atm annotated type mirror with a units annotation
-     * @return true if it is a subtype of {@link TimePoint}, false otherwise
+     * @return true if it is a subtype of {@link TimeInstant}, false otherwise
      */
-    protected boolean isTimePoint(final AnnotatedTypeMirror atm) {
+    protected boolean isTimeInstant(final AnnotatedTypeMirror atm) {
         return annotatedTypeIsSubtype(atm, factory.timeInstant);
     }
 

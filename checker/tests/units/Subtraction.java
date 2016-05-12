@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
 
 public class Subtraction {
@@ -47,7 +47,7 @@ public class Subtraction {
     @TimeDuration int bTimeDur = 5 * UnitsTools.h;
 
     // TimePoint
-    @TimePoint int aTimePt = 5 * UnitsTools.CALmin;
+    @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
     @CALh int bTimePt = 5 * UnitsTools.CALh;
 
     // Volume
@@ -206,7 +206,7 @@ public class Subtraction {
         cTime = aTimeDur - bVolume;
 
         // TimePoint
-        @TimePoint int cTimePt = aTimePt - bTimeDur;
+        @TimeInstant int cTimePt = aTimePt - bTimeDur;
         cTimePt = aTimeDur - bTimePt;
         aTimeDur = aTimePt - aTimePt;
 

@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
 
 import java.util.List;
@@ -187,17 +187,17 @@ public class ParamReturn {
         inBottom(i);
     }
 
-    @TimePoint class A {
-        @TimePoint public A() {}
+    @TimeInstant class A {
+        @TimeInstant public A() {}
         void m() {
             // default receiver is @Scalar
         }
     }
 
-    @TimePoint class B {
-        @TimePoint public B() {}
-        void m(@TimePoint B this) {
-            // receiver is a @TimePoint
+    @TimeInstant class B {
+        @TimeInstant public B() {}
+        void m(@TimeInstant B this) {
+            // receiver is a @TimeInstant
         }
     }
 

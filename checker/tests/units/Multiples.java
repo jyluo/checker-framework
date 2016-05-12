@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
 
 public class Multiples {
@@ -140,8 +140,8 @@ public class Multiples {
         distance = s * (s * accelm);
 
         // TimePoint
-        @TimePoint int aTimePt = 5 * UnitsTools.CALmin;
-        @TimePoint int bTimePt = 5 * UnitsTools.CALh;
+        @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
+        @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
         //:: error: (time.point.multiplication.disallowed)
         @UnknownUnits int junk = aTimePt * bTimePt;
         //:: error: (time.point.multiplication.disallowed)

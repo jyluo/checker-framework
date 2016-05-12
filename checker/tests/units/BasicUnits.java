@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.point.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
 
 public class BasicUnits {
@@ -94,8 +94,8 @@ public class BasicUnits {
         @kmPERh int speed = kilometers / hours;
 
         // TimePoint
-        @TimePoint int aTimePt = 5 * UnitsTools.CALmin;
-        @TimePoint int bTimePt = 5 * UnitsTools.CALh;
+        @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
+        @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
 
         aTimePt = aTimePt % 5;
         bTimePt = bTimePt % speed;

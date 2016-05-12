@@ -2,8 +2,8 @@ package org.checkerframework.checker.units;
 
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.Scalar;
-import org.checkerframework.checker.units.qual.time.point.DurationUnit;
-import org.checkerframework.checker.units.qual.time.point.TimePoint;
+import org.checkerframework.checker.units.qual.time.instant.DurationUnit;
+import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotationBuilder;
@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class UnitsRelationsTools {
     // Used to detect annotations that are subtypes of timeInstant
-    private static String timeInstantClassName = TimePoint.class.getCanonicalName().intern();
+    private static String timeInstantClassName = TimeInstant.class.getCanonicalName().intern();
 
     /**
      * Creates an AnnotationMirror representing a unit defined by annoClass,
@@ -531,25 +531,22 @@ public class UnitsRelationsTools {
      * is related to via {@link DurationUnit}. For any other Annotated Type,
      * this method returns null.
      *
-     * @param env Checker Processing Environment, provided as a parameter in
-     *            init() of a UnitsRelations implementation
+     * @param atf Units Annotated Type Factory
      * @param annoType an Annotated Type with a time point unit
      * @return an AnnotationMirror representing the time duration unit that this
      *         Annotated Type is related to, or null
      */
-    public static /*@Nullable*/ AnnotationMirror getTimeDurationUnit(/*@Nullable*/ final ProcessingEnvironment env, /*@Nullable*/ final AnnotatedTypeMirror annoType) {
-        if (env == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(ProcessingEnvironment, AnnotatedTypeMirror) must be" +
-                    " called by passing in a reference to the Checker" +
-                    " Processing Environment, provided as a parameter in" +
-                    " init() of a UnitsRelations implementation");
+    public static /*@Nullable*/ AnnotationMirror getTimeDurationUnit(/*@Nullable*/ final UnitsAnnotatedTypeFactory atf, /*@Nullable*/ final AnnotatedTypeMirror annoType) {
+        if (atf == null) {
+            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be" +
+                    " called by passing in a reference to the Units Annotated Type Factory");
         }
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(ProcessingEnvironment, AnnotatedTypeMirror) must be" +
+            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be" +
                     " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time point unit");
         }
-        if (!isTimePoint(annoType)) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(ProcessingEnvironment, AnnotatedTypeMirror) the" +
+        if (!isTimeInstant(annoType)) {
+            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) the" +
                     " AnnotatedTypeMirror passed in is not a time point unit, the method must be" +
                     " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time point unit");
         }
@@ -562,7 +559,9 @@ public class UnitsRelationsTools {
         if (durationUnitAnno != null) {
             // retrieve the Class of the duration unit
             Class<? extends Annotation> durationUnitAnnoClass = AnnotationUtils.getElementValueClass(durationUnitAnno, "unit", true).asSubclass(Annotation.class);
-            return UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(env, durationUnitAnnoClass);
+
+            // if the related time duration unit is an alias of a metric prefix of seconds, then retrieve the base version of that annotation mirror
+            return atf.aliasedAnnotation(UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(atf.getProcessingEnv(), durationUnitAnnoClass));
         }
 
         return null;
@@ -602,24 +601,24 @@ public class UnitsRelationsTools {
 
     /**
      * Checks to see if the units annotation in the annotated type mirror is a
-     * subtype of {@link TimePoint}
+     * subtype of {@link TimeInstant}
      *
      * Specifically, it checks to see if the {@link DurationUnit}
      * meta-annotation is present, and that it is a direct subtype of
-     * {@link TimePoint} through the {@link SubtypeOf} meta-annotation. Every
+     * {@link TimeInstant} through the {@link SubtypeOf} meta-annotation. Every
      * time point unit must be defined with both of these meta-annotations.
      *
      * @param annotatedType annotated type mirror with a units annotation
-     * @return true if it is a subtype of {@link TimePoint}, false otherwise
+     * @return true if it is a subtype of {@link TimeInstant}, false otherwise
      */
-    private static boolean isTimePoint(final AnnotatedTypeMirror annotatedType) {
-        // return true if the annotated type is @TimePoint
-        if (annotatedType.getAnnotation(TimePoint.class) != null) {
+    private static boolean isTimeInstant(final AnnotatedTypeMirror annotatedType) {
+        // return true if the annotated type is @TimeInstant
+        if (annotatedType.getAnnotation(TimeInstant.class) != null) {
             return true;
         }
 
         boolean hasDurationUnitMetaAnno = false;
-        boolean isDirectSubtypeOfTimePoint = false;
+        boolean isDirectSubtypeOfTimeInstant = false;
 
         // loop through all of the annotations on the type
         for (AnnotationMirror mirror : annotatedType.getEffectiveAnnotations()) {
@@ -632,25 +631,25 @@ public class UnitsRelationsTools {
             AnnotationMirror subtypeOfMetaAnno = getSubtypeOfMetaAnnotation(mirror);
             if (subtypeOfMetaAnno != null) {
                 // if Subtypeof meta annotation is present, check to see if it's
-                // value is TimePoint
+                // value is TimeInstant
                 // obtain the classes declared in the SubtypeOf annotation
                 @SuppressWarnings("unchecked")
                 List<Attribute.Class> supertypes = AnnotationUtils.getElementValue(subtypeOfMetaAnno, "value", List.class, true);
 
                 // loop through those classes, check to see that it's name
-                // matches the TimePoint class's canonical name
+                // matches the TimeInstant class's canonical name
                 for (Attribute.Class supertype : supertypes) {
                     String subtypeAnnoValue = supertype.getValue().asElement().getQualifiedName().toString().intern();
                     if (subtypeAnnoValue == timeInstantClassName) {
-                        isDirectSubtypeOfTimePoint = true;
+                        isDirectSubtypeOfTimeInstant = true;
                     }
                 }
             }
         }
 
         // return true if it has the DurationUnit meta annotation and is a
-        // direct subtype of TimePoint
-        return hasDurationUnitMetaAnno && isDirectSubtypeOfTimePoint;
+        // direct subtype of TimeInstant
+        return hasDurationUnitMetaAnno && isDirectSubtypeOfTimeInstant;
     }
 
     private static /*@Nullable*/ AnnotationMirror getDurationUnitMetaAnnotation(AnnotationMirror anno) {

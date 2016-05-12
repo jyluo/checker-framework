@@ -611,7 +611,7 @@ public class UnitsRelationsTools {
      * {@link TimePoint} through the {@link SubtypeOf} meta-annotation. Every
      * time point unit must be defined with both of these meta-annotations.
      *
-     * @param atm annotated type mirror with a units annotation
+     * @param annotatedType annotated type mirror with a units annotation
      * @return true if it is a subtype of {@link TimePoint}, false otherwise
      */
     private static boolean isTimePoint(final AnnotatedTypeMirror annotatedType) {

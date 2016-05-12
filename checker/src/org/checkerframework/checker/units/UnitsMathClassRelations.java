@@ -80,9 +80,8 @@ public class UnitsMathClassRelations extends UnitsClassRelations {
      * corresponding length unit
      *
      * @param arg a unit which may or may not be one of the supported area units
-     * @param type the result unit
-     * @return type will be replaced with the corresponding length unit if arg
-     *         is a supported area unit
+     * @param type the result unit, which will be replaced with the
+     *            corresponding length unit if arg is a supported area unit
      */
     private void processSquareRoot(AnnotatedTypeMirror arg, AnnotatedTypeMirror type) {
         if (UnitsRelationsTools.hasSpecificUnit(arg, factory.m2)) {
@@ -106,9 +105,8 @@ public class UnitsMathClassRelations extends UnitsClassRelations {
      *
      * @param arg a unit which may or may not be one of the supported volume
      *            units
-     * @param type the result unit
-     * @return type will be replaced with the corresponding length unit if arg
-     *         is a supported volume unit
+     * @param type the result unit, which will be replaced with the
+     *            corresponding length unit if arg is a supported volume unit
      */
     private void processCubeRoot(AnnotatedTypeMirror arg, AnnotatedTypeMirror type) {
         if (UnitsRelationsTools.hasSpecificUnit(arg, factory.m3)) {
@@ -131,9 +129,9 @@ public class UnitsMathClassRelations extends UnitsClassRelations {
      * value, then depending on the value of the exponent, it will produce a
      * unit for the resultType depending on the unit of powBase
      *
-     * @param powBase
-     * @param powExponent
-     * @param resultType
+     * @param powBase atm representing the base being raised
+     * @param powExponent the exponent
+     * @param resultType the result type
      */
     private void processPower(AnnotatedTypeMirror powBase, ExpressionTree powExponent, AnnotatedTypeMirror resultType) {
         double exp;

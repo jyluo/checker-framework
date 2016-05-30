@@ -43,17 +43,17 @@ class Math {
     static @PolyUnit long abs(@PolyUnit long a);
 
     // Trigonometry
-    static double sin(@radians double a);
-    static double cos(@radians double a);
-    static double tan(@radians double a);
+    static double sin(@rad double a);
+    static double cos(@rad double a);
+    static double tan(@rad double a);
     // both x & y must be same unit and if so returns that unit, else returns
     // the LUB of the units
     static @PolyUnit double hypot(@PolyUnit double x, @PolyUnit double y);
 
     // Inverse Trigonometry
-    static @radians double asin(double a);
-    static @radians double acos(double a);
-    static @radians double atan(double a);
+    static @rad double asin(double a);
+    static @rad double acos(double a);
+    static @rad double atan(double a);
 
     // x and y should be the same unit, returns the angle theta (in radians)
     // from the conversion of rectangular coordinates [x, y] to polar
@@ -61,7 +61,7 @@ class Math {
     // atan2(y, x) == atan(y / x) except the sign of both arguments are used to
     // determine the quadrant of the result
     // Units ATF ensures that y and x have the same units
-    static @radians double atan2(@UnknownUnits double y, @UnknownUnits double x);
+    static @rad double atan2(@UnknownUnits double y, @UnknownUnits double x);
     // Inverse Trigonometry identities in terms of units (value is subject to
     // domain)
     // sin(asin(x)) == x
@@ -76,13 +76,13 @@ class Math {
     // Hyperbolic Trigonometry
     // takes as input a hyperbolic angle which is also in radians for Math lib
     // implementation
-    static double sinh(@radians double x);
-    static double cosh(@radians double x);
-    static double tanh(@radians double x);
+    static double sinh(@rad double x);
+    static double cosh(@rad double x);
+    static double tanh(@rad double x);
 
     // Angle Conversion
-    static @degrees double toDegrees(@radians double angrad);
-    static @radians double toRadians(@degrees double angdeg);
+    static @deg double toDegrees(@rad double angrad);
+    static @rad double toRadians(@deg double angdeg);
 
     // Exact operations
     // returns a++ or exception if it overflows, same unit as a

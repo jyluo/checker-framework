@@ -23,14 +23,14 @@ public class UnitsTools {
     public static final @mPERs2 int mPERs2 = 1;
 
     // Angle
-    public static final @radians double rad = 1;
-    public static final @degrees double deg = 1;
+    public static final @rad double rad = 1;
+    public static final @deg double deg = 1;
 
-    public static @radians double toRadians(@degrees double angdeg) {
+    public static @rad double toRadians(@deg double angdeg) {
         return Math.toRadians(angdeg);
     }
 
-    public static @degrees double toDegrees(@radians double angrad) {
+    public static @deg double toDegrees(@rad double angrad) {
         return Math.toDegrees(angrad);
     }
 

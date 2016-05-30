@@ -194,7 +194,12 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         unitsRelations.addUnitsRelations(annoClass);
     }
 
-    private boolean isAliasedAnnotation(AnnotationMirror anno) {
+    /**
+     * Checks to see if anno is an alias annotation
+     * @param anno a units annotation
+     * @return true if anno is an alias annotation
+     */
+    protected boolean isAliasedAnnotation(AnnotationMirror anno) {
         return getUnitsMultipleMetaAnnotation(anno) != null;
     }
 
@@ -282,6 +287,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // unit annotations with prefix values (eg @g(Prefix.kilo))
     @Override
     public AnnotationMirror aliasedAnnotation(AnnotationMirror anno) {
+        // if it isn't an alias annotation, immediately return the annotation
+        if (!isAliasedAnnotation(anno)) {
+            return anno;
+        }
+
         // Get the name of the aliased annotation
         String aname = anno.getAnnotationType().toString().intern();
 

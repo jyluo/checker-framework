@@ -38,6 +38,7 @@ class Test {
         z.toString();
     }
 
+    @SuppressWarnings("unchecked")
     void test2(Map<String, List<Integer>> x) {
         x.values().forEach(
                 (c) -> Collections.sort((List<Integer>) List.class.cast(c))

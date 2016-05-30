@@ -41,8 +41,8 @@ public class Java7Math {
     }
 
     void trigonometryTest() {
-        @radians double angle = Math.PI * 20.0d * UnitsTools.rad;
-        @degrees double angDeg = 20.0d * UnitsTools.deg;
+        @rad double angle = Math.PI * 20.0d * UnitsTools.rad;
+        @deg double angDeg = 20.0d * UnitsTools.deg;
 
         // receiving type is @UnknownUnits
         double sin = Math.sin(angle);
@@ -85,40 +85,40 @@ public class Java7Math {
         @Scalar double constant = Math.PI;
         @m double meter = 20.0d * UnitsTools.m;
 
-        @radians double asin = Math.asin(constant);
-        @radians double acos = Math.acos(constant);
-        @radians double atan = Math.atan(constant);
+        @rad double asin = Math.asin(constant);
+        @rad double acos = Math.acos(constant);
+        @rad double atan = Math.atan(constant);
 
         //:: error: (assignment.type.incompatible)
-        @degrees double asind = Math.asin(constant);
+        @deg double asind = Math.asin(constant);
         //:: error: (assignment.type.incompatible)
-        @degrees double acosd = Math.acos(constant);
+        @deg double acosd = Math.acos(constant);
         //:: error: (assignment.type.incompatible)
-        @degrees double atand = Math.atan(constant);
+        @deg double atand = Math.atan(constant);
 
         //:: error: (argument.type.incompatible)
-        @radians double asinm = Math.asin(meter);
+        @rad double asinm = Math.asin(meter);
         //:: error: (argument.type.incompatible)
-        @radians double acosm = Math.acos(meter);
+        @rad double acosm = Math.acos(meter);
         //:: error: (argument.type.incompatible)
-        @radians double atanm = Math.atan(meter);
+        @rad double atanm = Math.atan(meter);
 
-        @radians double atan2 = Math.atan2(constant, constant);
-        @radians double atan21 = Math.atan2(meter, meter);
+        @rad double atan2 = Math.atan2(constant, constant);
+        @rad double atan21 = Math.atan2(meter, meter);
 
         //:: error: (assignment.type.incompatible)
-        @degrees double atan2d = Math.atan2(constant, constant);
+        @deg double atan2d = Math.atan2(constant, constant);
 
         // x and y have to have the same units
         //:: error: (two.parameter.method.arguments.unit.mismatch)
-        @radians double atan22 = Math.atan2(meter, constant);
+        @rad double atan22 = Math.atan2(meter, constant);
     }
 
     // Future TODO: keep and pass the unit through the trigonometric identities
     void inverseTrigIdentitiesTest() {
         // full list of identities
         // http://www.sosmath.com/trig/Trig5/trig5/trig5.html
-        @radians double r = 30 * UnitsTools.rad;
+        @rad double r = 30 * UnitsTools.rad;
         @Scalar double s = 30;
 
         // Inverse Trigonometry identities in terms of units (value is subject
@@ -129,7 +129,7 @@ public class Java7Math {
         @m double sasBad = Math.sin(Math.asin(s));
 
         // asin(sin(y)) == y
-        @radians double ass = Math.asin(Math.sin(r));
+        @rad double ass = Math.asin(Math.sin(r));
         //:: error: (assignment.type.incompatible)
         @m double assBad = Math.asin(Math.sin(r));
 
@@ -139,7 +139,7 @@ public class Java7Math {
         @m double cacBad = Math.cos(Math.acos(s));
 
         // acos(cos(y)) == y
-        @radians double acc = Math.acos(Math.cos(r));
+        @rad double acc = Math.acos(Math.cos(r));
         //:: error: (assignment.type.incompatible)
         @m double accBad = Math.acos(Math.cos(r));
 
@@ -149,7 +149,7 @@ public class Java7Math {
         @m double tatBad = Math.tan(Math.atan(s));
 
         // atan(tan(y)) == y
-        @radians double att = Math.atan(Math.tan(r));
+        @rad double att = Math.atan(Math.tan(r));
         //:: error: (assignment.type.incompatible)
         @m double attBad = Math.atan(Math.tan(r));
 
@@ -164,8 +164,8 @@ public class Java7Math {
     }
 
     void hyperbolicTrigTest() {
-        @radians double angle = Math.PI * 20.0d * UnitsTools.rad;
-        @degrees double angDeg = 20.0d * UnitsTools.deg;
+        @rad double angle = Math.PI * 20.0d * UnitsTools.rad;
+        @deg double angDeg = 20.0d * UnitsTools.deg;
 
         // receiving type is @UnknownUnits
         double sinh = Math.sinh(angle);
@@ -192,8 +192,8 @@ public class Java7Math {
     }
 
     void angleConversionTest() {
-        @radians double angRad = 30.0d * UnitsTools.rad;
-        @degrees double angDeg = 20.0d * UnitsTools.deg;
+        @rad double angRad = 30.0d * UnitsTools.rad;
+        @deg double angDeg = 20.0d * UnitsTools.deg;
 
         angDeg = Math.toDegrees(angRad);
         angRad = Math.toRadians(angDeg);

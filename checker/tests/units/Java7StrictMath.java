@@ -41,8 +41,8 @@ public class Java7StrictMath {
     }
 
     void trigonometryTest() {
-        @radians double angle = StrictMath.PI * 20.0d * UnitsTools.rad;
-        @degrees double angDeg = 20.0d * UnitsTools.deg;
+        @rad double angle = StrictMath.PI * 20.0d * UnitsTools.rad;
+        @deg double angDeg = 20.0d * UnitsTools.deg;
 
         // receiving type is @UnknownUnits
         double sin = StrictMath.sin(angle);
@@ -85,40 +85,40 @@ public class Java7StrictMath {
         @Scalar double constant = StrictMath.PI;
         @m double meter = 20.0d * UnitsTools.m;
 
-        @radians double asin = StrictMath.asin(constant);
-        @radians double acos = StrictMath.acos(constant);
-        @radians double atan = StrictMath.atan(constant);
+        @rad double asin = StrictMath.asin(constant);
+        @rad double acos = StrictMath.acos(constant);
+        @rad double atan = StrictMath.atan(constant);
 
         //:: error: (assignment.type.incompatible)
-        @degrees double asind = StrictMath.asin(constant);
+        @deg double asind = StrictMath.asin(constant);
         //:: error: (assignment.type.incompatible)
-        @degrees double acosd = StrictMath.acos(constant);
+        @deg double acosd = StrictMath.acos(constant);
         //:: error: (assignment.type.incompatible)
-        @degrees double atand = StrictMath.atan(constant);
+        @deg double atand = StrictMath.atan(constant);
 
         //:: error: (argument.type.incompatible)
-        @radians double asinm = StrictMath.asin(meter);
+        @rad double asinm = StrictMath.asin(meter);
         //:: error: (argument.type.incompatible)
-        @radians double acosm = StrictMath.acos(meter);
+        @rad double acosm = StrictMath.acos(meter);
         //:: error: (argument.type.incompatible)
-        @radians double atanm = StrictMath.atan(meter);
+        @rad double atanm = StrictMath.atan(meter);
 
-        @radians double atan2 = StrictMath.atan2(constant, constant);
-        @radians double atan21 = StrictMath.atan2(meter, meter);
+        @rad double atan2 = StrictMath.atan2(constant, constant);
+        @rad double atan21 = StrictMath.atan2(meter, meter);
 
         //:: error: (assignment.type.incompatible)
-        @degrees double atan2d = StrictMath.atan2(constant, constant);
+        @deg double atan2d = StrictMath.atan2(constant, constant);
 
         // x and y have to have the same units
         //:: error: (two.parameter.method.arguments.unit.mismatch)
-        @radians double atan22 = StrictMath.atan2(meter, constant);
+        @rad double atan22 = StrictMath.atan2(meter, constant);
     }
 
     // Future TODO: keep and pass the unit through the trigonometric identities
     void inverseTrigIdentitiesTest() {
         // full list of identities
         // http://www.sosmath.com/trig/Trig5/trig5/trig5.html
-        @radians double r = 30 * UnitsTools.rad;
+        @rad double r = 30 * UnitsTools.rad;
         @Scalar double s = 30;
 
         // Inverse Trigonometry identities in terms of units (value is subject
@@ -129,7 +129,7 @@ public class Java7StrictMath {
         @m double sasBad = StrictMath.sin(StrictMath.asin(s));
 
         // asin(sin(y)) == y
-        @radians double ass = StrictMath.asin(StrictMath.sin(r));
+        @rad double ass = StrictMath.asin(StrictMath.sin(r));
         //:: error: (assignment.type.incompatible)
         @m double assBad = StrictMath.asin(StrictMath.sin(r));
 
@@ -139,7 +139,7 @@ public class Java7StrictMath {
         @m double cacBad = StrictMath.cos(StrictMath.acos(s));
 
         // acos(cos(y)) == y
-        @radians double acc = StrictMath.acos(StrictMath.cos(r));
+        @rad double acc = StrictMath.acos(StrictMath.cos(r));
         //:: error: (assignment.type.incompatible)
         @m double accBad = StrictMath.acos(StrictMath.cos(r));
 
@@ -149,7 +149,7 @@ public class Java7StrictMath {
         @m double tatBad = StrictMath.tan(StrictMath.atan(s));
 
         // atan(tan(y)) == y
-        @radians double att = StrictMath.atan(StrictMath.tan(r));
+        @rad double att = StrictMath.atan(StrictMath.tan(r));
         //:: error: (assignment.type.incompatible)
         @m double attBad = StrictMath.atan(StrictMath.tan(r));
 
@@ -164,8 +164,8 @@ public class Java7StrictMath {
     }
 
     void hyperbolicTrigTest() {
-        @radians double angle = StrictMath.PI * 20.0d * UnitsTools.rad;
-        @degrees double angDeg = 20.0d * UnitsTools.deg;
+        @rad double angle = StrictMath.PI * 20.0d * UnitsTools.rad;
+        @deg double angDeg = 20.0d * UnitsTools.deg;
 
         // receiving type is @UnknownUnits
         double sinh = StrictMath.sinh(angle);
@@ -192,8 +192,8 @@ public class Java7StrictMath {
     }
 
     void angleConversionTest() {
-        @radians double angRad = 30.0d * UnitsTools.rad;
-        @degrees double angDeg = 20.0d * UnitsTools.deg;
+        @rad double angRad = 30.0d * UnitsTools.rad;
+        @deg double angDeg = 20.0d * UnitsTools.deg;
 
         angDeg = StrictMath.toDegrees(angRad);
         angRad = StrictMath.toRadians(angDeg);

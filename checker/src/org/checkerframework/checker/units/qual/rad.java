@@ -16,6 +16,6 @@ import org.checkerframework.framework.qual.SubtypeOf;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(Angle.class)
-public @interface radians {
+public @interface rad {
     Prefix value() default Prefix.one;
 }

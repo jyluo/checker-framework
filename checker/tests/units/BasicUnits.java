@@ -61,20 +61,20 @@ public class BasicUnits {
         //:: error: (assignment.type.incompatible)
         @km2 int bae1 = m * m;
 
-        @radians double rad = 20.0d * UnitsTools.rad;
-        @degrees double deg = 30.0d * UnitsTools.deg;
+        @rad double rad = 20.0d * UnitsTools.rad;
+        @deg double deg = 30.0d * UnitsTools.deg;
 
-        @degrees double rToD1 = UnitsTools.toDegrees(rad);
+        @deg double rToD1 = UnitsTools.toDegrees(rad);
         //:: error: (argument.type.incompatible)
-        @degrees double rToD2 = UnitsTools.toDegrees(deg);
+        @deg double rToD2 = UnitsTools.toDegrees(deg);
         //:: error: (assignment.type.incompatible)
-        @radians double rToD3 = UnitsTools.toDegrees(rad);
+        @rad double rToD3 = UnitsTools.toDegrees(rad);
 
-        @radians double dToR1 = UnitsTools.toRadians(deg);
+        @rad double dToR1 = UnitsTools.toRadians(deg);
         //:: error: (argument.type.incompatible)
-        @radians double rToR2 = UnitsTools.toRadians(rad);
+        @rad double rToR2 = UnitsTools.toRadians(rad);
         //:: error: (assignment.type.incompatible)
-        @degrees double rToR3 = UnitsTools.toRadians(deg);
+        @deg double rToR3 = UnitsTools.toRadians(deg);
 
         // speed conversion
         @mPERs int mPs = 30 * UnitsTools.mPERs;

@@ -16,11 +16,11 @@ import java.time.temporal.ValueRange;
 public class Java8TimeTest {
 
     void AddSubtractTest() {
-        @SuppressWarnings("units") @CALs long si = 30;
-        @SuppressWarnings("units") @CALyear long yi = 30;
+        @CALs long si = 30 * UnitsTools.CALs;
+        @CALyear long yi = 30 * UnitsTools.CALyear;
 
-        @SuppressWarnings("units") @s long sd = 30;
-        @SuppressWarnings("units") @year long yd = 30;
+        @s long sd = 30 * UnitsTools.s;
+        @year long yd = 30 * UnitsTools.year;
 
         sd = sd + sd;
         si = si + sd;
@@ -57,8 +57,8 @@ public class Java8TimeTest {
     }
 
     static void M() {
-        @SuppressWarnings("units") @CALs long s = 30;
-        @SuppressWarnings("units") @CALns long ns = 50;
+        @CALs long s = 30 * UnitsTools.CALs;
+        @CALns long ns = 50 * UnitsTools.CALns;
 
         ValueRange vr = ValueRange.of(s, s);
 

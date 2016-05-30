@@ -136,7 +136,7 @@ public class ParamReturn {
         if (x == y);
     }
 
-    void toDegree(@radians double x) {}
+    void toDegree(@rad double x) {}
 
     void inTop(@UnknownUnits double x) {}
 

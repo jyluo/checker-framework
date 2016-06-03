@@ -8,8 +8,7 @@ import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
-import org.checkerframework.javacutil.Pair;
-import org.checkerframework.javacutil.TreeUtils;
+import org.checkerframework.javacutil.*;
 
 import java.util.List;
 
@@ -31,8 +30,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         AnnotatedTypeMirror exprType = atypeFactory.getAnnotatedType(node.getExpression());
         Tree.Kind kind = node.getKind();
 
-        atypeFactory.getUnitsMathOperatorsRelations()
-            .processCompoundAssignmentOperation(node, kind, null, varType, exprType);
+        atypeFactory.getUnitsMathOperatorsRelations().processCompoundAssignmentOperation(node, kind, null, varType, exprType);
 
         return null;
     }
@@ -59,7 +57,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     // UnitsBottom. Classes are by default Scalar, but these objects may use
     // some unit that isn't a subtype of Scalar.
     @Override
-    protected boolean checkConstructorInvocation(AnnotatedDeclaredType useType, AnnotatedExecutableType constructor, Tree src) {
+    protected boolean checkConstructorInvocation(AnnotatedDeclaredType useType, AnnotatedExecutableType constructor, NewClassTree src) {
         // The declared constructor return type is the same as the declared type
         // of the class that is being constructed, by default this will be
         // Scalar.
@@ -158,10 +156,11 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
 
         // Units Checker Code =======================
-        // if the method receiver is Scalar and the receiving object is
-        // UnknownUnits, pass
+        // if the method's declared receiver is Scalar and the receiving object is
+        // UnknownUnits, or if the method's class is Object, pass
         if (UnitsRelationsTools.hasSpecificUnit(methodReceiver, atypeFactory.scalar)
-                && UnitsRelationsTools.hasSpecificUnit(treeReceiver, atypeFactory.TOP)) {
+                && UnitsRelationsTools.hasSpecificUnit(treeReceiver, atypeFactory.TOP) ||
+                TypesUtils.isObject(methodReceiver.getUnderlyingType()) ) {
             return;
         }
         // End Units Checker Code ===================
@@ -170,3 +169,4 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             checker.report(Result.failure("method.invocation.invalid", TreeUtils.elementFromUse(node), treeReceiver.toString(), methodReceiver.toString()), node);
         }
     }
+}

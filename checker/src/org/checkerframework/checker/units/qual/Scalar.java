@@ -21,10 +21,10 @@ import java.lang.annotation.*;
 @SubtypeOf(UnknownUnits.class)
 @DefaultQualifierInHierarchy
 @DefaultQualifierInHierarchyInUncheckedCode
-@DefaultFor({
-     TypeUseLocation.IMPLICIT_UPPER_BOUND,    // <T>
-     TypeUseLocation.EXPLICIT_UPPER_BOUND     // <T extends Object>
-})
+//@DefaultFor({
+//     TypeUseLocation.IMPLICIT_UPPER_BOUND,    // <T>
+//     TypeUseLocation.EXPLICIT_UPPER_BOUND     // <T extends Object>
+//})
 @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

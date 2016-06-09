@@ -18,7 +18,9 @@ import java.lang.annotation.*;
     // Allows flow based type refinement in the body of methods
     TypeUseLocation.LOCAL_VARIABLE,
     TypeUseLocation.EXCEPTION_PARAMETER,
-    TypeUseLocation.RESOURCE_VARIABLE
+    TypeUseLocation.RESOURCE_VARIABLE,
+    TypeUseLocation.IMPLICIT_UPPER_BOUND,    // <T>
+    TypeUseLocation.EXPLICIT_UPPER_BOUND     // <T extends Object>
 })
 @DefaultInUncheckedCodeFor({ TypeUseLocation.UPPER_BOUND })
 // Exceptions are always TOP type, so Throwable must be as well

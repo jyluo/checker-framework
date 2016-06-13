@@ -175,7 +175,7 @@ public class UnitsTools {
      */
     public static final @Scalar <T> T toScalar(@UnknownUnits T x) {
         // for version 8:
-        // public static final <T> @Scalar T toScalar(@UnknownUnits T x) {
+        // public static final <@UnknownUnits T> @Scalar T toScalar(T x) {
         return x;
     }
 }

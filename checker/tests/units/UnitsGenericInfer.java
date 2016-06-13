@@ -4,14 +4,14 @@ import java.util.*;
 
 // Test 1:
 class ClassA{}
-class ClassB< TT, HH extends TT >{}
+class ClassB< TT, HH extends @UnknownUnits TT >{}
 class MM{
     public void mm( ClassB< ClassA, ? > input) {}
 }
 
 // Test 2:
 class ClassC<V extends ClassC<V>> {}
-class ClassD extends ClassC<ClassD> {
+class ClassD extends @UnknownUnits ClassC<ClassD> {
     public ClassD(ClassE<ClassD, ?> input) {}
 }
 class ClassE<V extends ClassC<V>, S extends ClassE<V, S>> {}
@@ -25,7 +25,7 @@ interface A<T> {
 // Test 4:
 class MyClass<T extends String>{}
 class XX{
-    // extends bound higher than class declaration allowed in java
+    // extends bound higher than class declaration is allowed in java
     MyClass<? extends Object> x = new MyClass<String>();
 }
 
@@ -40,7 +40,7 @@ class TypeVarsArrays<T> {
 }
 
 // Test 6:
-class Comp<T extends @UnknownUnits Object> {
+class Comp<T extends Object> {
     Comp<T> method() {
         return new Comp<T>();
     }

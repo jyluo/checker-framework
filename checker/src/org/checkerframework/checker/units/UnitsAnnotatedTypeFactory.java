@@ -616,7 +616,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     protected class UnitsTypeHierarchy extends DefaultTypeHierarchy {
         public UnitsTypeHierarchy(BaseTypeChecker checker) {
-            // true allows covariant type arguments
+            // true as the last parameter allows covariant type arguments
             super(checker, getQualifierHierarchy(), checker.hasOption("ignoreRawTypeArguments"), checker.hasOption("invariantArrays"), true);
         }
     }

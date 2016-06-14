@@ -441,7 +441,7 @@
         <mkdir dir="dist" />
 
         <jar destfile="${checker.qual.lib}" basedir="${build}">
-            <include name="**/qual/*"/>
+            <include name="**/qual/**"/>
             <!-- Exclude test-only qualifiers -->
             <exclude name="lubglb/qual/*"/>
             <exclude name="polyall/qual/*"/>

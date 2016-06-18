@@ -70,4 +70,3 @@ class Comp<T extends Object> {
 
 // Test 7:
 abstract class Ordering<T> implements Comparator<T> {}
-

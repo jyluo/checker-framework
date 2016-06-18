@@ -38,6 +38,3 @@ class Other {
         b.m();
     }
 }
-
-
-

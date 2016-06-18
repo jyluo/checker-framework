@@ -86,4 +86,3 @@ interface Consumer<T extends @UnknownUnits Object> {
     void accept(T arg0);
     Consumer<T> andThen(Consumer<? super T> arg0);
 }
-

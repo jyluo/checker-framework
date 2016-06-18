@@ -14,12 +14,12 @@ class UnitsExtensionDemo {
         //:: error: (assignment.type.incompatible)
         frq = 5;
 
-        // suppress all warnings issued by the units checker for the d1
+        // surpress all warnings issued by the units checker for the d1
         // assignment statement
         @SuppressWarnings("units")
         @Hz int d1 = 9;
 
-        // specifically suppress warnings related to any frequency units for the
+        // specifically surpress warnings related to any frequency units for the
         // d2 assigment statement
         @SuppressWarnings("frequency")
         @Hz int d2 = 10;
@@ -69,5 +69,13 @@ class UnitsExtensionDemo {
         // Hz, so it will fail
         //:: error: (assignment.type.incompatible)
         @Hz int badTernaryAssign = seconds > otherSeconds ? hertz : kilohertz;
+
+        infer(hertz);
+        infer(seconds);
+    }
+
+    // The type of int is inferred through inference script
+    static void infer(int bleh) {
+
     }
 }

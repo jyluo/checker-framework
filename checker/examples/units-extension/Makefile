@@ -37,3 +37,6 @@ qual-folder-test:
 # test clean up
 clean:
 	-rm qual/*.class
+
+infer:
+	$CHECKERFRAMEWORK/checker/bin/infer-and-annotate.sh "UnitsChecker" ../../dist/checker.jar:$(cd .; pwd) -AprintErrorStack -Xbootclasspath/p:/home/jeff/workspace/jsr308/checker-framework/checker/examples/units-extension-infer -AunitsDirs=/home/jeff/workspace/jsr308/checker-framework/checker/examples/units-extension-infer Demo.java

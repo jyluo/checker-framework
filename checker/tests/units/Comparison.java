@@ -3,6 +3,9 @@ import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.checker.units.UnitsTools;
 
+import java.util.List;
+import java.util.Arrays;
+
 public class Comparison {
     @m int meter = 20 * UnitsTools.m;
     @s int second = 30 * UnitsTools.s;
@@ -83,5 +86,16 @@ public class Comparison {
 
     <T> void typeVarLoop(T[] x) {
         for (T i : x);
+    }
+
+    // contains() has a hidden comparison
+    private static final List<Class<? extends @Scalar Number>> INTEGERS = Arrays.asList(
+        Long.class, Integer.class, Short.class, Byte.class);
+
+    private static int factory(Number num) {
+        if (INTEGERS.contains(num.getClass())) {
+            return 5;
+        }
+        return 9;
     }
 }

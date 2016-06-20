@@ -8,7 +8,7 @@ package java.lang;
 // However, any class which overrides these methods current runs into an error
 class Object {
     Object();
-    Class<?> getClass();
+    Class<? extends @PolyUnit Object> getClass() @PolyUnit;
     int hashCode();
     boolean equals(@UnknownUnits Object arg0);
     protected @PolyUnit Object clone() @PolyUnit throws CloneNotSupportedException;

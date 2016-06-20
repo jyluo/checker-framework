@@ -5,6 +5,7 @@ import org.checkerframework.checker.units.UnitsTools;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class Comparison {
     @m int meter = 20 * UnitsTools.m;
@@ -88,8 +89,18 @@ public class Comparison {
         for (T i : x);
     }
 
+    void m(Number num) {
+        //:: error: (assignment.type.incompatible)
+        Class<? extends @s Object> c = num.getClass();
+
+        List<Class<? extends @s Object>> l = new ArrayList<Class<? extends @s Object>>();
+        l.add(c);
+
+        if ( l.contains(c) ) {}
+    }
+
     // contains() has a hidden comparison
-    private static final List<Class<? extends @Scalar Number>> INTEGERS = Arrays.asList(
+    private static final List<Class<? extends @Scalar Number>> INTEGERS = Arrays.<Class<? extends @Scalar Number>>asList(
         Long.class, Integer.class, Short.class, Byte.class);
 
     private static int factory(Number num) {

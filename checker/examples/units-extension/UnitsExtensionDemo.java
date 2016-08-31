@@ -70,8 +70,8 @@ class UnitsExtensionDemo {
         //:: error: (assignment.type.incompatible)
         @Hz int badTernaryAssign = seconds > otherSeconds ? hertz : kilohertz;
 
-        infer(hertz);
-        infer(seconds);
+        infer(5 * UnitsTools.C);
+        infer(6 * UnitsTools.K);
     }
 
     // The type of int is inferred through inference script

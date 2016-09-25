@@ -4,9 +4,8 @@ import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.C;
 import org.checkerframework.checker.units.qual.K;
 import org.checkerframework.checker.units.qual.cd;
-import org.checkerframework.checker.units.qual.degrees;
+import org.checkerframework.checker.units.qual.deg;
 import org.checkerframework.checker.units.qual.g;
-import org.checkerframework.checker.units.qual.h;
 import org.checkerframework.checker.units.qual.kg;
 import org.checkerframework.checker.units.qual.km;
 import org.checkerframework.checker.units.qual.km2;
@@ -15,12 +14,13 @@ import org.checkerframework.checker.units.qual.m;
 import org.checkerframework.checker.units.qual.m2;
 import org.checkerframework.checker.units.qual.mPERs;
 import org.checkerframework.checker.units.qual.mPERs2;
-import org.checkerframework.checker.units.qual.min;
 import org.checkerframework.checker.units.qual.mm;
 import org.checkerframework.checker.units.qual.mm2;
 import org.checkerframework.checker.units.qual.mol;
-import org.checkerframework.checker.units.qual.radians;
-import org.checkerframework.checker.units.qual.s;
+import org.checkerframework.checker.units.qual.rad;
+import org.checkerframework.checker.units.qual.time.duration.h;
+import org.checkerframework.checker.units.qual.time.duration.min;
+import org.checkerframework.checker.units.qual.time.duration.s;
 
 /**
  * Utility methods to generate annotated types and to convert between them.
@@ -33,14 +33,14 @@ public class UnitsTools {
     public static final @mPERs2 int mPERs2 = 1;
 
     // Angle
-    public static final @radians double rad = 1;
-    public static final @degrees double deg = 1;
+    public static final @rad double rad = 1;
+    public static final @deg double deg = 1;
 
-    public static @radians double toRadians(@degrees double angdeg) {
+    public static @rad double toRadians(@deg double angdeg) {
         return Math.toRadians(angdeg);
     }
 
-    public static @degrees double toDegrees(@radians double angrad) {
+    public static @deg double toDegrees(@rad double angrad) {
         return Math.toDegrees(angrad);
     }
 

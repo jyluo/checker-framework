@@ -183,8 +183,8 @@ class UnitsGenericClassesAndMethods {
     // Custom generic classes can be explicitly annotated for a category of
     // units, making it useable with only that category of units, and forbidding
     // its use with other incompatible units
-    class A<T extends @Length Object> {
-        public A() {}
+    class SomeClassA<T extends @Length Object> {
+        public SomeClassA() {}
 
         T method(T input) {
             return input;
@@ -192,13 +192,13 @@ class UnitsGenericClassesAndMethods {
     }
 
     void classATest() {
-        A<@m(Prefix.nano) Number> a = new A<@m(Prefix.nano) Number>();
+        SomeClassA<@m(Prefix.nano) Number> a = new SomeClassA<@m(Prefix.nano) Number>();
         a.method(new @m(Prefix.nano) Integer(5));
         //:: error: (argument.type.incompatible)
         a.method(new @UnknownUnits Integer(5));
 
         //:: error: (type.argument.type.incompatible)
-        A<@s Number> b = new A<@s Number>();
+        SomeClassA<@s Number> b = new SomeClassA<@s Number>();
     }
 
     // =======================

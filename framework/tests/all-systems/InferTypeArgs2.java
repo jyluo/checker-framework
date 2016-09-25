@@ -5,6 +5,7 @@ class InferTypeArgs2<V extends InferTypeArgs2<V>> {}
 // InferTypeArgs1.java.  In this case we end up comparing CFValue with V extends InferTypeArgs2<V>
 // which kicks off the DefaultRawnessComparer.  Before I fixed it, it then blew the stack
 class CFValue extends InferTypeArgs2<CFValue> {
+    @SuppressWarnings({"units"})
     public CFValue(InferTypeArgsAnalysis<CFValue, ?, ?> analysis) {}
 }
 
@@ -15,6 +16,7 @@ class CFAbstractTransfer<
         S extends CFAbstractStore<V, S>,
         T extends CFAbstractTransfer<V, S, T>> {}
 
+@SuppressWarnings({"units"})
 class InferTypeArgsAnalysis<
         V extends InferTypeArgs2<V>,
         S extends CFAbstractStore<V, S>,

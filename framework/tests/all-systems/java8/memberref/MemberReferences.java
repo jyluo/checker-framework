@@ -33,6 +33,7 @@ class Super {
             // TODO: Issue 802: type argument inference
             //:: warning: (methodref.inference.unimplemented)
             FunctionMR f2 = super::func2;
+            @SuppressWarnings({"units"})
             // Top level wildcards are ignored when type checking
             FunctionMR<? extends String, ? extends String> f3 = super::<String>func2;
         }
@@ -57,6 +58,7 @@ class Unbound {
         return o;
     }
 
+    @SuppressWarnings({"units"})
     void context() {
         FunctionMR<String, String> f1 = String::toString;
         // TODO: Issue 802: type argument inference
@@ -70,6 +72,7 @@ class Unbound {
 abstract class UnboundWithArg<U> {
     abstract U func1();
 
+    @SuppressWarnings({"units"})
     void context() {
         // TODO: Issue 802: type argument inference
         FunctionMR<UnboundWithArg<String>, String> f1 = UnboundWithArg::func1;
@@ -101,6 +104,7 @@ class Bound {
         return o;
     }
 
+    @SuppressWarnings({"units"})
     void context(Bound bound) {
         // TODO: Issue 802: type argument inference
         FunctionMR<String, String> f1 = bound::func1;

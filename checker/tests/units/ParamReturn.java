@@ -80,9 +80,9 @@ public class ParamReturn {
         y = 5;
         scalarParamScalarReturn(y);
 
-        // scalar type converted to Unknown and passed into scalar
+        // scalar type converted to meters and passed into scalar
         //:: error: (argument.type.incompatible)
-        scalarParamScalarReturn( (@UnknownUnits int) 5 );
+        scalarParamScalarReturn( 5 * UnitsTools.m );
     }
 
     void methodCalls() {
@@ -187,27 +187,27 @@ public class ParamReturn {
         inBottom(i);
     }
 
-    @TimeInstant class A {
-        @TimeInstant public A() {}
+    @TimeInstant class ParamReturnA {
+        @TimeInstant public ParamReturnA() {}
         void m() {
             // default receiver is @Scalar
         }
     }
 
-    @TimeInstant class B {
-        @TimeInstant public B() {}
-        void m(@TimeInstant B this) {
+    @TimeInstant class ParamReturnB {
+        @TimeInstant public ParamReturnB() {}
+        void m(@TimeInstant ParamReturnB this) {
             // receiver is a @TimeInstant
         }
     }
 
     class MethodReceiverTest {
         void x() {
-            A a = new @CALyear A();
+            ParamReturnA a = new @CALyear ParamReturnA();
             //:: error: (method.invocation.invalid)
             a.m();
 
-            B b = new @CALyear B();
+            ParamReturnB b = new @CALyear ParamReturnB();
             b.m();
         }
     }

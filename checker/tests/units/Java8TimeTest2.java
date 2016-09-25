@@ -10,9 +10,9 @@ import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
 @TimeInstant
-class A {
+class Alpha {
     @TimeInstant
-    public A() {}
+    public Alpha() {}
 
     void m() {
         // default receiver is @Scalar
@@ -20,22 +20,22 @@ class A {
 }
 
 @TimeInstant
-class B {
+class Beta {
     @TimeInstant
-    public B() {}
+    public Beta() {}
 
-    void m(@TimeInstant B this) {
+    void m(@TimeInstant Beta this) {
         // receiver is a @TimeInstant
     }
 }
 
 class Other {
-    void X() {
-        A a = new @CALyear A();
+    void Gamma() {
+        Alpha a = new @CALyear Alpha();
         //:: error: (method.invocation.invalid)
         a.m();
 
-        B b = new @CALyear B();
+        Beta b = new @CALyear Beta();
         b.m();
     }
 }

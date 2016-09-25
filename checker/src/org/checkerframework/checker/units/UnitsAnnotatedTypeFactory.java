@@ -1,22 +1,52 @@
 package org.checkerframework.checker.units;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.BinaryTree;
+import com.sun.source.tree.CompoundAssignmentTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.Tree;
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.Prefix;
+import org.checkerframework.checker.units.qual.Scalar;
+import org.checkerframework.checker.units.qual.UnitsBottom;
+import org.checkerframework.checker.units.qual.UnitsMultiple;
+import org.checkerframework.checker.units.qual.UnknownUnits;
+import org.checkerframework.checker.units.qual.km2;
+import org.checkerframework.checker.units.qual.km3;
+import org.checkerframework.checker.units.qual.m;
+import org.checkerframework.checker.units.qual.m2;
+import org.checkerframework.checker.units.qual.m3;
+import org.checkerframework.checker.units.qual.mm2;
+import org.checkerframework.checker.units.qual.mm3;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.framework.type.*;
+import org.checkerframework.framework.type.AnnotatedTypeFactory;
+import org.checkerframework.framework.type.AnnotatedTypeFormatter;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
-import org.checkerframework.framework.type.treeannotator.*;
+import org.checkerframework.framework.type.DefaultTypeHierarchy;
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.framework.type.TypeHierarchy;
+import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.PropagationTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.GraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
-import org.checkerframework.javacutil.*;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.Pair;
+import org.checkerframework.javacutil.TreeUtils;
+import org.checkerframework.javacutil.TypesUtils;
 
 /*>>>
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -83,22 +113,19 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // special processing of methods in classes
     // it is keyed by the fully qualified class names of each class that
     // requires special handling of its methods
-    private static final Map<String, UnitsClassRelations> classProcessors =
-            new HashMap<String, UnitsClassRelations>();
+    private static final Map<String, UnitsClassRelations> classProcessors = new HashMap<>();
 
     // map of externally loaded qualifiers
     private static final Map<String, Class<? extends Annotation>> externalQualsMap =
-            new HashMap<String, Class<? extends Annotation>>();
+            new HashMap<>();
 
     // map of alias annotations
-    private static final Map<String, AnnotationMirror> aliasMap =
-            new HashMap<String, AnnotationMirror>();
+    private static final Map<String, AnnotationMirror> aliasMap = new HashMap<>();
 
     // cache of examined type mirror equality comparisons, used in support of
     // identifying the appropriate class processor to provide special processing
     // of method invocations based on its receiver class type
-    private static final Map<String, Map<String, Boolean>> typeMirrorSameCache =
-            new HashMap<String, Map<String, Boolean>>();
+    private static final Map<String, Map<String, Boolean>> typeMirrorSameCache = new HashMap<>();
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         // use flow inference
@@ -125,11 +152,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // during the loading of external annotations, we may run into
         // externally defined units relations classes. Instantiate the manager
         // here to support the loading of external relations classes
-        unitsRelations = new UnitsRelationsManager((UnitsChecker) checker, this);
+        createUnitsRelationsManager();
 
         // get all the loaded units annotations that are bundled with the units
         // checker
-        Set<Class<? extends Annotation>> qualSet = new HashSet<Class<? extends Annotation>>();
+        Set<Class<? extends Annotation>> qualSet = new HashSet<>();
         qualSet.addAll(getBundledTypeQualifiersWithPolyAll());
 
         // load all the external units
@@ -352,7 +379,16 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
     }
 
+    private void createUnitsRelationsManager() {
+        if (unitsRelations == null) {
+            unitsRelations = new UnitsRelationsManager((UnitsChecker) checker, this);
+        }
+    }
+
     protected UnitsRelationsManager getUnitsRelationsManager() {
+        if (unitsRelations == null) {
+            createUnitsRelationsManager();
+        }
         return unitsRelations;
     }
 
@@ -437,7 +473,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         } else {
             // add a new inner map with the right type as key, and add this
             // inner map to the outer map
-            Map<String, Boolean> newInnerMap = new HashMap<String, Boolean>();
+            Map<String, Boolean> newInnerMap = new HashMap<>();
             newInnerMap.put(rhtKey, isSame);
             typeMirrorSameCache.put(lhtKey, newInnerMap);
         }

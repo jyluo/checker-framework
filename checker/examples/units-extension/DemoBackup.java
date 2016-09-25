@@ -1,10 +1,9 @@
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.time.duration.s;
-
+import qual.Frequency;
 import qual.Hz;
 import qual.kHz;
-import qual.Frequency;
 
 class UnitsExtensionDemo {
     @Hz int frq;
@@ -75,7 +74,5 @@ class UnitsExtensionDemo {
     }
 
     // The type of int is inferred through inference script
-    static void infer(int bleh) {
-
-    }
+    static void infer(int bleh) {}
 }

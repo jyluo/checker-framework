@@ -1,10 +1,9 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.time.UnknownTime;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * Units of time instants. A time instant is the precise time at which an event
@@ -23,6 +22,6 @@ import java.lang.annotation.*;
 @Documented
 @SubtypeOf(UnknownTime.class)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @DurationUnit(unit = TimeDuration.class)
 public @interface TimeInstant {}

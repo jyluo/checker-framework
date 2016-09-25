@@ -1,5 +1,11 @@
 package org.checkerframework.checker.units;
 
+import com.sun.source.tree.*;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
@@ -11,15 +17,6 @@ import org.checkerframework.framework.type.treeannotator.*;
 import org.checkerframework.framework.util.GraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
 import org.checkerframework.javacutil.*;
-
-import java.lang.annotation.Annotation;
-import java.util.*;
-
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-
-import com.sun.source.tree.*;
 
 /*>>>
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -37,24 +34,40 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
-    protected final AnnotationMirror scalar = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, Scalar.class);
-    protected final AnnotationMirror TOP = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, UnknownUnits.class);
-    protected final AnnotationMirror BOTTOM = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, UnitsBottom.class);
+    protected final AnnotationMirror scalar =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, Scalar.class);
+    protected final AnnotationMirror TOP =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, UnknownUnits.class);
+    protected final AnnotationMirror BOTTOM =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, UnitsBottom.class);
 
-    protected final AnnotationMirror m = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, m.class);
-    protected final AnnotationMirror mm = UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(processingEnv, m.class, Prefix.milli);
-    protected final AnnotationMirror km = UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(processingEnv, m.class, Prefix.kilo);
+    protected final AnnotationMirror m =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, m.class);
+    protected final AnnotationMirror mm =
+            UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(
+                    processingEnv, m.class, Prefix.milli);
+    protected final AnnotationMirror km =
+            UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(
+                    processingEnv, m.class, Prefix.kilo);
 
-    protected final AnnotationMirror m2 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, m2.class);
-    protected final AnnotationMirror mm2 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, mm2.class);
-    protected final AnnotationMirror km2 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, km2.class);
+    protected final AnnotationMirror m2 =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, m2.class);
+    protected final AnnotationMirror mm2 =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, mm2.class);
+    protected final AnnotationMirror km2 =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, km2.class);
 
-    protected final AnnotationMirror m3 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, m3.class);
-    protected final AnnotationMirror km3 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, km3.class);
-    protected final AnnotationMirror mm3 = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, mm3.class);
+    protected final AnnotationMirror m3 =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, m3.class);
+    protected final AnnotationMirror km3 =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, km3.class);
+    protected final AnnotationMirror mm3 =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, mm3.class);
 
-    protected final AnnotationMirror timeDuration = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimeDuration.class);;
-    protected final AnnotationMirror timeInstant = UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimeInstant.class);;
+    protected final AnnotationMirror timeDuration =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimeDuration.class);;
+    protected final AnnotationMirror timeInstant =
+            UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(processingEnv, TimeInstant.class);;
 
     // used to detect and skip string addition processing
     protected final TypeMirror stringType = getTypeMirror(java.lang.String.class);
@@ -70,18 +83,22 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // special processing of methods in classes
     // it is keyed by the fully qualified class names of each class that
     // requires special handling of its methods
-    private static final Map<String, UnitsClassRelations> classProcessors = new HashMap<String, UnitsClassRelations>();
+    private static final Map<String, UnitsClassRelations> classProcessors =
+            new HashMap<String, UnitsClassRelations>();
 
     // map of externally loaded qualifiers
-    private static final Map<String, Class<? extends Annotation>> externalQualsMap = new HashMap<String, Class<? extends Annotation>>();
+    private static final Map<String, Class<? extends Annotation>> externalQualsMap =
+            new HashMap<String, Class<? extends Annotation>>();
 
     // map of alias annotations
-    private static final Map<String, AnnotationMirror> aliasMap = new HashMap<String, AnnotationMirror>();
+    private static final Map<String, AnnotationMirror> aliasMap =
+            new HashMap<String, AnnotationMirror>();
 
     // cache of examined type mirror equality comparisons, used in support of
     // identifying the appropriate class processor to provide special processing
     // of method invocations based on its receiver class type
-    private static final Map<String, Map<String, Boolean>> typeMirrorSameCache = new HashMap<String, Map<String, Boolean>>();
+    private static final Map<String, Map<String, Boolean>> typeMirrorSameCache =
+            new HashMap<String, Map<String, Boolean>>();
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         // use flow inference
@@ -205,7 +222,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
 
     private /*@Nullable*/ AnnotationMirror getUnitsMultipleMetaAnnotation(AnnotationMirror anno) {
-        for (AnnotationMirror metaAnno : anno.getAnnotationType().asElement().getAnnotationMirrors()) {
+        for (AnnotationMirror metaAnno :
+                anno.getAnnotationType().asElement().getAnnotationMirrors()) {
             // see if the meta annotation is UnitsMultiple
             if (isUnitsMultiple(metaAnno)) {
                 return metaAnno;
@@ -226,20 +244,25 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
      * @param anno a units annotation
      * @return the pair, or null
      */
-    private /*@Nullable*/ Pair<Class<? extends Annotation>, Prefix> getBaseUnitClassAndPrefix(AnnotationMirror anno) {
+    private /*@Nullable*/ Pair<Class<? extends Annotation>, Prefix> getBaseUnitClassAndPrefix(
+            AnnotationMirror anno) {
         AnnotationMirror unitsMultipleAnno = getUnitsMultipleMetaAnnotation(anno);
 
         // see if the annotation is an alias
         if (unitsMultipleAnno != null) {
             // retrieve the Class of the base unit annotation
-            Class<? extends Annotation> baseUnitAnnoClass = AnnotationUtils.getElementValueClass(unitsMultipleAnno, "quantity", true).asSubclass(Annotation.class);
+            Class<? extends Annotation> baseUnitAnnoClass =
+                    AnnotationUtils.getElementValueClass(unitsMultipleAnno, "quantity", true)
+                            .asSubclass(Annotation.class);
 
             // TODO: does every alias have to have a Prefix?
             // retrieve the Prefix of the alias unit
-            Prefix prefix = AnnotationUtils.getElementValueEnum(unitsMultipleAnno, "prefix", Prefix.class, true);
+            Prefix prefix =
+                    AnnotationUtils.getElementValueEnum(
+                            unitsMultipleAnno, "prefix", Prefix.class, true);
 
             // return the Class and the Prefix as a pair
-            return Pair.<Class<? extends Annotation>, Prefix> of(baseUnitAnnoClass, prefix);
+            return Pair.<Class<? extends Annotation>, Prefix>of(baseUnitAnnoClass, prefix);
         } else {
             return null;
         }
@@ -267,7 +290,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             Prefix prefix = baseUnit.second;
 
             // Try to build a base unit annotation with the prefix applied
-            result = UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(processingEnv, baseUnitClass, prefix);
+            result =
+                    UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(
+                            processingEnv, baseUnitClass, prefix);
 
             // see if we are able to build the base unit annotation with the
             // alias's prefix
@@ -427,8 +452,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     public TreeAnnotator createTreeAnnotator() {
         return new ListTreeAnnotator(
-                new UnitsPropagationTreeAnnotator(this),
-                new ImplicitsTreeAnnotator(this));
+                new UnitsPropagationTreeAnnotator(this), new ImplicitsTreeAnnotator(this));
     }
 
     private class UnitsPropagationTreeAnnotator extends PropagationTreeAnnotator {
@@ -437,24 +461,42 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // Add all of the class relations here to handle special processing
             // of specific methods such as Math.pow() or Integer.compare()
-            UnitsMathClassRelations javaMathClassMethodRelations = new UnitsMathClassRelations((UnitsChecker) checker, (UnitsAnnotatedTypeFactory) atypeFactory);
-            classProcessors.put(getQualifiedClassName(java.lang.Math.class), javaMathClassMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.StrictMath.class), javaMathClassMethodRelations);
+            UnitsMathClassRelations javaMathClassMethodRelations =
+                    new UnitsMathClassRelations(
+                            (UnitsChecker) checker, (UnitsAnnotatedTypeFactory) atypeFactory);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Math.class), javaMathClassMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.StrictMath.class),
+                    javaMathClassMethodRelations);
 
-            UnitsBoxedNumbersClassRelations javaNumberClassesMethodRelations = new UnitsBoxedNumbersClassRelations((UnitsChecker) checker, (UnitsAnnotatedTypeFactory) atypeFactory);
-            classProcessors.put(getQualifiedClassName(java.lang.Number.class), javaNumberClassesMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.Byte.class), javaNumberClassesMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.Short.class), javaNumberClassesMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.Integer.class), javaNumberClassesMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.Long.class), javaNumberClassesMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.Float.class), javaNumberClassesMethodRelations);
-            classProcessors.put(getQualifiedClassName(java.lang.Double.class), javaNumberClassesMethodRelations);
+            UnitsBoxedNumbersClassRelations javaNumberClassesMethodRelations =
+                    new UnitsBoxedNumbersClassRelations(
+                            (UnitsChecker) checker, (UnitsAnnotatedTypeFactory) atypeFactory);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Number.class),
+                    javaNumberClassesMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Byte.class), javaNumberClassesMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Short.class), javaNumberClassesMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Integer.class),
+                    javaNumberClassesMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Long.class), javaNumberClassesMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Float.class), javaNumberClassesMethodRelations);
+            classProcessors.put(
+                    getQualifiedClassName(java.lang.Double.class),
+                    javaNumberClassesMethodRelations);
 
             // Future TODO: add external class processors via reflection
         }
 
         @Override
-        public Void visitMethodInvocation(MethodInvocationTree node, AnnotatedTypeMirror resultType) {
+        public Void visitMethodInvocation(
+                MethodInvocationTree node, AnnotatedTypeMirror resultType) {
             String methodName = TreeUtils.methodName(node).toString().intern();
             AnnotatedTypeMirror receiver = getReceiverType(node);
 
@@ -471,10 +513,15 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 // if there are no supporting class processors, then return
                 // super.visitMethodInvocation()
 
-                String methodClassQualifiedName = TypesUtils.getQualifiedName(receiverType.getUnderlyingType()).toString().intern();
+                String methodClassQualifiedName =
+                        TypesUtils.getQualifiedName(receiverType.getUnderlyingType())
+                                .toString()
+                                .intern();
 
                 if (classProcessors.containsKey(methodClassQualifiedName)) {
-                    classProcessors.get(methodClassQualifiedName).processMethodInvocation(methodName, methodArguments, resultType, node);
+                    classProcessors
+                            .get(methodClassQualifiedName)
+                            .processMethodInvocation(methodName, methodArguments, resultType, node);
                     // malformed implementations of a class processor by
                     // external developers could remove all units annotations
                     // from a result type, so assert that the result type has a
@@ -498,7 +545,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         @Override
-        public Void visitCompoundAssignment(CompoundAssignmentTree node, AnnotatedTypeMirror resultType) {
+        public Void visitCompoundAssignment(
+                CompoundAssignmentTree node, AnnotatedTypeMirror resultType) {
             // TODO: ATF Bug: this is only called for inner right hand
             // expressions of an assignment or compound assignment statement for
             // primitive types:
@@ -512,7 +560,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             AnnotatedTypeMirror exprType = atypeFactory.getAnnotatedType(node.getExpression());
             Tree.Kind kind = node.getKind();
 
-            mathOpRelations.processCompoundAssignmentOperation(node, kind, resultType, varType, exprType);
+            mathOpRelations.processCompoundAssignmentOperation(
+                    node, kind, resultType, varType, exprType);
             return null;
         }
     }
@@ -617,7 +666,12 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     protected class UnitsTypeHierarchy extends DefaultTypeHierarchy {
         public UnitsTypeHierarchy(BaseTypeChecker checker) {
             // true as the last parameter allows covariant type arguments
-            super(checker, getQualifierHierarchy(), checker.hasOption("ignoreRawTypeArguments"), checker.hasOption("invariantArrays"), true);
+            super(
+                    checker,
+                    getQualifierHierarchy(),
+                    checker.hasOption("ignoreRawTypeArguments"),
+                    checker.hasOption("invariantArrays"),
+                    true);
         }
     }
 }

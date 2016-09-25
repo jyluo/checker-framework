@@ -1,13 +1,10 @@
 package org.checkerframework.checker.units;
 
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-
+import com.sun.source.tree.*;
 import java.util.List;
-
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.util.Elements;
-
-import com.sun.source.tree.*;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public abstract class UnitsClassRelations {
     protected final UnitsAnnotatedTypeFactory factory;
@@ -46,7 +43,11 @@ public abstract class UnitsClassRelations {
      * @param node the AST node of the method invocation, used for issuing
      *            errors and warnings
      */
-    public abstract void processMethodInvocation(String methodName, List<? extends ExpressionTree> methodArguments, AnnotatedTypeMirror resultType, MethodInvocationTree node);
+    public abstract void processMethodInvocation(
+            String methodName,
+            List<? extends ExpressionTree> methodArguments,
+            AnnotatedTypeMirror resultType,
+            MethodInvocationTree node);
 
     /**
      * Helper method which extracts the two arguments of a Math library method
@@ -59,7 +60,11 @@ public abstract class UnitsClassRelations {
      * @param type the resulting type
      * @param methodArguments the arguments to the Math library method call
      */
-    protected void processMathLibraryArithmeticOperation(ExpressionTree node, Tree.Kind kind, AnnotatedTypeMirror type, List<? extends ExpressionTree> methodArguments) {
+    protected void processMathLibraryArithmeticOperation(
+            ExpressionTree node,
+            Tree.Kind kind,
+            AnnotatedTypeMirror type,
+            List<? extends ExpressionTree> methodArguments) {
         AnnotatedTypeMirror lht = factory.getAnnotatedType(methodArguments.get(0));
         AnnotatedTypeMirror rht = factory.getAnnotatedType(methodArguments.get(1));
         mathOpRelations.processMathOperation(node, kind, type, lht, rht);

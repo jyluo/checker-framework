@@ -1,10 +1,8 @@
 package org.checkerframework.checker.units.qual;
 
-import org.checkerframework.framework.qual.*;
-
 import java.lang.annotation.*;
-
 import javax.lang.model.type.TypeKind;
+import org.checkerframework.framework.qual.*;
 
 /**
  * UnitsBottom is the bottom type of the type hierarchy.
@@ -26,9 +24,9 @@ import javax.lang.model.type.TypeKind;
 // users can write this as the explicit lower bound of a type parameter
 @TargetLocations({TypeUseLocation.EXPLICIT_LOWER_BOUND})
 @ImplicitFor(
-        literals = {LiteralKind.NULL},
-        types = {TypeKind.NULL, TypeKind.VOID},
-        typeNames = {java.lang.Void.class}
+    literals = {LiteralKind.NULL},
+    types = {TypeKind.NULL, TypeKind.VOID},
+    typeNames = {java.lang.Void.class}
 )
 @DefaultFor({TypeUseLocation.IMPLICIT_LOWER_BOUND, TypeUseLocation.EXPLICIT_LOWER_BOUND})
 @DefaultInUncheckedCodeFor({TypeUseLocation.LOWER_BOUND})

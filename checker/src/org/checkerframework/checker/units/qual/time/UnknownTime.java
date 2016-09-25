@@ -1,11 +1,10 @@
 package org.checkerframework.checker.units.qual.time;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * An unknown unit of time. Subtypes of this type are split into two
@@ -17,5 +16,5 @@ import java.lang.annotation.*;
 @SubtypeOf(UnknownUnits.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 public @interface UnknownTime {}

@@ -1,9 +1,8 @@
-import org.checkerframework.checker.units.qual.*;
-
-import java.util.Objects;
-import java.util.Map;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import org.checkerframework.checker.units.qual.*;
 
 public class OverrideMethods {
     @Override
@@ -40,8 +39,6 @@ class Test {
 
     @SuppressWarnings("unchecked")
     void test2(Map<String, List<Integer>> x) {
-        x.values().forEach(
-                (c) -> Collections.sort((List<Integer>) List.class.cast(c))
-                );
+        x.values().forEach((c) -> Collections.sort((List<Integer>) List.class.cast(c)));
     }
 }

@@ -1,5 +1,13 @@
 package org.checkerframework.checker.units;
 
+import com.sun.source.tree.*;
+import com.sun.tools.javac.code.Attribute;
+import com.sun.tools.javac.util.List;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.*;
+import javax.lang.model.util.Elements;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.Scalar;
 import org.checkerframework.checker.units.qual.time.instant.DurationUnit;
@@ -9,17 +17,6 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
-
-import java.lang.annotation.Annotation;
-import java.util.*;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.*;
-import javax.lang.model.util.Elements;
-
-import com.sun.source.tree.*;
-import com.sun.tools.javac.code.Attribute;
-import com.sun.tools.javac.util.List;
 
 /*>>>
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -44,16 +41,20 @@ public class UnitsRelationsTools {
      * @return An AnnotationMirror of the Unit with Prefix.one, or null if it
      *         cannot be constructed
      */
-    public static /*@Nullable*/ AnnotationMirror buildAnnoMirrorWithDefaultPrefix(/*@Nullable*/ final ProcessingEnvironment env, /*@Nullable*/ final Class<? extends Annotation> annoClass) {
+    public static /*@Nullable*/ AnnotationMirror buildAnnoMirrorWithDefaultPrefix(
+            /*@Nullable*/ final ProcessingEnvironment env,
+            /*@Nullable*/ final Class<? extends Annotation> annoClass) {
         if (env == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithDefaultPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be" +
-                    " called by passing in a reference to the Checker" +
-                    " Processing Environment, provided as a parameter in" +
-                    " init() of a UnitsRelations implementation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithDefaultPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be"
+                            + " called by passing in a reference to the Checker"
+                            + " Processing Environment, provided as a parameter in"
+                            + " init() of a UnitsRelations implementation");
         }
         if (annoClass == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithDefaultPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be" +
-                    " called with the class of an Annotation representing a Unit (eg m.class for meters)");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithDefaultPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be"
+                            + " called with the class of an Annotation representing a Unit (eg m.class for meters)");
         }
 
         return buildAnnoMirrorWithSpecificPrefix(env, annoClass, Prefix.one);
@@ -71,20 +72,26 @@ public class UnitsRelationsTools {
      * @return An AnnotationMirror of the Unit with the Prefix p, or null if it
      *         cannot be constructed
      */
-    public static /*@Nullable*/ AnnotationMirror buildAnnoMirrorWithSpecificPrefix(/*@Nullable*/ final ProcessingEnvironment env, /*@Nullable*/ final Class<? extends Annotation> annoClass, /*@Nullable*/ final Prefix p) {
+    public static /*@Nullable*/ AnnotationMirror buildAnnoMirrorWithSpecificPrefix(
+            /*@Nullable*/ final ProcessingEnvironment env,
+            /*@Nullable*/ final Class<? extends Annotation> annoClass,
+            /*@Nullable*/ final Prefix p) {
         if (env == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(ProcessingEnvironment, Class<? extends Annotation>, Prefix) must be" +
-                    " called by passing in a reference to the Checker" +
-                    " Processing Environment, provided as a parameter in" +
-                    " init() of a UnitsRelations implementation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(ProcessingEnvironment, Class<? extends Annotation>, Prefix) must be"
+                            + " called by passing in a reference to the Checker"
+                            + " Processing Environment, provided as a parameter in"
+                            + " init() of a UnitsRelations implementation");
         }
         if (annoClass == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(ProcessingEnvironment, Class<? extends Annotation>, Prefix) must be" +
-                    " called with the class of an Annotation representing a Unit (eg m.class for meters)");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(ProcessingEnvironment, Class<? extends Annotation>, Prefix) must be"
+                            + " called with the class of an Annotation representing a Unit (eg m.class for meters)");
         }
         if (p == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(ProcessingEnvironment, Class<? extends Annotation>, Prefix) must be" +
-                    " called with a Prefix");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithSpecificPrefix(ProcessingEnvironment, Class<? extends Annotation>, Prefix) must be"
+                            + " called with a Prefix");
         }
 
         AnnotationBuilder builder = new AnnotationBuilder(env, annoClass);
@@ -103,16 +110,20 @@ public class UnitsRelationsTools {
      * @return An AnnotationMirror of the Unit with no prefix, or null if it
      *         cannot be constructed
      */
-    public static /*@Nullable*/ AnnotationMirror buildAnnoMirrorWithNoPrefix(/*@Nullable*/ final ProcessingEnvironment env, /*@Nullable*/ final Class<? extends Annotation> annoClass) {
+    public static /*@Nullable*/ AnnotationMirror buildAnnoMirrorWithNoPrefix(
+            /*@Nullable*/ final ProcessingEnvironment env,
+            /*@Nullable*/ final Class<? extends Annotation> annoClass) {
         if (env == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be" +
-                    " called by passing in a reference to the Checker" +
-                    " Processing Environment, provided as a parameter in" +
-                    " init() of a UnitsRelations implementation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be"
+                            + " called by passing in a reference to the Checker"
+                            + " Processing Environment, provided as a parameter in"
+                            + " init() of a UnitsRelations implementation");
         }
         if (annoClass == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be" +
-                    " called with the class of an Annotation representing a Unit (eg m.class for meters)");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(ProcessingEnvironment, Class<? extends Annotation>) must be"
+                            + " called with the class of an Annotation representing a Unit (eg m.class for meters)");
         }
 
         return AnnotationUtils.fromClass(env.getElementUtils(), annoClass);
@@ -127,8 +138,9 @@ public class UnitsRelationsTools {
      */
     public static /*@Nullable*/ Prefix getPrefix(/*@Nullable*/ final AnnotatedTypeMirror annoType) {
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getPrefix(AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.getPrefix(AnnotatedTypeMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
 
         Prefix result = null;
@@ -155,10 +167,12 @@ public class UnitsRelationsTools {
      *            Annotation
      * @return A Prefix value (including Prefix.one), or null if it has none
      */
-    public static /*@Nullable*/ Prefix getPrefix(/*@Nullable*/ final AnnotationMirror unitsAnnotation) {
+    public static /*@Nullable*/ Prefix getPrefix(
+            /*@Nullable*/ final AnnotationMirror unitsAnnotation) {
         if (unitsAnnotation == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getPrefix(AnnotationMirror) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.getPrefix(AnnotationMirror) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation");
         }
 
         AnnotationValue annotationValue = getAnnotationMirrorPrefix(unitsAnnotation);
@@ -190,8 +204,9 @@ public class UnitsRelationsTools {
      */
     public static boolean hasNoPrefix(/*@Nullable*/ final AnnotatedTypeMirror annoType) {
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasNoPrefix(AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasNoPrefix(AnnotatedTypeMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
 
         for (AnnotationMirror mirror : annoType.getEffectiveAnnotations()) {
@@ -213,8 +228,9 @@ public class UnitsRelationsTools {
      */
     public static boolean hasNoPrefix(/*@Nullable*/ final AnnotationMirror unitsAnnotation) {
         if (unitsAnnotation == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasNoPrefix(AnnotationMirror) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasNoPrefix(AnnotationMirror) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation");
         }
 
         AnnotationValue annotationValue = getAnnotationMirrorPrefix(unitsAnnotation);
@@ -223,10 +239,13 @@ public class UnitsRelationsTools {
 
     // given an Annotation, returns the prefix (eg kilo) as an AnnotationValue
     // if there is any, otherwise returns null
-    private static /*@Nullable*/ AnnotationValue getAnnotationMirrorPrefix(final AnnotationMirror unitsAnnotation) {
-        Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = unitsAnnotation.getElementValues();
+    private static /*@Nullable*/ AnnotationValue getAnnotationMirrorPrefix(
+            final AnnotationMirror unitsAnnotation) {
+        Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues =
+                unitsAnnotation.getElementValues();
 
-        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : elementValues.entrySet()) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry :
+                elementValues.entrySet()) {
             if (entry.getKey().getSimpleName().toString().intern() == "value".intern()) {
                 return entry.getValue();
             }
@@ -252,10 +271,12 @@ public class UnitsRelationsTools {
      * @return an AnnotationMirror representing the unit that this Annotated
      *         Type has
      */
-    public static /*@Nullable*/ AnnotationMirror getUnit(/*@Nullable*/ final AnnotatedTypeMirror annoType) {
+    public static /*@Nullable*/ AnnotationMirror getUnit(
+            /*@Nullable*/ final AnnotatedTypeMirror annoType) {
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getUnit(AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.getUnit(AnnotatedTypeMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
 
         // return the first unit (should always be the only unit) in the
@@ -285,14 +306,16 @@ public class UnitsRelationsTools {
             /*@Nullable*/ final Elements elements,
             /*@Nullable*/ final AnnotationMirror unitsAnnotation) {
         if (elements == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.removePrefix(Elements, AnnotationMirror) must be" +
-                    " called by passing in a reference to the Element Utilities," +
-                    " typically obtained by calling env.getElementUtils() in" +
-                    " init() of a Units Relations implementation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.removePrefix(Elements, AnnotationMirror) must be"
+                            + " called by passing in a reference to the Element Utilities,"
+                            + " typically obtained by calling env.getElementUtils() in"
+                            + " init() of a Units Relations implementation");
         }
         if (unitsAnnotation == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.removePrefix(Elements, AnnotationMirror) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.removePrefix(Elements, AnnotationMirror) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation");
         }
 
         if (hasNoPrefix(unitsAnnotation)) {
@@ -301,7 +324,8 @@ public class UnitsRelationsTools {
             // the only value is the prefix value in Units Checker
             // Future TODO: in case extension Annotations have more than just Prefix in
             // its values, remove only the Prefix. Currently this removes all values
-            return AnnotationUtils.fromName(elements, unitsAnnotation.getAnnotationType().toString());
+            return AnnotationUtils.fromName(
+                    elements, unitsAnnotation.getAnnotationType().toString());
         }
     }
 
@@ -318,16 +342,20 @@ public class UnitsRelationsTools {
      * @return A copy of the Annotated Type without the prefix, or null if it
      *         cannot be copied
      */
-    public static AnnotatedTypeMirror removePrefix(/*@Nullable*/ final Elements elements, /*@Nullable*/ final AnnotatedTypeMirror annoType) {
+    public static AnnotatedTypeMirror removePrefix(
+            /*@Nullable*/ final Elements elements,
+            /*@Nullable*/ final AnnotatedTypeMirror annoType) {
         if (elements == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.removePrefix(Elements, AnnotatedTypeMirror) must be" +
-                    " called by passing in a reference to the Element Utilities," +
-                    " typically obtained by calling env.getElementUtils() in" +
-                    " init() of a Units Relations implementation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.removePrefix(Elements, AnnotatedTypeMirror) must be"
+                            + " called by passing in a reference to the Element Utilities,"
+                            + " typically obtained by calling env.getElementUtils() in"
+                            + " init() of a Units Relations implementation");
         }
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.removePrefix(Elements, AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.removePrefix(Elements, AnnotatedTypeMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
 
         // deep copy the Annotated Type Mirror without any of the Annotations
@@ -367,8 +395,9 @@ public class UnitsRelationsTools {
      */
     public static boolean hasNoUnits(/*@Nullable*/ final AnnotatedTypeMirror annoType) {
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasNoUnits(AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasNoUnits(AnnotatedTypeMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
 
         return (annoType.getAnnotation(Scalar.class) != null);
@@ -384,14 +413,18 @@ public class UnitsRelationsTools {
      *            Annotation of a specific unit
      * @return true if the Type has the specific unit, false otherwise
      */
-    public static boolean hasSpecificUnit(/*@Nullable*/ final AnnotatedTypeMirror annoType, /*@Nullable*/ final AnnotationMirror unitsAnnotation) {
+    public static boolean hasSpecificUnit(
+            /*@Nullable*/ final AnnotatedTypeMirror annoType,
+            /*@Nullable*/ final AnnotationMirror unitsAnnotation) {
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasSpecificUnit(AnnotatedTypeMirror, AnnotationMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasSpecificUnit(AnnotatedTypeMirror, AnnotationMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
         if (unitsAnnotation == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasSpecificUnit(AnnotatedTypeMirror, AnnotationMirror) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasSpecificUnit(AnnotatedTypeMirror, AnnotationMirror) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation");
         }
 
         return AnnotationUtils.containsSame(annoType.getEffectiveAnnotations(), unitsAnnotation);
@@ -407,17 +440,22 @@ public class UnitsRelationsTools {
      *            Annotation of the base unit
      * @return true if the Type has the specific unit, false otherwise
      */
-    public static boolean hasSpecificUnitIgnoringPrefix(/*@Nullable*/ final AnnotatedTypeMirror annoType, /*@Nullable*/ final AnnotationMirror unitsAnnotation) {
+    public static boolean hasSpecificUnitIgnoringPrefix(
+            /*@Nullable*/ final AnnotatedTypeMirror annoType,
+            /*@Nullable*/ final AnnotationMirror unitsAnnotation) {
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasSpecificUnitIgnoringPrefix(AnnotatedTypeMirror, AnnotationMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasSpecificUnitIgnoringPrefix(AnnotatedTypeMirror, AnnotationMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type");
         }
         if (unitsAnnotation == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.hasSpecificUnitIgnoringPrefix(AnnotatedTypeMirror, AnnotationMirror) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation of the base unit");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.hasSpecificUnitIgnoringPrefix(AnnotatedTypeMirror, AnnotationMirror) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation of the base unit");
         }
 
-        return AnnotationUtils.containsSameIgnoringValues(annoType.getEffectiveAnnotations(), unitsAnnotation);
+        return AnnotationUtils.containsSameIgnoringValues(
+                annoType.getEffectiveAnnotations(), unitsAnnotation);
     }
 
     /**
@@ -428,14 +466,18 @@ public class UnitsRelationsTools {
      * @param t2 second annotated type
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean areSameUnits(/*@Nullable*/ final AnnotatedTypeMirror t1, /*@Nullable*/ final AnnotatedTypeMirror t2) {
+    public static boolean areSameUnits(
+            /*@Nullable*/ final AnnotatedTypeMirror t1,
+            /*@Nullable*/ final AnnotatedTypeMirror t2) {
         if (t1 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnits(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type at t1");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnits(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type at t1");
         }
         if (t2 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnits(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type at t2");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnits(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type at t2");
         }
 
         return AnnotationUtils.areSame(t1.getEffectiveAnnotations(), t2.getEffectiveAnnotations());
@@ -449,21 +491,24 @@ public class UnitsRelationsTools {
      * @param t2 second annotated type
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean areSameUnitsIgnoringPrefix(/*@Nullable*/ final AnnotatedTypeMirror t1, /*@Nullable*/ final AnnotatedTypeMirror t2) {
+    public static boolean areSameUnitsIgnoringPrefix(
+            /*@Nullable*/ final AnnotatedTypeMirror t1,
+            /*@Nullable*/ final AnnotatedTypeMirror t2) {
         if (t1 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type at t1");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type at t1");
         }
         if (t2 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type at t2");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotatedTypeMirror t1, AnnotatedTypeMirror t2) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type at t2");
         }
 
         Collection<? extends AnnotationMirror> c1 = t1.getEffectiveAnnotations();
         Collection<? extends AnnotationMirror> c2 = t2.getEffectiveAnnotations();
 
-        if (c1.size() != c2.size())
-            return false;
+        if (c1.size() != c2.size()) return false;
         if (c1.size() == 1)
             return areSameUnitsIgnoringPrefix(c1.iterator().next(), c2.iterator().next());
 
@@ -479,8 +524,7 @@ public class UnitsRelationsTools {
         while (iter1.hasNext()) {
             AnnotationMirror anno1 = iter1.next();
             AnnotationMirror anno2 = iter2.next();
-            if (!areSameUnitsIgnoringPrefix(anno1, anno2))
-                return false;
+            if (!areSameUnitsIgnoringPrefix(anno1, anno2)) return false;
         }
         return true;
     }
@@ -493,14 +537,17 @@ public class UnitsRelationsTools {
      * @param m2 second annotation mirror
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean areSameUnits(/*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
+    public static boolean areSameUnits(
+            /*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
         if (m1 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnits(AnnotationMirror m1, AnnotationMirror m2) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation of the base unit at m1");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnits(AnnotationMirror m1, AnnotationMirror m2) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation of the base unit at m1");
         }
         if (m2 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnits(AnnotationMirror m1, AnnotationMirror m2) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation of the base unit at m2");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnits(AnnotationMirror m1, AnnotationMirror m2) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation of the base unit at m2");
         }
 
         return AnnotationUtils.areSame(m1, m2);
@@ -514,14 +561,17 @@ public class UnitsRelationsTools {
      * @param m2 second annotation mirror
      * @return true if they have the same unit, false otherwise
      */
-    public static boolean areSameUnitsIgnoringPrefix(/*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
+    public static boolean areSameUnitsIgnoringPrefix(
+            /*@Nullable*/ final AnnotationMirror m1, /*@Nullable*/ final AnnotationMirror m2) {
         if (m1 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotationMirror m1, AnnotationMirror m2) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation of the base unit at m1");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotationMirror m1, AnnotationMirror m2) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation of the base unit at m1");
         }
         if (m2 == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotationMirror m1, AnnotationMirror m2) must be" +
-                    " called with an AnnotationMirror representing a Units Annotation of the base unit at m2");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.areSameUnitsIgnoringPrefix(AnnotationMirror m1, AnnotationMirror m2) must be"
+                            + " called with an AnnotationMirror representing a Units Annotation of the base unit at m2");
         }
 
         return AnnotationUtils.areSameIgnoringValues(m1, m2);
@@ -538,19 +588,24 @@ public class UnitsRelationsTools {
      * @return an AnnotationMirror representing the time duration unit that this
      *         Annotated Type is related to, or null
      */
-    public static /*@Nullable*/ AnnotationMirror getTimeDurationUnit(/*@Nullable*/ final UnitsAnnotatedTypeFactory atf, /*@Nullable*/ final AnnotatedTypeMirror annoType) {
+    public static /*@Nullable*/ AnnotationMirror getTimeDurationUnit(
+            /*@Nullable*/ final UnitsAnnotatedTypeFactory atf,
+            /*@Nullable*/ final AnnotatedTypeMirror annoType) {
         if (atf == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be" +
-                    " called by passing in a reference to the Units Annotated Type Factory");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be"
+                            + " called by passing in a reference to the Units Annotated Type Factory");
         }
         if (annoType == null) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time instant unit");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time instant unit");
         }
         if (!isTimeInstant(annoType)) {
-            ErrorReporter.errorAbort("UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) the" +
-                    " AnnotatedTypeMirror passed in is not a time instant unit, the method must be" +
-                    " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time instant unit");
+            ErrorReporter.errorAbort(
+                    "UnitsRelationsTools.getTimeDurationUnit(UnitsAnnotatedTypeFactory, AnnotatedTypeMirror) the"
+                            + " AnnotatedTypeMirror passed in is not a time instant unit, the method must be"
+                            + " called with an AnnotatedTypeMirror representing a Units Annotated Type with a time instant unit");
         }
 
         // get the time unit annotation
@@ -560,10 +615,14 @@ public class UnitsRelationsTools {
 
         if (durationUnitAnno != null) {
             // retrieve the Class of the duration unit
-            Class<? extends Annotation> durationUnitAnnoClass = AnnotationUtils.getElementValueClass(durationUnitAnno, "unit", true).asSubclass(Annotation.class);
+            Class<? extends Annotation> durationUnitAnnoClass =
+                    AnnotationUtils.getElementValueClass(durationUnitAnno, "unit", true)
+                            .asSubclass(Annotation.class);
 
             // if the related time duration unit is an alias of a metric prefix of seconds, then retrieve the base version of that annotation mirror
-            return atf.aliasedAnnotation(UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(atf.getProcessingEnv(), durationUnitAnnoClass));
+            return atf.aliasedAnnotation(
+                    UnitsRelationsTools.buildAnnoMirrorWithNoPrefix(
+                            atf.getProcessingEnv(), durationUnitAnnoClass));
         }
 
         return null;
@@ -574,30 +633,31 @@ public class UnitsRelationsTools {
     public static boolean isPrimitiveNumberLiteralExpression(ExpressionTree tree) {
         // TODO: bitshift support?
         switch (tree.getKind()) {
-        case TYPE_CAST:
-            // any type casting of the number literals are ignored
-            return isPrimitiveNumberLiteralExpression(((TypeCastTree) tree).getExpression());
-        case PARENTHESIZED:
-            // descend into parentheses
-            return isPrimitiveNumberLiteralExpression(((ParenthesizedTree) tree).getExpression());
-        case PLUS:
-        case MINUS:
-        case MULTIPLY:
-        case DIVIDE:
-        case REMAINDER:
-            // for the 5 mathematical operations, return true if both operands
-            // are mathematical sub-expression that consists of only number
-            // literals
-            BinaryTree bTree = (BinaryTree) tree;
-            return isPrimitiveNumberLiteralExpression(bTree.getLeftOperand())
-                    && isPrimitiveNumberLiteralExpression(bTree.getRightOperand());
-        case INT_LITERAL:
-        case LONG_LITERAL:
-        case FLOAT_LITERAL:
-        case DOUBLE_LITERAL:
-            return true;
-        default:
-            return false;
+            case TYPE_CAST:
+                // any type casting of the number literals are ignored
+                return isPrimitiveNumberLiteralExpression(((TypeCastTree) tree).getExpression());
+            case PARENTHESIZED:
+                // descend into parentheses
+                return isPrimitiveNumberLiteralExpression(
+                        ((ParenthesizedTree) tree).getExpression());
+            case PLUS:
+            case MINUS:
+            case MULTIPLY:
+            case DIVIDE:
+            case REMAINDER:
+                // for the 5 mathematical operations, return true if both operands
+                // are mathematical sub-expression that consists of only number
+                // literals
+                BinaryTree bTree = (BinaryTree) tree;
+                return isPrimitiveNumberLiteralExpression(bTree.getLeftOperand())
+                        && isPrimitiveNumberLiteralExpression(bTree.getRightOperand());
+            case INT_LITERAL:
+            case LONG_LITERAL:
+            case FLOAT_LITERAL:
+            case DOUBLE_LITERAL:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -636,12 +696,15 @@ public class UnitsRelationsTools {
                 // value is TimeInstant
                 // obtain the classes declared in the SubtypeOf annotation
                 @SuppressWarnings("unchecked")
-                List<Attribute.Class> supertypes = AnnotationUtils.getElementValue(subtypeOfMetaAnno, "value", List.class, true);
+                List<Attribute.Class> supertypes =
+                        AnnotationUtils.getElementValue(
+                                subtypeOfMetaAnno, "value", List.class, true);
 
                 // loop through those classes, check to see that it's name
                 // matches the TimeInstant class's canonical name
                 for (Attribute.Class supertype : supertypes) {
-                    String subtypeAnnoValue = supertype.getValue().asElement().getQualifiedName().toString().intern();
+                    String subtypeAnnoValue =
+                            supertype.getValue().asElement().getQualifiedName().toString().intern();
                     if (subtypeAnnoValue == timeInstantClassName) {
                         isDirectSubtypeOfTimeInstant = true;
                     }
@@ -654,8 +717,10 @@ public class UnitsRelationsTools {
         return hasDurationUnitMetaAnno && isDirectSubtypeOfTimeInstant;
     }
 
-    private static /*@Nullable*/ AnnotationMirror getDurationUnitMetaAnnotation(AnnotationMirror anno) {
-        for (AnnotationMirror metaAnno : anno.getAnnotationType().asElement().getAnnotationMirrors()) {
+    private static /*@Nullable*/ AnnotationMirror getDurationUnitMetaAnnotation(
+            AnnotationMirror anno) {
+        for (AnnotationMirror metaAnno :
+                anno.getAnnotationType().asElement().getAnnotationMirrors()) {
             // see if the meta annotation is UnitsMultiple
             if (AnnotationUtils.areSameByClass(metaAnno, DurationUnit.class)) {
                 return metaAnno;
@@ -664,8 +729,10 @@ public class UnitsRelationsTools {
         return null;
     }
 
-    private static /*@Nullable*/ AnnotationMirror getSubtypeOfMetaAnnotation(AnnotationMirror anno) {
-        for (AnnotationMirror metaAnno : anno.getAnnotationType().asElement().getAnnotationMirrors()) {
+    private static /*@Nullable*/ AnnotationMirror getSubtypeOfMetaAnnotation(
+            AnnotationMirror anno) {
+        for (AnnotationMirror metaAnno :
+                anno.getAnnotationType().asElement().getAnnotationMirrors()) {
             // see if the meta annotation is UnitsMultiple
             if (AnnotationUtils.areSameByClass(metaAnno, SubtypeOf.class)) {
                 return metaAnno;
@@ -673,5 +740,4 @@ public class UnitsRelationsTools {
         }
         return null;
     }
-
 }

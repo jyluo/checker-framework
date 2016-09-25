@@ -1,8 +1,40 @@
 package org.checkerframework.checker.units;
 
 import org.checkerframework.checker.units.qual.*;
-import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.instant.*;
+import org.checkerframework.checker.units.qual.time.duration.century;
+import org.checkerframework.checker.units.qual.time.duration.day;
+import org.checkerframework.checker.units.qual.time.duration.decade;
+import org.checkerframework.checker.units.qual.time.duration.era;
+import org.checkerframework.checker.units.qual.time.duration.forever;
+import org.checkerframework.checker.units.qual.time.duration.h;
+import org.checkerframework.checker.units.qual.time.duration.halfday;
+import org.checkerframework.checker.units.qual.time.duration.millennia;
+import org.checkerframework.checker.units.qual.time.duration.min;
+import org.checkerframework.checker.units.qual.time.duration.month;
+import org.checkerframework.checker.units.qual.time.duration.ms;
+import org.checkerframework.checker.units.qual.time.duration.ns;
+import org.checkerframework.checker.units.qual.time.duration.quarteryear;
+import org.checkerframework.checker.units.qual.time.duration.s;
+import org.checkerframework.checker.units.qual.time.duration.us;
+import org.checkerframework.checker.units.qual.time.duration.week;
+import org.checkerframework.checker.units.qual.time.duration.year;
+import org.checkerframework.checker.units.qual.time.instant.CALcentury;
+import org.checkerframework.checker.units.qual.time.instant.CALday;
+import org.checkerframework.checker.units.qual.time.instant.CALdecade;
+import org.checkerframework.checker.units.qual.time.instant.CALera;
+import org.checkerframework.checker.units.qual.time.instant.CALforever;
+import org.checkerframework.checker.units.qual.time.instant.CALh;
+import org.checkerframework.checker.units.qual.time.instant.CALhalfday;
+import org.checkerframework.checker.units.qual.time.instant.CALmillennia;
+import org.checkerframework.checker.units.qual.time.instant.CALmin;
+import org.checkerframework.checker.units.qual.time.instant.CALmonth;
+import org.checkerframework.checker.units.qual.time.instant.CALms;
+import org.checkerframework.checker.units.qual.time.instant.CALns;
+import org.checkerframework.checker.units.qual.time.instant.CALquarteryear;
+import org.checkerframework.checker.units.qual.time.instant.CALs;
+import org.checkerframework.checker.units.qual.time.instant.CALus;
+import org.checkerframework.checker.units.qual.time.instant.CALweek;
+import org.checkerframework.checker.units.qual.time.instant.CALyear;
 
 /**
  * Utility constants to assign units to types and methods to convert between them.

@@ -1,9 +1,8 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.time.duration.forever;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * A conceptual time instant of forever in the past or future, artificially
@@ -14,7 +13,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeInstant.class)
 @DurationUnit(unit = forever.class)
 public @interface CALforever {}

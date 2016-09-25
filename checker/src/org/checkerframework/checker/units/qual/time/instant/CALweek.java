@@ -1,9 +1,8 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.time.duration.week;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * Calendar week.
@@ -18,7 +17,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeInstant.class)
 @DurationUnit(unit = week.class)
 public @interface CALweek {}

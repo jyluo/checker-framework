@@ -1,10 +1,9 @@
+import java.util.LinkedList;
+import java.util.List;
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
-import org.checkerframework.checker.units.UnitsTools;
-
-import java.util.List;
-import java.util.LinkedList;
 
 class UnitsGenericClassesAndMethods {
 
@@ -51,11 +50,9 @@ class UnitsGenericClassesAndMethods {
     // explicitly set the lowerbound to @Scalar, thus this class can only be
     // instantiated with Scalar or UnknownUnits type arguments
     class MyScalarList<@Scalar T> {
-        public MyScalarList() {
-        }
+        public MyScalarList() {}
 
-        void add(T value) {
-        }
+        void add(T value) {}
     }
 
     void myScalarListTest() {
@@ -95,11 +92,9 @@ class UnitsGenericClassesAndMethods {
     // The explicit upperbound is set to @Scalar, thus this class can be
     // instantiated with @Scalar or @UnitsBottom type arguments
     class MyScalarList2<T extends @Scalar Object> {
-        public MyScalarList2() {
-        }
+        public MyScalarList2() {}
 
-        void add(T value) {
-        }
+        void add(T value) {}
     }
 
     void myScalarList2Test() {
@@ -130,11 +125,9 @@ class UnitsGenericClassesAndMethods {
     // Both the explicit lowerbound and upperbound is set to @Scalar, thus this
     // class can only be instantiated with @Scalar type arguments
     class MyScalarList3<@Scalar T extends @Scalar Object> {
-        public MyScalarList3() {
-        }
+        public MyScalarList3() {}
 
-        void add(T value) {
-        }
+        void add(T value) {}
     }
 
     void myScalarList3Test() {
@@ -167,11 +160,9 @@ class UnitsGenericClassesAndMethods {
     // By default, the upper bound is @UnknownUnits, which makes generic classes
     // declarable with all units in the units checker
     class MyList<T> {
-        public MyList() {
-        }
+        public MyList() {}
 
-        void add(T value) {
-        }
+        void add(T value) {}
     }
 
     void myListTest() {
@@ -193,8 +184,7 @@ class UnitsGenericClassesAndMethods {
     // units, making it useable with only that category of units, and forbidding
     // its use with other incompatible units
     class A<T extends @Length Object> {
-        public A() {
-        }
+        public A() {}
 
         T method(T input) {
             return input;
@@ -238,20 +228,20 @@ class UnitsGenericClassesAndMethods {
         // if the method was invoked with an explicit type argument, the type
         // argument must be a subtype of @UnknownUnits as well (which they all
         // are)
-        this.<Object> defaultImplicitExtendsBound(x);
-        this.<@UnknownUnits Object> defaultImplicitExtendsBound(x);
+        this.<Object>defaultImplicitExtendsBound(x);
+        this.<@UnknownUnits Object>defaultImplicitExtendsBound(x);
         // explicitly declaring T as a @Scalar Object causes argument type
         // incompatible error as uu is a @UnknownUnits Object
         //:: error: (argument.type.incompatible)
-        this.<Object> defaultImplicitExtendsBound(uu);
+        this.<Object>defaultImplicitExtendsBound(uu);
         // explicitly declaring T as a @Scalar Integer causes argument type
         // incompatible error as m is a @Meter Integer
         //:: error: (argument.type.incompatible)
-        this.<Integer> defaultImplicitExtendsBound(m);
+        this.<Integer>defaultImplicitExtendsBound(m);
 
         // @UnitsBottom (for null) is a subtype of @m, and @m is a subtype of
         // @UnknownUnits
-        this.<@m Object> defaultImplicitExtendsBound(null);
+        this.<@m Object>defaultImplicitExtendsBound(null);
     }
 
     // the default explicit upperbound of method type arguments is @UnknownUnits
@@ -267,13 +257,13 @@ class UnitsGenericClassesAndMethods {
         uu = this.defaultExplicitExtendsBound(uu);
         m = this.defaultExplicitExtendsBound(m);
 
-        this.<Object> defaultImplicitExtendsBound(x);
-        this.<@UnknownUnits Object> defaultImplicitExtendsBound(x);
+        this.<Object>defaultImplicitExtendsBound(x);
+        this.<@UnknownUnits Object>defaultImplicitExtendsBound(x);
         //:: error: (argument.type.incompatible)
-        this.<Object> defaultImplicitExtendsBound(uu);
+        this.<Object>defaultImplicitExtendsBound(uu);
         //:: error: (argument.type.incompatible)
-        this.<Integer> defaultImplicitExtendsBound(m);
-        this.<@m Object> defaultImplicitExtendsBound(null);
+        this.<Integer>defaultImplicitExtendsBound(m);
+        this.<@m Object>defaultImplicitExtendsBound(null);
     }
 
     // lowerbound is defaulted to UnitsBottom, upperbound is declared as Length.
@@ -298,25 +288,25 @@ class UnitsGenericClassesAndMethods {
         // explicit type invocation
         // the explicitly declared T has to be a subtype of Length
         //:: error: (type.argument.type.incompatible)
-        this.<@UnknownUnits Object> declaredExplicitLengthUpperBound(uu);
+        this.<@UnknownUnits Object>declaredExplicitLengthUpperBound(uu);
 
         // w is UnknownUnits Object, which is not a subtype of Length
         //:: error: (argument.type.incompatible)
-        this.<@Length Object> declaredExplicitLengthUpperBound(uu);
+        this.<@Length Object>declaredExplicitLengthUpperBound(uu);
 
         // T = Scalar Object is not a subtype of Length Object
         //:: error: (type.argument.type.incompatible)
-        this.<Object> declaredExplicitLengthUpperBound(x);
+        this.<Object>declaredExplicitLengthUpperBound(x);
 
         // UnitsBottom is a subtype of Length
-        this.<@Length Object> declaredExplicitLengthUpperBound(null);
+        this.<@Length Object>declaredExplicitLengthUpperBound(null);
 
         // bottom is a subtype of m
-        this.<@m Object> declaredExplicitLengthUpperBound(null);
+        this.<@m Object>declaredExplicitLengthUpperBound(null);
 
-        this.<@m Integer> declaredExplicitLengthUpperBound(m);
+        this.<@m Integer>declaredExplicitLengthUpperBound(m);
         // meter is a subtype of length
-        this.<@Length Integer> declaredExplicitLengthUpperBound(m);
+        this.<@Length Integer>declaredExplicitLengthUpperBound(m);
     }
 
     // we can declare the lower bound of a method type argument to any unit that
@@ -375,36 +365,36 @@ class UnitsGenericClassesAndMethods {
 
         // explicit type invocation
         // all types involved are precisely @m
-        this.<@m Object> meterLowerBound(meter);
+        this.<@m Object>meterLowerBound(meter);
         // this passes because @Length Object is a supertype of @m T
-        this.<@Length Object> meterLowerBound(length);
+        this.<@Length Object>meterLowerBound(length);
         // TODO: should be error (currently checks that Bottom is a subtype of
         // Length only
-        this.<@Length Object> meterLowerBound(null);
+        this.<@Length Object>meterLowerBound(null);
 
         // same for UnknownUnits
-        this.<@UnknownUnits Object> meterLowerBound(length);
-        this.<@UnknownUnits Object> meterLowerBound(meter);
+        this.<@UnknownUnits Object>meterLowerBound(length);
+        this.<@UnknownUnits Object>meterLowerBound(meter);
         // TODO: should be error
-        this.<@UnknownUnits Object> meterLowerBound(null);
+        this.<@UnknownUnits Object>meterLowerBound(null);
 
         // this passes because @Unknown Object overrides @m T, and @s is a
         // subtype of @Unknown
-        this.<@UnknownUnits Object> meterLowerBound(second);
+        this.<@UnknownUnits Object>meterLowerBound(second);
         // while bottom is a subtype of Speed, Speed is not a supertype of m
         //:: error: (type.argument.type.incompatible)
-        this.<@Speed Object> meterLowerBound(null);
+        this.<@Speed Object>meterLowerBound(null);
 
-        this.<@Length Object> lengthLowerBound(meter);
+        this.<@Length Object>lengthLowerBound(meter);
         // second is not a subtype of length
         //:: error: (argument.type.incompatible)
-        this.<@Length Object> lengthLowerBound(second);
+        this.<@Length Object>lengthLowerBound(second);
         // meter is not a supertype of length
         //:: error: (type.argument.type.incompatible)
-        this.<@m Object> lengthLowerBound(meter);
+        this.<@m Object>lengthLowerBound(meter);
         // scalar is not a supertype of length
         //:: error: (type.argument.type.incompatible)
-        this.<Object> meterLowerBound(null);
+        this.<Object>meterLowerBound(null);
     }
 
     // both the lower bound and the upperbound can be set to specific units
@@ -435,18 +425,18 @@ class UnitsGenericClassesAndMethods {
         // explicit type invocation
         // the explicitly declared T has to be a subtype of Length
         //:: error: (type.argument.type.incompatible)
-        this.<@UnknownUnits Object> declaredExplicitBounds(uu);
+        this.<@UnknownUnits Object>declaredExplicitBounds(uu);
 
         // the explicitly declared T has to be a supertype of Meter
         //:: error: (type.argument.type.incompatible)
-        this.<@UnitsBottom Object> declaredExplicitBounds(null);
+        this.<@UnitsBottom Object>declaredExplicitBounds(null);
 
-        this.<@m Object> declaredExplicitBounds(null);
+        this.<@m Object>declaredExplicitBounds(null);
         // TODO: should be error
         this.declaredExplicitBounds(null);
 
-        this.<@m Integer> declaredExplicitBounds(m);
+        this.<@m Integer>declaredExplicitBounds(m);
         // meter is a subtype of length
-        this.<@Length Integer> declaredExplicitBounds(m);
+        this.<@Length Integer>declaredExplicitBounds(m);
     }
 }

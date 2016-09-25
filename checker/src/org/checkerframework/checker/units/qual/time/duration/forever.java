@@ -1,8 +1,7 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
-import org.checkerframework.framework.qual.SubtypeOf;
-
 import java.lang.annotation.*;
+import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
  * A conceptual duration of forever, artificially defined in Java 8 as
@@ -12,7 +11,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeDuration.class)
 @TimeMultiple(timeUnit = s.class, multiplier = Long.MAX_VALUE + 0.999999999D)
 public @interface forever {}

@@ -1,9 +1,8 @@
+import java.lang.StrictMath;
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
-import org.checkerframework.checker.units.UnitsTools;
-
-import java.lang.StrictMath;
 
 // this test contains only the new methods introduced in java 8 that are not in java 7
 // @below-java8-jdk-skip-test

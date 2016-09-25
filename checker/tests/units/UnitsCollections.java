@@ -1,9 +1,8 @@
-import org.checkerframework.checker.units.qual.*;
-import org.checkerframework.checker.units.qual.time.duration.*;
-
 import java.lang.Iterable;
 import java.util.*;
 import java.util.Map.Entry;
+import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
 
 @SuppressWarnings("unchecked")
 class CollectionsTests {
@@ -25,8 +24,7 @@ class CollectionsTests {
             return null;
         }
 
-        public void remove() {
-        }
+        public void remove() {}
     }
 
     void customIterableTest() {
@@ -37,9 +35,7 @@ class CollectionsTests {
         }
 
         //:: error: (enhancedfor.type.incompatible)
-        for (@m Integer meter : collection) {
-
-        }
+        for (@m Integer meter : collection) {}
     }
 
     // ================================================
@@ -200,7 +196,8 @@ class CollectionsTests {
         x = ad.pollFirst();
         x = ad.pollLast();
         x = ad.pop();
-        ad.push(x);;
+        ad.push(x);
+        ;
         x = ad.remove();
         ad.remove(x);
         x = ad.removeFirst();
@@ -226,7 +223,8 @@ class CollectionsTests {
         Integer key2 = new Integer(39);
         @m2 Double val = new @m2 Double(23.5);
 
-        WeakHashMap<@Length Integer, @Area Double> whm = new WeakHashMap<@Length Integer, @Area Double>();
+        WeakHashMap<@Length Integer, @Area Double> whm =
+                new WeakHashMap<@Length Integer, @Area Double>();
         // Raw Types are defaulted to their upper bounds
         //:: error: (assignment.type.incompatible)
         whm = new WeakHashMap(whm);

@@ -1,9 +1,8 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.time.duration.millennia;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * Calendar millennium.
@@ -15,7 +14,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeInstant.class)
 @DurationUnit(unit = millennia.class)
 public @interface CALmillennia {}

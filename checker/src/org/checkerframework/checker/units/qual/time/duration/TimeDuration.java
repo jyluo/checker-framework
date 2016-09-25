@@ -1,10 +1,9 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.time.UnknownTime;
 import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * Units of time duration. A time duration represents the duration of a single
@@ -21,5 +20,5 @@ import java.lang.annotation.*;
 @SubtypeOf(UnknownTime.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 public @interface TimeDuration {}

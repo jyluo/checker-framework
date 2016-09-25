@@ -1,8 +1,7 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
-import org.checkerframework.framework.qual.SubtypeOf;
-
 import java.lang.annotation.*;
+import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
  * Month.
@@ -11,7 +10,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeDuration.class)
 // defined as a Gregorian year in seconds / 12 = 31556952 / 12 = 2629746
 @TimeMultiple(timeUnit = s.class, multiplier = 2629746L)

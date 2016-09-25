@@ -1,23 +1,23 @@
 package org.checkerframework.checker.units;
 
+/*>>>
+import org.checkerframework.checker.nullness.qual.Nullable;
+ */
+
+import com.sun.source.tree.CompoundAssignmentTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.Tree;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.time.duration.TimeDuration;
 import org.checkerframework.checker.units.qual.time.instant.TimeInstant;
 import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-/*>>>
-import org.checkerframework.checker.nullness.qual.Nullable;
- */
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic.Kind;
-
-import com.sun.source.tree.*;
 
 /**
  * This class encodes the units checker's type rules for all math arithmetic
@@ -42,7 +42,8 @@ public class UnitsMathOperatorsRelations {
     private final Elements elements;
     private final UnitsRelationsManager unitsRelations;
 
-    protected UnitsMathOperatorsRelations(UnitsChecker uChecker, UnitsAnnotatedTypeFactory uFactory) {
+    protected UnitsMathOperatorsRelations(
+            UnitsChecker uChecker, UnitsAnnotatedTypeFactory uFactory) {
         this.checker = uChecker;
         this.factory = uFactory;
         this.processingEnv = checker.getProcessingEnvironment();
@@ -72,7 +73,12 @@ public class UnitsMathOperatorsRelations {
      * @param rht right hand type of the operation
      */
     @SuppressWarnings("fallthrough")
-    public void processMathOperation(ExpressionTree node, Tree.Kind kind, AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
+    public void processMathOperation(
+            ExpressionTree node,
+            Tree.Kind kind,
+            AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror lht,
+            AnnotatedTypeMirror rht) {
         // Remove Prefix.one
         if (UnitsRelationsTools.getPrefix(lht) == Prefix.one) {
             lht = UnitsRelationsTools.removePrefix(elements, lht);
@@ -87,8 +93,12 @@ public class UnitsMathOperatorsRelations {
             AnnotationMirror res = useUnitsRelation(kind, ur, lht, rht);
 
             if (bestResult != null && res != null && !bestResult.equals(res)) {
-                checker.message(Kind.WARNING, "UnitsRelation mismatch, taking neither! Previous: "
-                        + bestResult + " and current: " + res);
+                checker.message(
+                        Kind.WARNING,
+                        "UnitsRelation mismatch, taking neither! Previous: "
+                                + bestResult
+                                + " and current: "
+                                + res);
                 return;
             }
 
@@ -106,33 +116,33 @@ public class UnitsMathOperatorsRelations {
         // If none of the units relations classes could resolve the
         // units, then apply default rules as follows:
         switch (kind) {
-        case PLUS:
-            processPlus(resultType, lht, rht, node);
-            break;
-        case MINUS:
-            processMinus(resultType, lht, rht);
-            break;
-        case MULTIPLY:
-            processMultiply(resultType, lht, rht, node);
-            break;
-        case DIVIDE:
-            processDivide(resultType, lht, rht, node);
-            break;
-        case REMAINDER:
-            processRemainder(resultType, lht);
-            break;
-        case EQUAL_TO:
-        case NOT_EQUAL_TO:
-        case GREATER_THAN:
-        case GREATER_THAN_EQUAL:
-        case LESS_THAN:
-        case LESS_THAN_EQUAL:
-            processComparison(resultType, lht, rht, node);
-            break;
-        default:
-            // Placeholders for unhandled binary operations
-            // Do nothing
-            break;
+            case PLUS:
+                processPlus(resultType, lht, rht, node);
+                break;
+            case MINUS:
+                processMinus(resultType, lht, rht);
+                break;
+            case MULTIPLY:
+                processMultiply(resultType, lht, rht, node);
+                break;
+            case DIVIDE:
+                processDivide(resultType, lht, rht, node);
+                break;
+            case REMAINDER:
+                processRemainder(resultType, lht);
+                break;
+            case EQUAL_TO:
+            case NOT_EQUAL_TO:
+            case GREATER_THAN:
+            case GREATER_THAN_EQUAL:
+            case LESS_THAN:
+            case LESS_THAN_EQUAL:
+                processComparison(resultType, lht, rht, node);
+                break;
+            default:
+                // Placeholders for unhandled binary operations
+                // Do nothing
+                break;
         }
     }
 
@@ -144,7 +154,11 @@ public class UnitsMathOperatorsRelations {
      * @param rht right hand type of addition
      * @param node the AST node of the addition
      */
-    private void processPlus(AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht, ExpressionTree node) {
+    private void processPlus(
+            AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror lht,
+            AnnotatedTypeMirror rht,
+            ExpressionTree node) {
         // if only left or right is a string, replace with the types of the
         // string
         if (factory.isSameUnderlyingType(lht, factory.stringType)) {
@@ -163,7 +177,10 @@ public class UnitsMathOperatorsRelations {
             // Time instant + time instant ==> error
             // One cannot add the 4th month of a year to the 7th month of some
             // other year
-            checker.report(Result.failure("time.instant.addition.disallowed", lht.toString(), rht.toString()), node);
+            checker.report(
+                    Result.failure(
+                            "time.instant.addition.disallowed", lht.toString(), rht.toString()),
+                    node);
         } else {
             // addition of other units is the same as subtraction in terms of
             // rules
@@ -179,7 +196,8 @@ public class UnitsMathOperatorsRelations {
      * @param lht left hand type of addition or subtraction
      * @param rht right hand type of addition or subtraction
      */
-    private void processMinus(AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
+    private void processMinus(
+            AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
         // Process time units first
         if (UnitsRelationsTools.hasSpecificUnit(lht, factory.TOP)
                 || UnitsRelationsTools.hasSpecificUnit(rht, factory.TOP)) {
@@ -195,8 +213,10 @@ public class UnitsMathOperatorsRelations {
             } else {
                 // subtraction of two different time instant units results in
                 // the LUB of the two respective time duration units
-                AnnotationMirror lhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(factory, lht);
-                AnnotationMirror rhtDurationUnit = UnitsRelationsTools.getTimeDurationUnit(factory, rht);
+                AnnotationMirror lhtDurationUnit =
+                        UnitsRelationsTools.getTimeDurationUnit(factory, lht);
+                AnnotationMirror rhtDurationUnit =
+                        UnitsRelationsTools.getTimeDurationUnit(factory, rht);
                 resultType.replaceAnnotation(getLUB(lhtDurationUnit, rhtDurationUnit));
             }
         } else if (isTimeInstant(lht) && isTimeDuration(rht)) {
@@ -229,20 +249,29 @@ public class UnitsMathOperatorsRelations {
      * @param rht right hand type of the multiplication, or the multiplicand
      * @param node the AST node of the multiplication
      */
-    private void processMultiply(AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht, ExpressionTree node) {
+    private void processMultiply(
+            AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror lht,
+            AnnotatedTypeMirror rht,
+            ExpressionTree node) {
         if (UnitsRelationsTools.hasSpecificUnit(lht, factory.TOP)
                 || UnitsRelationsTools.hasSpecificUnit(rht, factory.TOP)) {
             // unknown * unknown = unknown
             // unknown * anything = unknown
             // anything * unknown = unknown
             resultType.replaceAnnotation(factory.TOP);
-        } else if ((isTimeDuration(lht) && isTimeInstant(rht)) ||
-                (isTimeInstant(lht) && isTimeDuration(rht)) ||
-                (isTimeInstant(lht) && isTimeInstant(rht))) {
+        } else if ((isTimeDuration(lht) && isTimeInstant(rht))
+                || (isTimeInstant(lht) && isTimeDuration(rht))
+                || (isTimeInstant(lht) && isTimeInstant(rht))) {
             // duration * time instant = invalid
             // time instant * duration = invalid
             // time instant * time instant = invalid
-            checker.report(Result.failure("time.instant.multiplication.disallowed", lht.toString(), rht.toString()), node);
+            checker.report(
+                    Result.failure(
+                            "time.instant.multiplication.disallowed",
+                            lht.toString(),
+                            rht.toString()),
+                    node);
         } else if (UnitsRelationsTools.hasNoUnits(lht)) {
             // any unit multiplied by a scalar keeps the unit
             // also unknown * scalar = unknown
@@ -272,20 +301,27 @@ public class UnitsMathOperatorsRelations {
      * @param rht right hand type of the division, or the divisor
      * @param node the AST node of the division
      */
-    private void processDivide(AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht, ExpressionTree node) {
+    private void processDivide(
+            AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror lht,
+            AnnotatedTypeMirror rht,
+            ExpressionTree node) {
         if (UnitsRelationsTools.hasSpecificUnit(lht, factory.TOP)
                 || UnitsRelationsTools.hasSpecificUnit(rht, factory.TOP)) {
             // unknown / unknown = unknown
             // unknown / anything = unknown
             // anything / unknown = unknown
             resultType.replaceAnnotation(factory.TOP);
-        } else if ((isTimeDuration(lht) && isTimeInstant(rht)) ||
-                (isTimeInstant(lht) && isTimeDuration(rht)) ||
-                (isTimeInstant(lht) && isTimeInstant(rht))) {
+        } else if ((isTimeDuration(lht) && isTimeInstant(rht))
+                || (isTimeInstant(lht) && isTimeDuration(rht))
+                || (isTimeInstant(lht) && isTimeInstant(rht))) {
             // duration / time instant = invalid
             // time instant / duration = invalid
             // time instant / time instant = invalid
-            checker.report(Result.failure("time.instant.division.disallowed", lht.toString(), rht.toString()), node);
+            checker.report(
+                    Result.failure(
+                            "time.instant.division.disallowed", lht.toString(), rht.toString()),
+                    node);
         } else if (UnitsRelationsTools.areSameUnits(lht, rht)) {
             // if the units of the division match, return scalar
             resultType.replaceAnnotation(factory.scalar);
@@ -334,7 +370,11 @@ public class UnitsMathOperatorsRelations {
      * @param rht right hand type of the comparison
      * @param node the AST node of the comparison
      */
-    private void processComparison(AnnotatedTypeMirror resultType, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht, ExpressionTree node) {
+    private void processComparison(
+            AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror lht,
+            AnnotatedTypeMirror rht,
+            ExpressionTree node) {
         if (UnitsRelationsTools.areSameUnits(lht, rht)
                 || UnitsRelationsTools.hasSpecificUnit(lht, factory.scalar)
                 || UnitsRelationsTools.hasSpecificUnit(rht, factory.scalar)
@@ -348,7 +388,8 @@ public class UnitsMathOperatorsRelations {
             resultType.replaceAnnotation(factory.scalar);
         } else {
             // otherwise if the operands have different units, then alert error
-            checker.report(Result.failure("operands.unit.mismatch", lht.toString(), rht.toString()), node);
+            checker.report(
+                    Result.failure("operands.unit.mismatch", lht.toString(), rht.toString()), node);
         }
     }
 
@@ -378,44 +419,57 @@ public class UnitsMathOperatorsRelations {
      * @param exprType right hand type of the operation
      */
     @SuppressWarnings("fallthrough")
-    public void processCompoundAssignmentOperation(CompoundAssignmentTree node, Tree.Kind kind, /*@Nullable*/ AnnotatedTypeMirror resultType, AnnotatedTypeMirror varType, AnnotatedTypeMirror exprType) {
+    public void processCompoundAssignmentOperation(
+            CompoundAssignmentTree node,
+            Tree.Kind kind,
+            /*@Nullable*/ AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror varType,
+            AnnotatedTypeMirror exprType) {
         switch (kind) {
-        case PLUS_ASSIGNMENT:
-            // skip checking addition on Strings
-            if (factory.isSameUnderlyingType(varType, factory.stringType)) {
+            case PLUS_ASSIGNMENT:
+                // skip checking addition on Strings
+                if (factory.isSameUnderlyingType(varType, factory.stringType)) {
+                    break;
+                }
+                // otherwise the check is the same as for minus assign
+                // fallthrough intended!
+            case MINUS_ASSIGNMENT:
+                // expr has to be a subtype of var, if so, the result has the same
+                // type as var
+                if (!factory.getTypeHierarchy().isSubtype(exprType, varType)) {
+                    checker.report(
+                            Result.failure(
+                                    "compound.assignment.type.incompatible", exprType, varType),
+                            node);
+                }
                 break;
-            }
-            // otherwise the check is the same as for minus assign
-            // fallthrough intended!
-        case MINUS_ASSIGNMENT:
-            // expr has to be a subtype of var, if so, the result has the same
-            // type as var
-            if (!factory.getTypeHierarchy().isSubtype(exprType, varType)) {
-                checker.report(Result.failure("compound.assignment.type.incompatible", exprType, varType), node);
-            }
-            break;
-        case MULTIPLY_ASSIGNMENT:
-            // fallthrough intended!
-        case DIVIDE_ASSIGNMENT:
-            // if the var is @UnknownUnits, the result is @UnknownUnits
-            // if the expr is @Scalar, the result keeps the unit of var
-            // otherwise raise error
-            if (!(UnitsRelationsTools.hasSpecificUnit(varType, factory.TOP)
-                    || UnitsRelationsTools.hasSpecificUnit(exprType, factory.scalar))) {
-                // if the var is any unit other than UnknownUnits, then the expr
-                // can only have the type of scalar
-                // generate the required type by copying the expr type and
-                // replace the unit with scalar
-                AnnotatedTypeMirror requiredType = exprType.deepCopy();
-                requiredType.replaceAnnotation(factory.scalar);
-                checker.report(Result.failure("compound.assignment.type.incompatible", exprType, requiredType), node);
-            }
-            break;
-        case REMAINDER_ASSIGNMENT:
-            // var keeps its type regardless of what expr is
-            break;
-        default:
-            break;
+            case MULTIPLY_ASSIGNMENT:
+                // fallthrough intended!
+            case DIVIDE_ASSIGNMENT:
+                // if the var is @UnknownUnits, the result is @UnknownUnits
+                // if the expr is @Scalar, the result keeps the unit of var
+                // otherwise raise error
+                if (!(UnitsRelationsTools.hasSpecificUnit(varType, factory.TOP)
+                        || UnitsRelationsTools.hasSpecificUnit(exprType, factory.scalar))) {
+                    // if the var is any unit other than UnknownUnits, then the expr
+                    // can only have the type of scalar
+                    // generate the required type by copying the expr type and
+                    // replace the unit with scalar
+                    AnnotatedTypeMirror requiredType = exprType.deepCopy();
+                    requiredType.replaceAnnotation(factory.scalar);
+                    checker.report(
+                            Result.failure(
+                                    "compound.assignment.type.incompatible",
+                                    exprType,
+                                    requiredType),
+                            node);
+                }
+                break;
+            case REMAINDER_ASSIGNMENT:
+                // var keeps its type regardless of what expr is
+                break;
+            default:
+                break;
         }
 
         if (resultType != null) {
@@ -438,20 +492,21 @@ public class UnitsMathOperatorsRelations {
      *         calculation, or null if this units relations class doesn't
      *         specify what type to return
      */
-    private AnnotationMirror useUnitsRelation(Tree.Kind kind, UnitsRelations ur, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
+    private AnnotationMirror useUnitsRelation(
+            Tree.Kind kind, UnitsRelations ur, AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
         // TODO: add support for other relations?
         // compound assignment, comparison, plus, minus, remainder
         AnnotationMirror res = null;
         if (ur != null) {
             switch (kind) {
-            case DIVIDE:
-                res = ur.division(lht, rht);
-                break;
-            case MULTIPLY:
-                res = ur.multiplication(lht, rht);
-                break;
-            default:
-                // Do nothing
+                case DIVIDE:
+                    res = ur.division(lht, rht);
+                    break;
+                case MULTIPLY:
+                    res = ur.multiplication(lht, rht);
+                    break;
+                default:
+                    // Do nothing
             }
         }
         return res;
@@ -472,8 +527,13 @@ public class UnitsMathOperatorsRelations {
      * @param instant the time instant unit
      * @param duration the time duration unit
      */
-    private void processInstantAndDurationMathOperation(AnnotatedTypeMirror resultType, AnnotatedTypeMirror instant, AnnotatedTypeMirror duration) {
-        if (UnitsRelationsTools.areSameUnits(UnitsRelationsTools.getTimeDurationUnit(factory, instant), UnitsRelationsTools.getUnit(duration))) {
+    private void processInstantAndDurationMathOperation(
+            AnnotatedTypeMirror resultType,
+            AnnotatedTypeMirror instant,
+            AnnotatedTypeMirror duration) {
+        if (UnitsRelationsTools.areSameUnits(
+                UnitsRelationsTools.getTimeDurationUnit(factory, instant),
+                UnitsRelationsTools.getUnit(duration))) {
             // If the instant is based upon the same unit as the duration,
             // then Time instant + or - time duration => time instant
             resultType.replaceAnnotations(instant.getAnnotations());
@@ -523,7 +583,8 @@ public class UnitsMathOperatorsRelations {
      * @param superType an annotation mirror denoting a supertype
      * @return true if the units annotation in the atm is a subtype of superType
      */
-    private boolean annotatedTypeIsSubtype(final AnnotatedTypeMirror atm, final AnnotationMirror superType) {
+    private boolean annotatedTypeIsSubtype(
+            final AnnotatedTypeMirror atm, final AnnotationMirror superType) {
         // if one of the annotations of the atm is a subtype of superType then
         // return true
         for (AnnotationMirror anno : atm.getEffectiveAnnotations()) {
@@ -543,8 +604,10 @@ public class UnitsMathOperatorsRelations {
      * @param rht right type
      * @return the set of least upper bounds of the two annotated types
      */
-    private Set<? extends AnnotationMirror> getLUBs(AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
-        return factory.getQualifierHierarchy().leastUpperBounds(lht, rht, lht.getAnnotations(), rht.getAnnotations());
+    private Set<? extends AnnotationMirror> getLUBs(
+            AnnotatedTypeMirror lht, AnnotatedTypeMirror rht) {
+        return factory.getQualifierHierarchy()
+                .leastUpperBounds(lht, rht, lht.getAnnotations(), rht.getAnnotations());
     }
 
     /**

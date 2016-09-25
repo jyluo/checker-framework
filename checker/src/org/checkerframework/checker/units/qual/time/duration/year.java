@@ -1,8 +1,7 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
-import org.checkerframework.framework.qual.SubtypeOf;
-
 import java.lang.annotation.*;
+import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
  * Gregorian Year.
@@ -11,7 +10,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeDuration.class)
 // Java 8 defines a year as 31556952 seconds (a Gregorian year), which accounts
 // for leap years.

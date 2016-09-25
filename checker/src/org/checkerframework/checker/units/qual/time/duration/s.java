@@ -1,9 +1,8 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
+import java.lang.annotation.*;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * Second (1/60 of a minute).
@@ -12,7 +11,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeDuration.class)
 @TimeMultiple(timeUnit = ns.class, multiplier = 1000000000L)
 public @interface s {

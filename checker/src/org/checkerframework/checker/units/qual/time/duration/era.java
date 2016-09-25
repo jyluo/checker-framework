@@ -1,8 +1,7 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
-import org.checkerframework.framework.qual.SubtypeOf;
-
 import java.lang.annotation.*;
+import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
  * Era (1 million Gregorian years). In Java 8, it is impossible to add an era
@@ -12,7 +11,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(TimeDuration.class)
 @TimeMultiple(timeUnit = s.class, multiplier = 31556952L * 1000000000L)
 public @interface era {}

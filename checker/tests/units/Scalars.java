@@ -1,7 +1,7 @@
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
-import org.checkerframework.checker.units.UnitsTools;
 
 public class Scalars {
     @Scalar double s = 20.0d;
@@ -54,28 +54,28 @@ public class Scalars {
 
         // No Prefix ======================
         // super type of m and m is m
-        @m int m_m = (m == m? m : m);
+        @m int m_m = (m == m ? m : m);
 
         // Single Prefix ==================
         // super type of m & km is Length
-        @Length int m_km = (m == m? m : km);
+        @Length int m_km = (m == m ? m : km);
         // in reverse order
-        @Length int km_m = (m == m? km : m);
+        @Length int km_m = (m == m ? km : m);
 
         // Multiple Prefix ================
         // super type of mm and km is Length
-        @Length int mm_km = (m == m? mm : km);
+        @Length int mm_km = (m == m ? mm : km);
         // in reverse order
-        @Length int km_mm = (m == m? km : mm);
+        @Length int km_mm = (m == m ? km : mm);
 
         // Multiple Prefix with Single Prefix.one =============
         // testing @m(Prefix.one) which is the same as @m
-        @Length int m1_mk = (m1 == m1? m1 : mk);
+        @Length int m1_mk = (m1 == m1 ? m1 : mk);
         // in reverse order
-        @Length int mk_m1 = (m1 == m1? mk : m1);
+        @Length int mk_m1 = (m1 == m1 ? mk : m1);
 
         // Double Prefix.one ==============
-        @m int m1_m1 = (m1 == m1? m1 : m1);
+        @m int m1_m1 = (m1 == m1 ? m1 : m1);
     }
 
     void primitiveNumberTypeRefinement() {

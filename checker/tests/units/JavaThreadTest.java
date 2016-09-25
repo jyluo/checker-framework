@@ -1,10 +1,10 @@
-import org.checkerframework.checker.units.qual.Prefix;
-import org.checkerframework.checker.units.qual.time.duration.*;
-import static org.checkerframework.checker.units.UnitsTools.s;
 import static org.checkerframework.checker.units.UnitsTools.ms;
 import static org.checkerframework.checker.units.UnitsTools.ns;
+import static org.checkerframework.checker.units.UnitsTools.s;
 
 import java.util.Date;
+import org.checkerframework.checker.units.qual.Prefix;
+import org.checkerframework.checker.units.qual.time.duration.*;
 
 public class JavaThreadTest {
     void m() throws InterruptedException {

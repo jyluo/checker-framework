@@ -1,8 +1,7 @@
 package org.checkerframework.checker.units.qual;
 
-import org.checkerframework.framework.qual.*;
-
 import java.lang.annotation.*;
+import org.checkerframework.framework.qual.*;
 
 /**
  * UnknownUnits is the top type of the type hierarchy.
@@ -19,13 +18,13 @@ import java.lang.annotation.*;
     TypeUseLocation.LOCAL_VARIABLE,
     TypeUseLocation.EXCEPTION_PARAMETER,
     TypeUseLocation.RESOURCE_VARIABLE,
-    TypeUseLocation.IMPLICIT_UPPER_BOUND,    // <T>
-    TypeUseLocation.EXPLICIT_UPPER_BOUND     // <T extends Object>
+    TypeUseLocation.IMPLICIT_UPPER_BOUND, // <T>
+    TypeUseLocation.EXPLICIT_UPPER_BOUND // <T extends Object>
 })
-@DefaultInUncheckedCodeFor({ TypeUseLocation.UPPER_BOUND })
+@DefaultInUncheckedCodeFor({TypeUseLocation.UPPER_BOUND})
 // Exceptions are always TOP type, so Throwable must be as well
-@ImplicitFor(typeNames = { java.lang.Throwable.class })
+@ImplicitFor(typeNames = {java.lang.Throwable.class})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 public @interface UnknownUnits {}

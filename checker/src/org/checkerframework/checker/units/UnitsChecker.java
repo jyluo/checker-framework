@@ -1,13 +1,11 @@
 package org.checkerframework.checker.units;
 
+import java.lang.annotation.Annotation;
+import java.util.*;
+import javax.annotation.processing.SupportedOptions;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.qual.StubFiles;
-
-import java.lang.annotation.Annotation;
-import java.util.*;
-
-import javax.annotation.processing.SupportedOptions;
 
 /**
  * Units Checker main class.
@@ -20,12 +18,18 @@ import javax.annotation.processing.SupportedOptions;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@SupportedOptions({ "units", "unitsDirs" })
+@SupportedOptions({"units", "unitsDirs"})
 @StubFiles({
-    "Math.astub", "StrictMath.astub", "PrintStream.astub",
-    "JavaSystemTime.astub", "JavaThread.astub",
-    "JavaBoxedPrimitives.astub", "JavaGenerics.astub",
-    "Java8Time.astub", "Java8TemporalTime.astub", "JavaUtilTime.astub"
+    "Math.astub",
+    "StrictMath.astub",
+    "PrintStream.astub",
+    "JavaSystemTime.astub",
+    "JavaThread.astub",
+    "JavaBoxedPrimitives.astub",
+    "JavaGenerics.astub",
+    "Java8Time.astub",
+    "Java8TemporalTime.astub",
+    "JavaUtilTime.astub"
 })
 public class UnitsChecker extends BaseTypeChecker {
     /**
@@ -34,10 +38,9 @@ public class UnitsChecker extends BaseTypeChecker {
      */
     @Override
     public Collection<String> getSuppressWarningsKeys() {
-        Set<String> swKeys = new HashSet<String>(
-                super.getSuppressWarningsKeys());
-        Set<Class<? extends Annotation>> annos = ((BaseTypeVisitor<?>) visitor)
-                .getTypeFactory().getSupportedTypeQualifiers();
+        Set<String> swKeys = new HashSet<String>(super.getSuppressWarningsKeys());
+        Set<Class<? extends Annotation>> annos =
+                ((BaseTypeVisitor<?>) visitor).getTypeFactory().getSupportedTypeQualifiers();
 
         for (Class<? extends Annotation> anno : annos) {
             swKeys.add(anno.getSimpleName().toLowerCase());

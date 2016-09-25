@@ -1,8 +1,7 @@
 package org.checkerframework.checker.units.qual;
 
-import org.checkerframework.framework.qual.*;
-
 import java.lang.annotation.*;
+import org.checkerframework.framework.qual.*;
 
 /**
  * A Scalar is defined in Physics as a quantity that is independent of specific
@@ -28,5 +27,5 @@ import java.lang.annotation.*;
 @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE_USE, ElementType.TYPE_PARAMETER })
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 public @interface Scalar {}

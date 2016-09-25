@@ -1,15 +1,13 @@
 package org.checkerframework.checker.units;
 
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
-
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.util.Elements;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
 
 /*>>>
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -25,7 +23,8 @@ public class UnitsRelationsManager {
     // multiple times.
     private Map<String, UnitsRelations> unitsRelations;
 
-    private static final Class<org.checkerframework.checker.units.qual.UnitsRelations> unitsRelationsAnnoClass = org.checkerframework.checker.units.qual.UnitsRelations.class;
+    private static final Class<org.checkerframework.checker.units.qual.UnitsRelations>
+            unitsRelationsAnnoClass = org.checkerframework.checker.units.qual.UnitsRelations.class;
 
     private final UnitsAnnotatedTypeFactory factory;
     private final UnitsChecker checker;
@@ -50,19 +49,25 @@ public class UnitsRelationsManager {
 
         for (AnnotationMirror ama : am.getAnnotationType().asElement().getAnnotationMirrors()) {
             if (AnnotationUtils.areSameByClass(ama, unitsRelationsAnnoClass)) {
-                Class<? extends UnitsRelations> theclass = AnnotationUtils.getElementValueClass(ama, "value", true).asSubclass(UnitsRelations.class);
+                Class<? extends UnitsRelations> theclass =
+                        AnnotationUtils.getElementValueClass(ama, "value", true)
+                                .asSubclass(UnitsRelations.class);
                 String classname = theclass.getCanonicalName().intern();
 
                 if (!getUnitsRelationsMap().containsKey(classname)) {
                     try {
-                        unitsRelations.put(classname, ((UnitsRelations) theclass.newInstance()).init(processingEnv));
+                        unitsRelations.put(
+                                classname,
+                                ((UnitsRelations) theclass.newInstance()).init(processingEnv));
                     } catch (InstantiationException e) {
-                        ErrorReporter.errorAbort("Could not instantiate "
-                                + classname + " is it on the classpath?");
+                        ErrorReporter.errorAbort(
+                                "Could not instantiate " + classname + " is it on the classpath?");
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
-                        ErrorReporter.errorAbort("Could not reflectively instantiate "
-                                + classname + " is it on the classpath?");
+                        ErrorReporter.errorAbort(
+                                "Could not reflectively instantiate "
+                                        + classname
+                                        + " is it on the classpath?");
                         e.printStackTrace();
                     }
                 }
@@ -74,7 +79,9 @@ public class UnitsRelationsManager {
         if (unitsRelations == null) {
             unitsRelations = new HashMap<String, UnitsRelations>();
             // Always add the default units relations for the standard units.
-            unitsRelations.put(UnitsRelationsDefault.class.getCanonicalName().intern(), new UnitsRelationsDefault().init(processingEnv));
+            unitsRelations.put(
+                    UnitsRelationsDefault.class.getCanonicalName().intern(),
+                    new UnitsRelationsDefault().init(processingEnv));
         }
         return unitsRelations;
     }

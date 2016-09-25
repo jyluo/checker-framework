@@ -1,5 +1,8 @@
 package org.checkerframework.checker.units;
 
+import com.sun.source.tree.*;
+import java.util.List;
+import javax.lang.model.element.ElementKind;
 import org.checkerframework.checker.units.qual.Scalar;
 import org.checkerframework.checker.units.qual.UnitsBottom;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -9,12 +12,6 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.javacutil.*;
-
-import java.util.List;
-
-import javax.lang.model.element.ElementKind;
-
-import com.sun.source.tree.*;
 
 /**
  * Units visitor.h
@@ -30,7 +27,9 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         AnnotatedTypeMirror exprType = atypeFactory.getAnnotatedType(node.getExpression());
         Tree.Kind kind = node.getKind();
 
-        atypeFactory.getUnitsMathOperatorsRelations().processCompoundAssignmentOperation(node, kind, null, varType, exprType);
+        atypeFactory
+                .getUnitsMathOperatorsRelations()
+                .processCompoundAssignmentOperation(node, kind, null, varType, exprType);
 
         return null;
     }
@@ -39,7 +38,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     // UnitsBottom. Classes are by default Scalar, but these reference
     // declarations will use some unit that isn't a subtype of Scalar.
     @Override
-    public boolean isValidUse(AnnotatedDeclaredType declarationType, AnnotatedDeclaredType useType, Tree tree) {
+    public boolean isValidUse(
+            AnnotatedDeclaredType declarationType, AnnotatedDeclaredType useType, Tree tree) {
         // eg for the statement "@m Double x;" the declarationType is @Scalar
         // Double, and the useType is @m Double
         if (isValidDeclarationTypeUse(declarationType, useType)) {
@@ -57,7 +57,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     // UnitsBottom. Classes are by default Scalar, but these objects may use
     // some unit that isn't a subtype of Scalar.
     @Override
-    protected boolean checkConstructorInvocation(AnnotatedDeclaredType useType, AnnotatedExecutableType constructor, NewClassTree src) {
+    protected boolean checkConstructorInvocation(
+            AnnotatedDeclaredType useType, AnnotatedExecutableType constructor, NewClassTree src) {
         // The declared constructor return type is the same as the declared type
         // of the class that is being constructed, by default this will be
         // Scalar.
@@ -76,7 +77,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
 
     // If a class is declared as Scalar, and the use of the class is any units
     // annotation except UnitsBottom, then return true
-    private boolean isValidDeclarationTypeUse(AnnotatedTypeMirror declaredType, AnnotatedTypeMirror useType) {
+    private boolean isValidDeclarationTypeUse(
+            AnnotatedTypeMirror declaredType, AnnotatedTypeMirror useType) {
         return declaredType.getEffectiveAnnotation(Scalar.class) != null
                 && useType.getEffectiveAnnotation(UnitsBottom.class) == null;
     }
@@ -85,14 +87,22 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     // require a unit. all parameters are scalar by default.
     // Developer Notes: keep in sync with super implementation.
     @Override
-    protected void checkArguments(List<? extends AnnotatedTypeMirror> requiredArgs, List<? extends ExpressionTree> passedArgs) {
-        assert requiredArgs.size() == passedArgs.size() : "mismatch between required args ("
-                + requiredArgs + ") and passed args (" + passedArgs + ")";
+    protected void checkArguments(
+            List<? extends AnnotatedTypeMirror> requiredArgs,
+            List<? extends ExpressionTree> passedArgs) {
+        assert requiredArgs.size() == passedArgs.size()
+                : "mismatch between required args ("
+                        + requiredArgs
+                        + ") and passed args ("
+                        + passedArgs
+                        + ")";
 
         Pair<Tree, AnnotatedTypeMirror> preAssCtxt = visitorState.getAssignmentContext();
         try {
             for (int i = 0; i < requiredArgs.size(); ++i) {
-                visitorState.setAssignmentContext(Pair.<Tree, AnnotatedTypeMirror> of((Tree) null, (AnnotatedTypeMirror) requiredArgs.get(i)));
+                visitorState.setAssignmentContext(
+                        Pair.<Tree, AnnotatedTypeMirror>of(
+                                (Tree) null, (AnnotatedTypeMirror) requiredArgs.get(i)));
 
                 // Units Checker Code =======================
                 AnnotatedTypeMirror requiredArg = requiredArgs.get(i);
@@ -111,7 +121,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                     // such methods still result in errors.
                 } else {
                     // Developer note: keep in sync with super implementation
-                    commonAssignmentCheck(requiredArg, passedExpression, "argument.type.incompatible");
+                    commonAssignmentCheck(
+                            requiredArg, passedExpression, "argument.type.incompatible");
                 }
                 // End Units Checker Code ===================
 
@@ -128,7 +139,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     // UnknownUnits object (all classes are scalar by default)
     // Developer Notes: keep in sync with super implementation.
     @Override
-    protected void checkMethodInvocability(AnnotatedExecutableType method, MethodInvocationTree node) {
+    protected void checkMethodInvocability(
+            AnnotatedExecutableType method, MethodInvocationTree node) {
         if (method.getReceiverType() == null) {
             // Static methods don't have a receiver.
             return;
@@ -159,14 +171,20 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         // if the method's declared receiver is Scalar and the receiving object is
         // UnknownUnits, or if the method's class is Object, pass
         if (UnitsRelationsTools.hasSpecificUnit(methodReceiver, atypeFactory.scalar)
-                && UnitsRelationsTools.hasSpecificUnit(treeReceiver, atypeFactory.TOP) ||
-                TypesUtils.isObject(methodReceiver.getUnderlyingType()) ) {
+                        && UnitsRelationsTools.hasSpecificUnit(treeReceiver, atypeFactory.TOP)
+                || TypesUtils.isObject(methodReceiver.getUnderlyingType())) {
             return;
         }
         // End Units Checker Code ===================
 
         if (!atypeFactory.getTypeHierarchy().isSubtype(treeReceiver, methodReceiver)) {
-            checker.report(Result.failure("method.invocation.invalid", TreeUtils.elementFromUse(node), treeReceiver.toString(), methodReceiver.toString()), node);
+            checker.report(
+                    Result.failure(
+                            "method.invocation.invalid",
+                            TreeUtils.elementFromUse(node),
+                            treeReceiver.toString(),
+                            methodReceiver.toString()),
+                    node);
         }
     }
 }

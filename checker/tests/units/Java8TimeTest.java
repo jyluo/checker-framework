@@ -1,14 +1,13 @@
-import org.checkerframework.checker.units.qual.*;
-import org.checkerframework.checker.units.qual.time.duration.*;
-import org.checkerframework.checker.units.qual.time.instant.*;
-import org.checkerframework.checker.units.UnitsTools;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.ValueRange;
+import org.checkerframework.checker.units.UnitsTools;
+import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 
 // this test is for the new java 8 time api
 // @below-java8-jdk-skip-test
@@ -65,7 +64,7 @@ public class Java8TimeTest {
         ValueRange vr2 = ValueRange.of(ns, ns);
 
         //:: error: (operands.unit.mismatch)
-        if (vr == vr2);
+        if (vr == vr2) ;
 
         ChronoField cf = ChronoField.DAY_OF_MONTH;
 
@@ -73,7 +72,7 @@ public class Java8TimeTest {
         // (ChronoField.DAY_OF_MONTH).range();
 
         //:: error: (operands.unit.mismatch)
-        if (vr == vr3);
+        if (vr == vr3) ;
 
         Instant currentTime = Clock.systemDefaultZone().instant();
         @CALs long currentSecond = currentTime.getLong(ChronoField.INSTANT_SECONDS);
@@ -81,19 +80,27 @@ public class Java8TimeTest {
         @CALus long currentMicrosec = currentTime.getLong(ChronoField.MICRO_OF_SECOND);
         @CALns long currentNanosec = currentTime.getLong(ChronoField.NANO_OF_SECOND);
 
-        System.out.println("current time is: " + currentSecond + " seconds and "
-                + currentNanosec + " nanoseconds.");
+        System.out.println(
+                "current time is: "
+                        + currentSecond
+                        + " seconds and "
+                        + currentNanosec
+                        + " nanoseconds.");
 
         if (ChronoField.INSTANT_SECONDS.range().isValidValue(currentSecond)) {
             System.out.println("Current seconds fits in an Instant Second");
         }
 
-        currentSecond = ChronoField.INSTANT_SECONDS.range().checkValidValue(currentSecond, ChronoField.SECOND_OF_DAY);
+        currentSecond =
+                ChronoField.INSTANT_SECONDS
+                        .range()
+                        .checkValidValue(currentSecond, ChronoField.SECOND_OF_DAY);
 
         // TODO: remove this error: range() and getMinimum() needs to transfer the unit of the INSTANT_SECONDS enum
         //:: error: (operands.unit.mismatch)
         if (ChronoField.INSTANT_SECONDS.range().getMinimum() < currentSecond) {
-            System.out.println("Current seconds is larger than the minimum value of an Instant Second");
+            System.out.println(
+                    "Current seconds is larger than the minimum value of an Instant Second");
         }
     }
 
@@ -101,6 +108,5 @@ public class Java8TimeTest {
         Instant currentTime = Clock.systemDefaultZone().instant();
         @CALs long currentSecond = currentTime.getLong(ChronoField.INSTANT_SECONDS);
         ChronoField.INSTANT_SECONDS.range().isValidValue(currentSecond);
-
     }
 }

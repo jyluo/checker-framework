@@ -1,14 +1,10 @@
 package org.checkerframework.checker.units.qual;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Radians.
+ * Degrees in Angle.
  *
  * @checker_framework.manual #units-checker Units Checker
  */
@@ -16,6 +12,4 @@ import org.checkerframework.framework.qual.SubtypeOf;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(Angle.class)
-public @interface radians {
-    Prefix value() default Prefix.one;
-}
+public @interface deg {}

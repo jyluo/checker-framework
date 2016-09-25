@@ -8,13 +8,14 @@ import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Minute.
+ * Radians.
  *
  * @checker_framework.manual #units-checker Units Checker
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(Time.class)
-// TODO: @UnitsMultiple(quantity=s.class, factor=60)
-public @interface min {}
+@SubtypeOf(Angle.class)
+public @interface rad {
+    Prefix value() default Prefix.one;
+}

@@ -1,7 +1,20 @@
-import org.checkerframework.checker.units.*;
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 
 public class BasicUnits {
+
+    void AutoWidening() {
+        @m byte meterByte = (byte) (100 * UnitsTools.m);
+        @m short meterShort = meterByte;
+        //:: error: (assignment.type.incompatible)
+        @s short secondShort = meterByte;
+        @m int meterInt = meterShort;
+        @m long meterLong = meterInt;
+        @m float meterFloat = meterLong;
+        @m double meterDouble = meterFloat;
+    }
 
     void demo() {
         //:: error: (assignment.type.incompatible)
@@ -48,20 +61,20 @@ public class BasicUnits {
         //:: error: (assignment.type.incompatible)
         @km2 int bae1 = m * m;
 
-        @radians double rad = 20.0d * UnitsTools.rad;
-        @degrees double deg = 30.0d * UnitsTools.deg;
+        @rad double rad = 20.0d * UnitsTools.rad;
+        @deg double deg = 30.0d * UnitsTools.deg;
 
-        @degrees double rToD1 = UnitsTools.toDegrees(rad);
+        @deg double rToD1 = UnitsTools.toDegrees(rad);
         //:: error: (argument.type.incompatible)
-        @degrees double rToD2 = UnitsTools.toDegrees(deg);
+        @deg double rToD2 = UnitsTools.toDegrees(deg);
         //:: error: (assignment.type.incompatible)
-        @radians double rToD3 = UnitsTools.toDegrees(rad);
+        @rad double rToD3 = UnitsTools.toDegrees(rad);
 
-        @radians double dToR1 = UnitsTools.toRadians(deg);
+        @rad double dToR1 = UnitsTools.toRadians(deg);
         //:: error: (argument.type.incompatible)
-        @radians double rToR2 = UnitsTools.toRadians(rad);
+        @rad double rToR2 = UnitsTools.toRadians(rad);
         //:: error: (assignment.type.incompatible)
-        @degrees double rToR3 = UnitsTools.toRadians(deg);
+        @deg double rToR3 = UnitsTools.toRadians(deg);
 
         // speed conversion
         @mPERs int mPs = 30 * UnitsTools.mPERs;
@@ -80,20 +93,22 @@ public class BasicUnits {
         @h int hours = UnitsTools.h;
         @kmPERh int speed = kilometers / hours;
 
+        // TimePoint
+        @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
+        @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
+
+        aTimePt = aTimePt % 5;
+        bTimePt = bTimePt % speed;
+
         // Addition/substraction only accepts another @kmPERh value
         //:: error: (assignment.type.incompatible)
         speed = speed + 5;
-        //:: error: (compound.assignment.type.incompatible)
-        speed += 5;
-
-        speed += speed;
-        speed = (speed += speed);
+        speed = speed + speed;
+        speed = speed - speed;
 
         // Multiplication/division with an unqualified type is allowed
-        speed = kilometers / hours * 2;
-        speed /= 2;
-
-        speed = (speed /= 2);
+        speed = speed * 2;
+        speed = speed / 2;
     }
 
     void prefixOutputTest() {

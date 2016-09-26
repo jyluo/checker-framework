@@ -2,6 +2,8 @@ import static org.checkerframework.checker.units.UnitsTools.s;
 
 import org.checkerframework.checker.units.*;
 import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 
 public class Units {
     @m int m1 = 5 * UnitsTools.m;
@@ -13,4 +15,11 @@ public class Units {
 
     // With a static import:
     @s float time = 5.32f * s;
+
+    @CALms int timeMS = 50 * UnitsTools.CALms;
+    @ms int ms = 60 * UnitsTools.ms;
+
+    void m() {
+        timeMS = timeMS + ms;
+    }
 }

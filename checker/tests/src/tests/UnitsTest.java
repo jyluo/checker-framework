@@ -17,6 +17,7 @@ public class UnitsTest extends CheckerFrameworkPerDirectoryTest {
 
     @Parameters
     public static String[] getTestDirs() {
-        return new String[] {"units", "all-systems"};
+        return new String[] {"units"};
+        // return new String[] {"units", "all-systems"};
     }
 }

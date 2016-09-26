@@ -9,7 +9,7 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.util.Elements;
 import org.checkerframework.checker.units.qual.Prefix;
-import org.checkerframework.checker.units.qual.UnknownUnits;
+import org.checkerframework.checker.units.qual.Scalar;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
@@ -250,7 +250,7 @@ public class UnitsRelationsTools {
      * Checks to see if a particular Annotated Type has no units, such as scalar constants in calculations.
      *
      * Any number that isn't assigned a unit will automatically get the Annotation UnknownUnits.
-     * eg: int x = 5; // x has @UnknownUnits
+     * eg: int x = 5; // x has @Scalar
      *
      * @param annoType an AnnotatedTypeMirror representing a Units Annotated Type
      * @return true if the Type has no units, false otherwise
@@ -260,7 +260,7 @@ public class UnitsRelationsTools {
             return false;
         }
 
-        return (annoType.getAnnotation(UnknownUnits.class) != null);
+        return (annoType.getAnnotation(Scalar.class) != null);
     }
 
     /**

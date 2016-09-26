@@ -1,5 +1,6 @@
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
 
 // Include all the examples from the manual here,
 // to ensure they work as expected.

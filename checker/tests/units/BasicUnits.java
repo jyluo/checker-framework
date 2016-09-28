@@ -5,6 +5,8 @@ import org.checkerframework.checker.units.qual.time.instant.*;
 
 public class BasicUnits {
 
+    // This test case ensures that auto-widening of the number types pass if it
+    // has a correct unit, and fails if it doesn't.
     void AutoWidening() {
         @m byte meterByte = (byte) (100 * UnitsTools.m);
         @m short meterShort = meterByte;
@@ -16,7 +18,14 @@ public class BasicUnits {
         @m double meterDouble = meterFloat;
     }
 
+    // This test case runs through a sample of the units available in the Units
+    // Checker and helper methods in UnitsTools. It also serves as a demo of the
+    // capabilities of the Units Checker.
+    // TODO(jyluo): add comments explaining some of the errors, turn into a real
+    // demo file for EISOP.
     void demo() {
+        @Scalar int scalar = 5;
+
         //:: error: (assignment.type.incompatible)
         @m int merr = 5;
 
@@ -27,7 +36,7 @@ public class BasicUnits {
         @km int kmerr = 10;
         @km int km = 10 * UnitsTools.km;
 
-        // this is allowed, unqualified is a supertype of all units
+        // this is allowed, UnknownUnits is a supertype of all units
         int bad = m / s;
 
         @mPERs int good = m / s;
@@ -93,12 +102,15 @@ public class BasicUnits {
         @h int hours = UnitsTools.h;
         @kmPERh int speed = kilometers / hours;
 
-        // TimePoint
+        // TimeInstant
         @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
         @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
 
         aTimePt = aTimePt % 5;
         bTimePt = bTimePt % speed;
+
+        //:: error: (time.instant.addition.disallowed)
+        aTimePt = aTimePt + bTimePt;
 
         // Addition/substraction only accepts another @kmPERh value
         //:: error: (assignment.type.incompatible)
@@ -111,6 +123,12 @@ public class BasicUnits {
         speed = speed / 2;
     }
 
+    // This test is designed to deliberately output specific units qualifiers
+    // to the console for visual inspection of the formatting of the prefixes,
+    // namely that if the unit has no prefix (@m) or has the prefix of
+    // Prefix.one then the visual output should be the same (simply @unit).
+    // TODO(jyluo): integrate with test framework in a way that compares the
+    // generated output messages to an expected output.
     void prefixOutputTest() {
         @m int x = 5 * UnitsTools.m;
         @m(Prefix.kilo) int y = 2 * UnitsTools.km;

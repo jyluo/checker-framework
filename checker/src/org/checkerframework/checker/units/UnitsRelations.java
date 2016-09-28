@@ -15,18 +15,18 @@ public interface UnitsRelations {
     /**
      * Initialize the object. Needs to be called before any other method.
      *
-     * @param env the ProcessingEnvironment to use
-     * @return a reference to "this"
+     * @param env The ProcessingEnvironment of the Checker.
+     * @return A reference to "this".
      */
     UnitsRelations init(ProcessingEnvironment env);
 
     /**
      * Called for the multiplication of type lht and rht.
      *
-     * @param lht left hand side in multiplication
-     * @param rht right hand side in multiplication
-     * @return the annotation to use for the result of the multiplication or
-     *      null if no special relation is known
+     * @param lht Left hand side in multiplication.
+     * @param rht Right hand side in multiplication.
+     * @return The annotation to use for the result of the multiplication or
+     *         null if no special relation is known.
      */
     /*@Nullable*/ AnnotationMirror multiplication(AnnotatedTypeMirror lht, AnnotatedTypeMirror rht);
 

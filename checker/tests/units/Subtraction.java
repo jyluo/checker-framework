@@ -7,7 +7,12 @@ public class Subtraction {
     // Subtraction is legal when the operands have the same units.
     // Subtraction is illegal when the operands have different units.
 
+    // =========================================================================
     // Dimensions
+    // The following set of assignments tests that variables with a dimension
+    // qualifier can store a value with a unit of its dimension. The variables
+    // are also used later in the methods to test subtraction operations.
+
     // Acceleration
     @Acceleration int aAcceleration = 5 * UnitsTools.mPERs2;
     @Acceleration int bAcceleration = 5 * UnitsTools.mPERs2;
@@ -40,13 +45,13 @@ public class Subtraction {
 
     // Temperature
     @Temperature int aTemperature = 5 * UnitsTools.K;
-    @Temperature int bTemperature = 5 * UnitsTools.K;
+    @Temperature int bTemperature = 5 * UnitsTools.C;
 
     // TimeDuration
     @TimeDuration int aTimeDur = 5 * UnitsTools.min;
     @TimeDuration int bTimeDur = 5 * UnitsTools.h;
 
-    // TimePoint
+    // TimeInstant
     @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
     @CALh int bTimePt = 5 * UnitsTools.CALh;
 
@@ -55,7 +60,12 @@ public class Subtraction {
     @Volume int bVolume = 5 * UnitsTools.mm3;
     @Volume int cVolume = 5 * UnitsTools.km3;
 
+    // =========================================================================
     // Units
+    // The following set of assignments tests that variables with a unit
+    // qualifier can store a value with the same unit. The variables
+    // are also used later in the methods to test subtraction operations.
+
     // Amperes
     @A int aAmpere = 5 * UnitsTools.A;
     @A int bAmpere = 5 * UnitsTools.A;
@@ -205,7 +215,7 @@ public class Subtraction {
         //:: error: (assignment.type.incompatible)
         cTime = aTimeDur - bVolume;
 
-        // TimePoint
+        // TimeInstant
         @TimeInstant int cTimePt = aTimePt - bTimeDur;
         cTimePt = aTimeDur - bTimePt;
         aTimeDur = aTimePt - aTimePt;

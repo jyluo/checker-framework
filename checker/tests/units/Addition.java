@@ -3,7 +3,7 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
-public class Addition {
+class Addition {
     // Addition is legal when the operands have the same units.
     // Addition is illegal when the operands have different units.
 

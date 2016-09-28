@@ -37,13 +37,7 @@ import org.checkerframework.framework.qual.SubtypeOf;
 @ImplicitFor(
     // PRIMITIVE == INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR but we don't
     // care about CHAR (or BOOLEAN?)
-    literals = {
-        LiteralKind.INT,
-        LiteralKind.LONG,
-        LiteralKind.FLOAT,
-        LiteralKind.DOUBLE,
-        LiteralKind.BOOLEAN
-    }
+    literals = {LiteralKind.INT, LiteralKind.LONG, LiteralKind.FLOAT, LiteralKind.DOUBLE}
 )
 
 // @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})

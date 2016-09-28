@@ -3,7 +3,7 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
-public class Division {
+class Division {
     void d() {
         // Basic division of same units, no units constraint on x
         @m int am = 6 * UnitsTools.m, bm = 3 * UnitsTools.m;

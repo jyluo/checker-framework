@@ -3,7 +3,7 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
-public class Subtraction {
+class Subtraction {
     // Subtraction is legal when the operands have the same units.
     // Subtraction is illegal when the operands have different units.
 

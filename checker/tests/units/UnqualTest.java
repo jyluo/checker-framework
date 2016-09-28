@@ -4,7 +4,7 @@ import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
 // Tests for unqualified assignments
-public class UnqualTest {
+class UnqualTest {
     // Fields are by default @Scalar, inference should transfer units for UnknownUnits, but not Scalar
     int scalar = 5;
 

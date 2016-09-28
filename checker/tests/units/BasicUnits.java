@@ -3,21 +3,7 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
-public class BasicUnits {
-
-    // This test case ensures that auto-widening of the number types pass if it
-    // has a correct unit, and fails if it doesn't.
-    void AutoWidening() {
-        @m byte meterByte = (byte) (100 * UnitsTools.m);
-        @m short meterShort = meterByte;
-        //:: error: (assignment.type.incompatible)
-        @s short secondShort = meterByte;
-        @m int meterInt = meterShort;
-        @m long meterLong = meterInt;
-        @m float meterFloat = meterLong;
-        @m double meterDouble = meterFloat;
-    }
-
+class BasicUnits {
     // This test case runs through a sample of the units available in the Units
     // Checker and helper methods in UnitsTools. It also serves as a demo of the
     // capabilities of the Units Checker.
@@ -121,32 +107,5 @@ public class BasicUnits {
         // Multiplication/division with an unqualified type is allowed
         speed = speed * 2;
         speed = speed / 2;
-    }
-
-    // This test is designed to deliberately output specific units qualifiers
-    // to the console for visual inspection of the formatting of the prefixes,
-    // namely that if the unit has no prefix (@m) or has the prefix of
-    // Prefix.one then the visual output should be the same (simply @unit).
-    // TODO(jyluo): integrate with test framework in a way that compares the
-    // generated output messages to an expected output.
-    void prefixOutputTest() {
-        @m int x = 5 * UnitsTools.m;
-        @m(Prefix.kilo) int y = 2 * UnitsTools.km;
-        @m(Prefix.one) int z = 3 * UnitsTools.m;
-        @km int y2 = 3 * UnitsTools.km;
-
-        //:: error: (assignment.type.incompatible)
-        y2 = z;
-        //:: error: (assignment.type.incompatible)
-        y2 = x;
-        //:: error: (assignment.type.incompatible)
-        y = z;
-        //:: error: (assignment.type.incompatible)
-        y = x;
-
-        //:: error: (assignment.type.incompatible)
-        y2 = x * x;
-        //:: error: (assignment.type.incompatible)
-        y2 = z * z;
     }
 }

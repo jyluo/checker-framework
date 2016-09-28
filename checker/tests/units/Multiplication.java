@@ -3,7 +3,7 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 
-public class Multiples {
+class Multiplication {
     void m() {
         // Prefix assignment tests
         // kg

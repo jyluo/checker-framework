@@ -4,7 +4,7 @@ import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
 import org.checkerframework.framework.qual.PolyAll;
 
-public class PolyUnitTest {
+class PolyUnitTest {
 
     @PolyUnit int triplePolyUnit(@PolyUnit int amount) {
         return 3 * amount;

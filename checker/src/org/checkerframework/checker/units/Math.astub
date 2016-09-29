@@ -31,8 +31,8 @@ package java.lang;
  */
 class Math {
     // Scalar Constants
-    static final double E;
-    static final double PI;
+    static final @Scalar double E;
+    static final @Scalar double PI;
 
     // Methods ========
 
@@ -43,17 +43,23 @@ class Math {
     static @PolyUnit long abs(@PolyUnit long a);
 
     // Trigonometry
-    static double sin(@rad double a);
-    static double cos(@rad double a);
-    static double tan(@rad double a);
+    // These are technically ratios of two sides of a triangle, and would be better expressed as a
+    // unit of (x / y) for some unit x and unit y each for the sides... but the angle alone does
+    // not give this information. We leave the ratio as a scalar for easier multiplication.
+    static @Scalar double sin(@rad double a);
+    static @Scalar double cos(@rad double a);
+    static @Scalar double tan(@rad double a);
     // both x & y must be same unit and if so returns that unit, else returns
     // the LUB of the units
     static @PolyUnit double hypot(@PolyUnit double x, @PolyUnit double y);
 
     // Inverse Trigonometry
-    static @rad double asin(double a);
-    static @rad double acos(double a);
-    static @rad double atan(double a);
+    // Following above, we force the ratios to be scalar here.
+    // TODO: leaving it as UnknownUnits parameter is also a valid option, but makes it inconsistent
+    // with sin cos and tan.
+    static @rad double asin(@Scalar double a);
+    static @rad double acos(@Scalar double a);
+    static @rad double atan(@Scalar double a);
 
     // x and y should be the same unit, returns the angle theta (in radians)
     // from the conversion of rectangular coordinates [x, y] to polar
@@ -76,9 +82,10 @@ class Math {
     // Hyperbolic Trigonometry
     // takes as input a hyperbolic angle which is also in radians for Math lib
     // implementation
-    static double sinh(@rad double x);
-    static double cosh(@rad double x);
-    static double tanh(@rad double x);
+    // Like above, we force the ratio to be a scalar
+    static @Scalar double sinh(@rad double x);
+    static @Scalar double cosh(@rad double x);
+    static @Scalar double tanh(@rad double x);
 
     // Angle Conversion
     static @deg double toDegrees(@rad double angrad);
@@ -137,8 +144,8 @@ class Math {
     // returns the sign of the argument, the sign is a unitless scalar
     // Note: in some physics calculations, the sign denotes the relative
     // direction of a vector component (Future idea: vector mathematics support)
-    static double signum(@UnknownUnits double d);
-    static float signum(@UnknownUnits float f);
+    static @Scalar double signum(@UnknownUnits double d);
+    static @Scalar float signum(@UnknownUnits float f);
 
     // powers, exponents, and logarithms
     // returns the value of a ^ b, for specific cases of a having the units of
@@ -147,20 +154,20 @@ class Math {
     static double pow(@UnknownUnits double a, @UnknownUnits double b);
 
     // calculates e^a == e * e * e .... which is a unitless scalar
-    static double exp(@UnknownUnits double a);
+    static @Scalar double exp(@UnknownUnits double a);
     // calculates e^x - 1 ... which is also a unitless scalar
-    static double expm1(@UnknownUnits double x);
+    static @Scalar double expm1(@UnknownUnits double x);
     // returns unbiased exponent used in the representation of a double, ie the
-    // exponent in base 2 arithmetic => unitless constant
-    static int getExponent(@UnknownUnits double d);
-    static int getExponent(@UnknownUnits float f);
+    // exponent in base 2 arithmetic, which is a scalar constant
+    static @Scalar int getExponent(@UnknownUnits double d);
+    static @Scalar int getExponent(@UnknownUnits float f);
 
     // log[a] = y where e^y = a, unitless?, this is log with base e
-    static double log(@UnknownUnits double a);
+    static @Scalar double log(@UnknownUnits double a);
     // log with base 10, log10[x] = y where 10^y = x
-    static double log10(@UnknownUnits double a);
+    static @Scalar double log10(@UnknownUnits double a);
     // returns log[1.0 + x]
-    static double log1p(@UnknownUnits double x);
+    static @Scalar double log1p(@UnknownUnits double x);
 
     // Future TODO: support retainment of units in these identifies
     // identity: exp(log(a)) == a
@@ -198,7 +205,7 @@ class Math {
     static @PolyUnit double nextDown(@PolyUnit double d);
     static @PolyUnit float nextDown(@PolyUnit float f);
 
-    static double random();
+    static @Scalar double random();
 
     // rounding a to the closest int value, but still returns as a double, same
     // unit as a

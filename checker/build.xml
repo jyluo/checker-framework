@@ -979,6 +979,13 @@
         </antcall>
     </target>
 
+    <target name="zulu-tests" depends="jar,build-tests"
+            description="Run tests for the Zulu Checker">
+        <antcall target="-run-tests">
+            <param name="param" value="tests.ZuluTest"/>
+        </antcall>
+    </target>
+
     <target name="fenum-extension-tests" depends="jar,build-tests"
             description="Run tests for the Fenum Checker extension capabilities">
         <exec executable="chmod" failonerror="true">

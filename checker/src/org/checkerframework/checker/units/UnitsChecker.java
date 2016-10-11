@@ -1,7 +1,9 @@
 package org.checkerframework.checker.units;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.annotation.processing.SupportedOptions;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
@@ -34,11 +36,11 @@ import org.checkerframework.framework.qual.StubFiles;
 public class UnitsChecker extends BaseTypeChecker {
     /**
      * Copied from SubtypingChecker; cannot reuse it, because SubtypingChecker
-     * is final. TODO: SubtypingChecker might also want to always call super.
+     * is final.
      */
     @Override
     public Collection<String> getSuppressWarningsKeys() {
-        Set<String> swKeys = new HashSet<String>(super.getSuppressWarningsKeys());
+        Set<String> swKeys = new HashSet<>(super.getSuppressWarningsKeys());
         Set<Class<? extends Annotation>> annos =
                 ((BaseTypeVisitor<?>) visitor).getTypeFactory().getSupportedTypeQualifiers();
 

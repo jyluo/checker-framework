@@ -5,8 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.ImplicitFor;
-import org.checkerframework.framework.qual.LiteralKind;
+import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
@@ -25,20 +24,14 @@ import org.checkerframework.framework.qual.SubtypeOf;
  */
 @SubtypeOf(UnknownUnits.class)
 // Option 1:
-// @DefaultQualifierInHierarchy
-
-// Op 1 optional:
-// @DefaultFor({
-// TypeUseLocation.IMPLICIT_UPPER_BOUND, // <T>
-// TypeUseLocation.EXPLICIT_UPPER_BOUND // <T extends Object>
-// })
+@DefaultQualifierInHierarchy
 
 // Option 2:
-@ImplicitFor(
-    // PRIMITIVE == INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR but we don't
-    // care about CHAR (or BOOLEAN?)
-    literals = {LiteralKind.INT, LiteralKind.LONG, LiteralKind.FLOAT, LiteralKind.DOUBLE}
-)
+//@ImplicitFor(
+//    // PRIMITIVE == INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR but we don't
+//    // care about CHAR (or BOOLEAN?)
+//    literals = {LiteralKind.INT, LiteralKind.LONG, LiteralKind.FLOAT, LiteralKind.DOUBLE}
+//)
 
 // @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
 @Documented

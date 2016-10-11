@@ -1,17 +1,18 @@
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.time.duration.*;
 import org.checkerframework.checker.units.qual.time.instant.*;
-import org.checkerframework.checker.units.UnitsTools;
 
 class CompoundAssignment {
     // primitive values
-    int unknown = (@UnknownUnits int) 5;
+    // TODO replace in the future: (@UnknownUnits int) 5;
+    @UnknownUnits int unknown = ((@UnknownUnits Integer) Integer.valueOf(5)).intValue();
     @Scalar int scalar = 40;
     @m int meter = 20 * UnitsTools.m;
     @s int second = 30 * UnitsTools.s;
 
     // boxed values
-    Integer unknownBox = new Integer(5);
+    @UnknownUnits Integer unknownBox = new Integer(5);
     @Scalar Integer scalarBox = new @Scalar Integer(5);
     @m Integer meterBox = new @m Integer(5);
     @s Integer secondBox = new @s Integer(5);

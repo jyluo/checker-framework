@@ -13,9 +13,11 @@ class BasicUnits {
         @Scalar int scalar = 5;
 
         // casting between units qualifiers is allowed, but downcasting will produce warnings.
-        int unknownUnit = (@UnknownUnits int) 5;
+        // TODO replace in the future: (@UnknownUnits int) 5;
+        int unknownUnit = ((@UnknownUnits Integer) Integer.valueOf(5)).intValue();
+        // TODO replace in the future: (@@Scalar int) unknownUnit;
         //:: warning: (cast.unsafe)
-        scalar = (@Scalar int) unknownUnit;
+        scalar = ((@Scalar Integer) Integer.valueOf(unknownUnit)).intValue();
 
         //:: error: (assignment.type.incompatible)
         @m int merr = 5;

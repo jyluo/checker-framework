@@ -1,9 +1,24 @@
-import org.checkerframework.checker.units.*;
+import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
+import org.checkerframework.checker.units.qual.time.duration.*;
+import org.checkerframework.checker.units.qual.time.instant.*;
 
-public class BasicUnits {
-
+class BasicUnits {
+    // This test case runs through a sample of the units available in the Units
+    // Checker and helper methods in UnitsTools. It also serves as a demo of the
+    // capabilities of the Units Checker.
+    // TODO(jyluo): add comments explaining some of the errors, turn into a real
+    // demo file for EISOP.
     void demo() {
+        @Scalar int scalar = 5;
+
+        // casting between units qualifiers is allowed, but downcasting will produce warnings.
+        // TODO replace in the future: (@UnknownUnits int) 5;
+        int unknownUnit = ((@UnknownUnits Integer) Integer.valueOf(5)).intValue();
+        // TODO replace in the future: (@@Scalar int) unknownUnit;
+        //:: warning: (cast.unsafe)
+        scalar = ((@Scalar Integer) Integer.valueOf(unknownUnit)).intValue();
+
         //:: error: (assignment.type.incompatible)
         @m int merr = 5;
 
@@ -14,7 +29,7 @@ public class BasicUnits {
         @km int kmerr = 10;
         @km int km = 10 * UnitsTools.km;
 
-        // this is allowed, unqualified is a supertype of all units
+        // this is allowed, UnknownUnits is a supertype of all units
         int bad = m / s;
 
         @mPERs int good = m / s;
@@ -48,20 +63,20 @@ public class BasicUnits {
         //:: error: (assignment.type.incompatible)
         @km2 int bae1 = m * m;
 
-        @radians double rad = 20.0d * UnitsTools.rad;
-        @degrees double deg = 30.0d * UnitsTools.deg;
+        @rad double rad = 20.0d * UnitsTools.rad;
+        @deg double deg = 30.0d * UnitsTools.deg;
 
-        @degrees double rToD1 = UnitsTools.toDegrees(rad);
+        @deg double rToD1 = UnitsTools.toDegrees(rad);
         //:: error: (argument.type.incompatible)
-        @degrees double rToD2 = UnitsTools.toDegrees(deg);
+        @deg double rToD2 = UnitsTools.toDegrees(deg);
         //:: error: (assignment.type.incompatible)
-        @radians double rToD3 = UnitsTools.toDegrees(rad);
+        @rad double rToD3 = UnitsTools.toDegrees(rad);
 
-        @radians double dToR1 = UnitsTools.toRadians(deg);
+        @rad double dToR1 = UnitsTools.toRadians(deg);
         //:: error: (argument.type.incompatible)
-        @radians double rToR2 = UnitsTools.toRadians(rad);
+        @rad double rToR2 = UnitsTools.toRadians(rad);
         //:: error: (assignment.type.incompatible)
-        @degrees double rToR3 = UnitsTools.toRadians(deg);
+        @deg double rToR3 = UnitsTools.toRadians(deg);
 
         // speed conversion
         @mPERs int mPs = 30 * UnitsTools.mPERs;
@@ -80,40 +95,24 @@ public class BasicUnits {
         @h int hours = UnitsTools.h;
         @kmPERh int speed = kilometers / hours;
 
+        // TimeInstant
+        @TimeInstant int aTimePt = 5 * UnitsTools.CALmin;
+        @TimeInstant int bTimePt = 5 * UnitsTools.CALh;
+
+        aTimePt = aTimePt % 5;
+        bTimePt = bTimePt % speed;
+
+        //:: error: (time.instant.addition.disallowed)
+        aTimePt = aTimePt + bTimePt;
+
         // Addition/substraction only accepts another @kmPERh value
         //:: error: (assignment.type.incompatible)
         speed = speed + 5;
-        //:: error: (compound.assignment.type.incompatible)
-        speed += 5;
-
-        speed += speed;
-        speed = (speed += speed);
+        speed = speed + speed;
+        speed = speed - speed;
 
         // Multiplication/division with an unqualified type is allowed
-        speed = kilometers / hours * 2;
-        speed /= 2;
-
-        speed = (speed /= 2);
-    }
-
-    void prefixOutputTest() {
-        @m int x = 5 * UnitsTools.m;
-        @m(Prefix.kilo) int y = 2 * UnitsTools.km;
-        @m(Prefix.one) int z = 3 * UnitsTools.m;
-        @km int y2 = 3 * UnitsTools.km;
-
-        //:: error: (assignment.type.incompatible)
-        y2 = z;
-        //:: error: (assignment.type.incompatible)
-        y2 = x;
-        //:: error: (assignment.type.incompatible)
-        y = z;
-        //:: error: (assignment.type.incompatible)
-        y = x;
-
-        //:: error: (assignment.type.incompatible)
-        y2 = x * x;
-        //:: error: (assignment.type.incompatible)
-        y2 = z * z;
+        speed = speed * 2;
+        speed = speed / 2;
     }
 }

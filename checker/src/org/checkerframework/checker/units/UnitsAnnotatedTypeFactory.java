@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.tools.Diagnostic.Kind;
-import org.checkerframework.checker.units.qual.MixedUnits;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.checkerframework.checker.units.qual.UnitsBottom;
 import org.checkerframework.checker.units.qual.UnitsMultiple;
@@ -49,8 +48,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     private static final Class<org.checkerframework.checker.units.qual.UnitsRelations>
             unitsRelationsAnnoClass = org.checkerframework.checker.units.qual.UnitsRelations.class;
 
-    protected final AnnotationMirror mixedUnits =
-            AnnotationUtils.fromClass(elements, MixedUnits.class);
     protected final AnnotationMirror TOP = AnnotationUtils.fromClass(elements, UnknownUnits.class);
     protected final AnnotationMirror BOTTOM =
             AnnotationUtils.fromClass(elements, UnitsBottom.class);
@@ -62,10 +59,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     private Map<String, UnitsRelations> unitsRel;
 
     private static final Map<String, Class<? extends Annotation>> externalQualsMap =
-            new HashMap<String, Class<? extends Annotation>>();
+            new HashMap<>();
 
-    private static final Map<String, AnnotationMirror> aliasMap =
-            new HashMap<String, AnnotationMirror>();
+    private static final Map<String, AnnotationMirror> aliasMap = new HashMap<>();
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         // use true to enable flow inference, false to disable it
@@ -140,7 +136,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     protected Map<String, UnitsRelations> getUnitsRel() {
         if (unitsRel == null) {
-            unitsRel = new HashMap<String, UnitsRelations>();
+            unitsRel = new HashMap<>();
             // Always add the default units relations, for the standard units.
             unitsRel.put(
                     UnitsRelationsDefault.class.getCanonicalName(),
@@ -155,7 +151,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         loader = new UnitsAnnotationClassLoader(checker);
 
         // get all the loaded annotations
-        Set<Class<? extends Annotation>> qualSet = new HashSet<Class<? extends Annotation>>();
+        Set<Class<? extends Annotation>> qualSet = new HashSet<>();
         qualSet.addAll(getBundledTypeQualifiersWithPolyAll());
 
         // load all the external units
@@ -319,7 +315,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     public TreeAnnotator createTreeAnnotator() {
         ImplicitsTreeAnnotator implicitsTreeAnnotator = new ImplicitsTreeAnnotator(this);
-        implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM);
+        // implicitsTreeAnnotator.addTreeKind(Tree.Kind.NULL_LITERAL, BOTTOM);
         return new ListTreeAnnotator(
                 new UnitsPropagationTreeAnnotator(this),
                 implicitsTreeAnnotator,
@@ -398,7 +394,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                             type.replaceAnnotations(lht.getAnnotations());
                         } else {
                             // otherwise it results in mixed
-                            type.replaceAnnotation(mixedUnits);
+                            type.replaceAnnotation(TOP);
                         }
                         break;
                     case DIVIDE:
@@ -410,11 +406,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                             type.replaceAnnotations(lht.getAnnotations());
                         } else if (UnitsRelationsTools.hasNoUnits(lht)) {
                             // scalar divided by any unit returns mixed
-                            type.replaceAnnotation(mixedUnits);
+                            type.replaceAnnotation(TOP);
                         } else {
                             // else it is a division of two units that have no defined relations from a relations class
                             // return mixed
-                            type.replaceAnnotation(mixedUnits);
+                            type.replaceAnnotation(TOP);
                         }
                         break;
                     case MULTIPLY:
@@ -427,7 +423,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                         } else {
                             // else it is a multiplication of two units that have no defined relations from a relations class
                             // return mixed
-                            type.replaceAnnotation(mixedUnits);
+                            type.replaceAnnotation(TOP);
                         }
                         break;
                     case REMAINDER:

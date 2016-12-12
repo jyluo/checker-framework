@@ -1,11 +1,17 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Era (1 million Gregorian years). In Java 8, it is impossible to add an era to a date or a
- * date-time, as it is not defined in the ISO calendar system.
+ * Era (1 million Gregorian years).
+ *
+ * <p>In Java 8, it is impossible to add an era to a date or a date-time, as it is not defined in
+ * the ISO calendar system.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

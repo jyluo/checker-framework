@@ -9,7 +9,6 @@ import org.checkerframework.framework.qual.DefaultFor;
 import org.checkerframework.framework.qual.DefaultInUncheckedCodeFor;
 import org.checkerframework.framework.qual.DefaultQualifierInHierarchyInUncheckedCode;
 import org.checkerframework.framework.qual.ImplicitFor;
-import org.checkerframework.framework.qual.InvisibleQualifier;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
@@ -21,8 +20,6 @@ import org.checkerframework.framework.qual.TypeUseLocation;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@InvisibleQualifier
-@SubtypeOf({})
 @DefaultQualifierInHierarchyInUncheckedCode
 
 // Option 1:
@@ -54,11 +51,9 @@ import org.checkerframework.framework.qual.TypeUseLocation;
  *
  */
 
-// Option 2:
-//@DefaultQualifierInHierarchy
-
 // the rest:
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
+@SubtypeOf({})
 public @interface UnknownUnits {}

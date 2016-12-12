@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Units of substance, such as mole (@{@link mol}).
+ * Dimension of substance, such as mole (@{@link mol}).
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@SubtypeOf(UnknownUnits.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
+@SubtypeOf(UnknownUnits.class)
 public @interface Substance {}

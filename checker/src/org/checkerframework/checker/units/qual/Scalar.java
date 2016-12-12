@@ -20,19 +20,10 @@ import org.checkerframework.framework.qual.SubtypeOf;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@SubtypeOf(UnknownUnits.class)
-// Option 1:
 @DefaultQualifierInHierarchy
-
-// Option 2:
-//@ImplicitFor(
-//    // PRIMITIVE == INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR but we don't
-//    // care about CHAR (or BOOLEAN?)
-//    literals = {LiteralKind.INT, LiteralKind.LONG, LiteralKind.FLOAT, LiteralKind.DOUBLE}
-//)
-
 // @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
+@SubtypeOf(UnknownUnits.class)
 public @interface Scalar {}

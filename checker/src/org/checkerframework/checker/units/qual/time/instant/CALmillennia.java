@@ -1,11 +1,15 @@
 package org.checkerframework.checker.units.qual.time.instant;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import org.checkerframework.checker.units.qual.time.duration.millennia;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Calendar millennium.
+ * Calendar millennia.
  *
  * <p>This unit is used to denote a time instant in millennia, where the first millennia spans 1 CE
  * to 1000 CE.

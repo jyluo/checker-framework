@@ -1,6 +1,9 @@
 package org.checkerframework.checker.units.qual.time.duration;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Defines the numeric relationship between a base time unit and the current time unit.

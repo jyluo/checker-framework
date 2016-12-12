@@ -1,8 +1,18 @@
 package org.checkerframework.checker.units.qual;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import javax.lang.model.type.TypeKind;
-import org.checkerframework.framework.qual.*;
+import org.checkerframework.framework.qual.DefaultFor;
+import org.checkerframework.framework.qual.DefaultInUncheckedCodeFor;
+import org.checkerframework.framework.qual.ImplicitFor;
+import org.checkerframework.framework.qual.LiteralKind;
+import org.checkerframework.framework.qual.SubtypeOf;
+import org.checkerframework.framework.qual.TargetLocations;
+import org.checkerframework.framework.qual.TypeUseLocation;
 
 /**
  * UnitsBottom is the bottom type of the type hierarchy.
@@ -14,8 +24,6 @@ import org.checkerframework.framework.qual.*;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-// programmatically assigned as the bottom qualifier of every units qualifier
-@SubtypeOf({})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
@@ -28,4 +36,6 @@ import org.checkerframework.framework.qual.*;
 )
 @DefaultFor({TypeUseLocation.IMPLICIT_LOWER_BOUND, TypeUseLocation.EXPLICIT_LOWER_BOUND})
 @DefaultInUncheckedCodeFor({TypeUseLocation.LOWER_BOUND})
+//programmatically assigned as the bottom qualifier of every units qualifier
+@SubtypeOf({})
 public @interface UnitsBottom {}

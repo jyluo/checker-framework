@@ -14,6 +14,7 @@ import org.checkerframework.framework.qual.SubtypeOf;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(Frequency.class)
+// This meta-annotation adds the indicated UnitsRelations subclass to the Units Checker.
 @UnitsRelations(FrequencyRelations.class)
 public @interface Hz {
     Prefix value() default Prefix.one;

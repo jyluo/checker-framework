@@ -1,6 +1,7 @@
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.Prefix;
-import org.checkerframework.checker.units.qual.s;
+import org.checkerframework.checker.units.qual.Scalar;
+import org.checkerframework.checker.units.qual.time.duration.s;
 import qual.Frequency;
 import qual.Hz;
 import qual.kHz;
@@ -8,22 +9,8 @@ import qual.kHz;
 class UnitsExtensionDemo {
     @Hz int frq;
 
-    void bad() {
-        // Error! Unqualified value assigned to a @Hz value.
-        //:: error: (assignment.type.incompatible)
-        frq = 5;
-
-        // suppress all warnings issued by the units checker for the d1 assignment statement
-        @SuppressWarnings("units")
-        @Hz int d1 = 9;
-
-        // specifically suppress warnings related to any frequency units for the d2 assigment statement
-        @SuppressWarnings("frequency")
-        @Hz int d2 = 10;
-    }
-
     // specifically suppresses warnings for the hz annotation for the toHz method
-    @SuppressWarnings("hz")
+    @SuppressWarnings("frequency")
     static @Hz int toHz(int hz) {
         return hz;
     }
@@ -33,11 +20,19 @@ class UnitsExtensionDemo {
 
         @s double time = 5 * UnitsTools.s;
         @Hz double freq2 = 20 / time;
+
+        @Scalar double constant = time * freq2;
     }
 
-    void auto(@s int time) {
-        // The @Hz annotation is automatically added to the result
-        // of the division, because we provide class FrequencyRelations.
+    void bad() {
+        // Error! @Scalar value assigned to a @Hz value.
+        //:: error: (assignment.type.incompatible)
+        frq = 5;
+    }
+
+    void useFrequencyRelations(@s int time) {
+        // The @Hz annotation is automatically added to the result of the division, because class
+        // FrequencyRelations defines the @scalar/@s => @Hz relation.
         frq = 99 / time;
     }
 
@@ -48,7 +43,7 @@ class UnitsExtensionDemo {
         @SuppressWarnings("units")
         @s(Prefix.milli) int millisec = 10;
 
-        @SuppressWarnings("hz")
+        @SuppressWarnings("frequency")
         @kHz int kilohertz = 30;
 
         @Hz int resultHz = hertz + 20 / seconds;
@@ -57,7 +52,8 @@ class UnitsExtensionDemo {
         @kHz int resultkHz = kilohertz + 50 / millisec;
         System.out.println(resultkHz);
 
-        // this demonstrates the type hierarchy resolution: the common supertype of Hz and kHz is Frequency, so this statement will pass
+        // this demonstrates the type hierarchy resolution: the supertype of Hz and kHz is
+        // Frequency, so this statement will pass
         @Frequency int okTernaryAssign = seconds > 10 ? hertz : kilohertz;
 
         // on the other hand, this statement expects the right hand side to be a Hz, so it will fail

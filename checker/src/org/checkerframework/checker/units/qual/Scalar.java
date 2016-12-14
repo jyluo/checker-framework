@@ -22,6 +22,7 @@ import org.checkerframework.framework.qual.SubtypeOf;
  */
 @DefaultQualifierInHierarchy
 // @DefaultInUncheckedCodeFor({TypeUseLocation.FIELD, TypeUseLocation.RETURN})
+// @ImplicitFor(literals = {LiteralKind.INT, LiteralKind.LONG, LiteralKind.FLOAT, LiteralKind.DOUBLE})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})

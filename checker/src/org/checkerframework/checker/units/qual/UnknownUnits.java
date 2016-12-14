@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.DefaultFor;
-import org.checkerframework.framework.qual.DefaultInUncheckedCodeFor;
-import org.checkerframework.framework.qual.DefaultQualifierInHierarchyInUncheckedCode;
 import org.checkerframework.framework.qual.ImplicitFor;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeUseLocation;
@@ -20,21 +18,28 @@ import org.checkerframework.framework.qual.TypeUseLocation;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@DefaultQualifierInHierarchyInUncheckedCode
+// @DefaultQualifierInHierarchyInUncheckedCode
 
 // Option 1:
-@DefaultInUncheckedCodeFor({TypeUseLocation.UPPER_BOUND})
+// @DefaultInUncheckedCodeFor({TypeUseLocation.UPPER_BOUND})
 //Exceptions are always TOP type, so Throwable must be as well
-@ImplicitFor(typeNames = {java.lang.Throwable.class})
+@ImplicitFor(
+    typeNames = {
+        java.lang.Throwable.class,
+        java.lang.Exception.class,
+        // java.lang.Number.class, java.lang.Byte.class, java.lang.Short.class, java.lang.Integer.class, java.lang.Long.class, java.lang.Float.class, java.lang.Double.class
+    }
+    // types = {TypeKind.BYTE, TypeKind.SHORT, TypeKind.INT, TypeKind.LONG, TypeKind.FLOAT, TypeKind.DOUBLE}
+    // literals = {LiteralKind.INT, LiteralKind.LONG, LiteralKind.FLOAT, LiteralKind.DOUBLE}
+)
 @DefaultFor({
     // Allows flow based type refinement in the body of methods
     TypeUseLocation.LOCAL_VARIABLE, // for flow based refinement
     TypeUseLocation.EXCEPTION_PARAMETER, // exceptions are always top
-    TypeUseLocation.RESOURCE_VARIABLE, // to allow foreach loops to loop over collections
+    // TypeUseLocation.RESOURCE_VARIABLE, // to allow foreach loops to loop over collections
     TypeUseLocation.IMPLICIT_UPPER_BOUND, // <T>, so that T can take on any type in usage
     // TypeUseLocation.EXPLICIT_UPPER_BOUND, // <T extends Object>
-    TypeUseLocation
-            .RECEIVER // classes are Scalar by default, but we can have objects where the unit is UnknownUnits.
+    // TypeUseLocation.RECEIVER // classes are Scalar by default, but we can have objects where the unit is UnknownUnits. // Enable after fixes for issues 946 and 948
 })
 
 /*

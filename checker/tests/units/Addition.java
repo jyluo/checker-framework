@@ -218,7 +218,7 @@ class Addition {
         // TimeInstant
         @TimeInstant int cTimePt = aTimePt + bTimeDur;
         cTimePt = aTimeDur + bTimePt;
-        //:: error: (time.instant.addition.disallowed)
+        //:: error: (time.instant.addition.disallowed) :: error: (assignment.type.incompatible)
         cTimePt = aTimePt + bTimePt;
 
         // Volume
@@ -342,7 +342,7 @@ class Addition {
         sSecond = aSecond + bSquareKilometer;
 
         // CALh
-        //:: error: (time.instant.addition.disallowed)
+        //:: error: (time.instant.addition.disallowed) :: error: (assignment.type.incompatible)
         @CALh int sCALhr = aTimePt + aTimePt;
     }
 }

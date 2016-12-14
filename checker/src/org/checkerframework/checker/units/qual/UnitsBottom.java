@@ -24,18 +24,19 @@ import org.checkerframework.framework.qual.TypeUseLocation;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-// users can write this as the explicit lower bound of a type parameter
-@TargetLocations({TypeUseLocation.EXPLICIT_LOWER_BOUND})
 @ImplicitFor(
     literals = {LiteralKind.NULL},
     types = {TypeKind.NULL, TypeKind.VOID},
     typeNames = {java.lang.Void.class}
 )
-@DefaultFor({TypeUseLocation.IMPLICIT_LOWER_BOUND, TypeUseLocation.EXPLICIT_LOWER_BOUND})
 @DefaultInUncheckedCodeFor({TypeUseLocation.LOWER_BOUND})
+@DefaultFor({TypeUseLocation.IMPLICIT_LOWER_BOUND, TypeUseLocation.EXPLICIT_LOWER_BOUND})
+
+//users can write this as the explicit lower bound of a type parameter
+@TargetLocations({TypeUseLocation.EXPLICIT_LOWER_BOUND})
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 //programmatically assigned as the bottom qualifier of every units qualifier
 @SubtypeOf({})
 public @interface UnitsBottom {}

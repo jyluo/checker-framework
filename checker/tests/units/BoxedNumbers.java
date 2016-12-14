@@ -7,17 +7,18 @@ class BoxedNumbers {
     void ByteTest() {
         @Scalar byte scalarByte = (byte) 100;
         @SuppressWarnings({"units"})
-        @m byte meterByte = (byte) (100 * UnitsTools.m);
+        @m byte meterByte = (@m byte) (100 * UnitsTools.m);
         @SuppressWarnings({"units"})
-        @s byte secondByte = (byte) (100 * UnitsTools.s);
+        @s byte secondByte = (@s byte) (100 * UnitsTools.s);
 
         Byte unknownByteBox = new Byte((byte) 30);
         @Scalar Byte scalarByteBox = new @Scalar Byte(scalarByte);
         //:: error: (assignment.type.incompatible)
         @Scalar Byte scalarByteBox2 = new @UnknownUnits Byte(scalarByte);
         @s Byte secondByteBox = new @s Byte((byte) 30);
-        // currently unsupported, even though the constructor is declared @PolyUnit Byte(@PolyUnit byte)
-        //:: error: (assignment.type.incompatible)
+        // the constructor is declared @PolyUnit Byte(@PolyUnit byte), but we can't force conversion
+        // of meter to scalar
+        //:: error: (assignment.type.incompatible) :: error: (constructor.invocation.invalid)
         @m Byte meterByteBox = new Byte(meterByte);
         @m Byte meterByteBox2 = new @m Byte((byte) 50);
         @m Byte meterByteBox3 = meterByte; // auto boxing
@@ -40,7 +41,7 @@ class BoxedNumbers {
         @m float mFloat = meterByteBox.floatValue();
         @m double mDouble = meterByteBox.doubleValue();
 
-        String x = meterByteBox.toString();
+        @Scalar String x = meterByteBox.toString();
         x = Byte.toString(meterByte);
         int hash = meterByteBox.hashCode();
         hash = Byte.hashCode(meterByte);
@@ -75,8 +76,9 @@ class BoxedNumbers {
 
         @Scalar Short scalarShortBox = new @Scalar Short(scalarShort);
         @s Short secondShortBox = new @s Short((short) 30);
-        // currently unsupported, even though the constructor is declared @PolyUnit Short(@PolyUnit short)
-        //:: error: (assignment.type.incompatible)
+        // the constructor is declared @PolyUnit Short(@PolyUnit short), but we can't force
+        // conversion of meter to scalar
+        //:: error: (assignment.type.incompatible) :: error: (constructor.invocation.invalid)
         @m Short meterShortBox = new Short(meterShort);
         @m Short meterShortBox2 = new @m Short((short) 50);
         @m Short meterShortBox3 = meterShort; // auto boxing
@@ -99,7 +101,7 @@ class BoxedNumbers {
         @m float mFloat = meterShortBox.floatValue();
         @m double mDouble = meterShortBox.doubleValue();
 
-        String x = meterShortBox.toString();
+        @Scalar String x = meterShortBox.toString();
         x = Short.toString(meterShort);
         int hash = meterShortBox.hashCode();
         hash = Short.hashCode(meterShort);
@@ -133,8 +135,9 @@ class BoxedNumbers {
 
         @Scalar Integer scalarIntegerBox = new @Scalar Integer(scalarInteger);
         @s Integer secondIntegerBox = new @s Integer(30);
-        // currently unsupported, even though the constructor is declared @PolyUnit Integer(@PolyUnit int)
-        //:: error: (assignment.type.incompatible)
+        // the constructor is declared @PolyUnit Integer(@PolyUnit int), but we can't force
+        // conversion of meter to scalar
+        //:: error: (assignment.type.incompatible) :: error: (constructor.invocation.invalid)
         @m Integer meterIntegerBox = new Integer(meterInteger);
         @m Integer meterIntegerBox2 = new @m Integer(50);
         @m Integer meterIntegerBox3 = meterInteger; // auto boxing
@@ -157,7 +160,7 @@ class BoxedNumbers {
         @m float mFloat = meterIntegerBox.floatValue();
         @m double mDouble = meterIntegerBox.doubleValue();
 
-        String x = meterIntegerBox.toString();
+        @Scalar String x = meterIntegerBox.toString();
         x = Integer.toString(meterInteger);
         x = Integer.toString(meterInteger, 16);
         x = Integer.toUnsignedString(meterInteger);
@@ -223,8 +226,9 @@ class BoxedNumbers {
 
         @Scalar Long scalarLongBox = new @Scalar Long(scalarLong);
         @s Long secondLongBox = new @s Long(30l);
-        // currently unsupported, even though the constructor is declared @PolyUnit Long(@PolyUnit long)
-        //:: error: (assignment.type.incompatible)
+        // the constructor is declared @PolyUnit Long(@PolyUnit long), but we can't force
+        // conversion of meter to scalar
+        //:: error: (assignment.type.incompatible) :: error: (constructor.invocation.invalid)
         @m Long meterLongBox = new Long(meterLong);
         @m Long meterLongBox2 = new @m Long(50l);
         @m Long meterLongBox3 = meterLong; // auto boxing
@@ -247,7 +251,7 @@ class BoxedNumbers {
         @m float mFloat = meterLongBox.floatValue();
         @m double mDouble = meterLongBox.doubleValue();
 
-        String x = meterLongBox.toString();
+        @Scalar String x = meterLongBox.toString();
         x = Long.toString(meterLong);
         x = Long.toString(meterLong, 16);
         x = Long.toUnsignedString(meterLong);
@@ -313,8 +317,9 @@ class BoxedNumbers {
 
         @Scalar Float scalarFloatBox = new @Scalar Float(scalarFloat);
         @s Float secondFloatBox = new @s Float(30.0f);
-        // currently unsupported, even though the constructor is declared @PolyUnit Float(@PolyUnit float)
-        //:: error: (assignment.type.incompatible)
+        // the constructor is declared @PolyUnit Float(@PolyUnit float), but we can't force
+        // conversion of meter to scalar
+        //:: error: (assignment.type.incompatible) :: error: (constructor.invocation.invalid)
         @m Float meterFloatBox = new Float(meterFloat);
         @m Float meterFloatBox2 = new @m Float(50.0f);
         @m Float meterFloatBox3 = meterFloat; // auto boxing
@@ -340,7 +345,7 @@ class BoxedNumbers {
         @m float mFloat = meterFloatBox.floatValue();
         @m double mDouble = meterFloatBox.doubleValue();
 
-        String x = meterFloatBox.toString();
+        @Scalar String x = meterFloatBox.toString();
         x = Float.toString(meterFloat);
         x = Float.toHexString(meterFloat);
 
@@ -386,8 +391,9 @@ class BoxedNumbers {
 
         @Scalar Double scalarDoubleBox = new @Scalar Double(scalarDouble);
         @s Double secondDoubleBox = new @s Double(30.0d);
-        // currently unsupported, even though the constructor is declared @PolyUnit Double(@PolyUnit double)
-        //:: error: (assignment.type.incompatible)
+        // the constructor is declared @PolyUnit Double(@PolyUnit double), but we can't force
+        // conversion of meter to scalar
+        //:: error: (assignment.type.incompatible) :: error: (constructor.invocation.invalid)
         @m Double meterDoubleBox = new Double(meterDouble);
         @m Double meterDoubleBox2 = new @m Double(50.0d);
         @m Double meterDoubleBox3 = meterDouble; // auto boxing
@@ -410,7 +416,7 @@ class BoxedNumbers {
         @m float mFloat = meterDoubleBox.floatValue();
         @m double mDouble = meterDoubleBox.doubleValue();
 
-        String x = meterDoubleBox.toString();
+        @Scalar String x = meterDoubleBox.toString();
         x = Double.toString(meterDouble);
         x = Double.toHexString(meterDouble);
 

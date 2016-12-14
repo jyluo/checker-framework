@@ -8,7 +8,7 @@ import org.checkerframework.framework.type.AnnotationClassLoader;
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 
-public class UnitsAnnotationClassLoader extends AnnotationClassLoader {
+public final class UnitsAnnotationClassLoader extends AnnotationClassLoader {
 
     public UnitsAnnotationClassLoader(BaseTypeChecker checker) {
         super(checker);

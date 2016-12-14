@@ -76,34 +76,38 @@ class Comparison {
         x = meter <= second ? meter : meter;
     }
 
-    // the internal workings of the foreach loop used on an array compares
-    // an index to the array's length property
+    // the foreach loop used on an array has a hidden comparison of an index to the array's length
+    // property
     // units checker's comparison rules need to be checked here as well
     void foreachLoopIndexComparisonPrimitiveTypeArray() {
         int[] x = new int[5];
         for (int i : x) ;
+
+        Integer[] y = new Integer[5];
+        for (Integer i : y) ;
     }
     // also test the foreach loop used on a generic type array
-    <T> void foreachLoopIndexComparisonGenericTypeArray(T[] x) {
+    <T extends @UnknownUnits Number> void foreachLoopIndexComparisonGenericTypeArray(T[] x) {
         for (T i : x) ;
     }
 
     // contains() has a hidden comparison
     void containsComparisonSecondClasses(Number num) {
         //:: error: (assignment.type.incompatible)
-        Class<? extends @s Object> c = num.getClass();
+        @Scalar Class<? extends @s Number> c = num.getClass();
 
-        List<Class<? extends @s Object>> l = new ArrayList<Class<? extends @s Object>>();
+        @Scalar List<Class<? extends @s Number>> l = new ArrayList<Class<? extends @s Number>>();
         l.add(c);
 
         if (l.contains(c)) {}
     }
 
-    int containsComparisonScalarClasses(Number num, @s Number numSec) {
+    int containsComparisonScalarClasses(Number numScalar, @s Number numSec) {
+        @Scalar
         List<Class<? extends Number>> INTEGERS =
                 Arrays.<Class<? extends Number>>asList(
                         Long.class, Integer.class, Short.class, Byte.class);
-        if (INTEGERS.contains(num.getClass())) {
+        if (INTEGERS.contains(numScalar.getClass())) {
             return 5;
         } else if (INTEGERS.contains(numSec.getClass())) {
             return 6;

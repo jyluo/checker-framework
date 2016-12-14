@@ -102,7 +102,7 @@ class BasicUnits {
         aTimePt = aTimePt % 5;
         bTimePt = bTimePt % speed;
 
-        //:: error: (time.instant.addition.disallowed)
+        //:: error: (time.instant.addition.disallowed) :: error: (assignment.type.incompatible)
         aTimePt = aTimePt + bTimePt;
 
         // Addition/substraction only accepts another @kmPERh value

@@ -65,16 +65,10 @@ import javax.tools.Diagnostic.Kind;
 import org.checkerframework.dataflow.analysis.FlowExpressions;
 import org.checkerframework.dataflow.analysis.FlowExpressions.Receiver;
 import org.checkerframework.dataflow.analysis.TransferResult;
-import org.checkerframework.dataflow.cfg.node.ArrayAccessNode;
 import org.checkerframework.dataflow.cfg.node.BooleanLiteralNode;
-import org.checkerframework.dataflow.cfg.node.ExplicitThisLiteralNode;
-import org.checkerframework.dataflow.cfg.node.FieldAccessNode;
-import org.checkerframework.dataflow.cfg.node.ImplicitThisLiteralNode;
-import org.checkerframework.dataflow.cfg.node.LocalVariableNode;
 import org.checkerframework.dataflow.cfg.node.MethodInvocationNode;
 import org.checkerframework.dataflow.cfg.node.Node;
 import org.checkerframework.dataflow.cfg.node.ReturnNode;
-import org.checkerframework.dataflow.cfg.node.ThisLiteralNode;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.util.PurityChecker;
 import org.checkerframework.dataflow.util.PurityChecker.PurityResult;
@@ -82,7 +76,6 @@ import org.checkerframework.dataflow.util.PurityUtils;
 import org.checkerframework.framework.flow.CFAbstractStore;
 import org.checkerframework.framework.flow.CFAbstractValue;
 import org.checkerframework.framework.qual.DefaultQualifier;
-import org.checkerframework.framework.qual.FieldIsExpression;
 import org.checkerframework.framework.qual.Unused;
 import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.source.SourceVisitor;
@@ -100,6 +93,7 @@ import org.checkerframework.framework.type.GenericAnnotatedTypeFactory;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.TypeHierarchy;
 import org.checkerframework.framework.type.VisitorState;
+import org.checkerframework.framework.type.visitor.SimpleAnnotatedTypeScanner;
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.framework.util.ContractsUtils;
 import org.checkerframework.framework.util.ContractsUtils.ConditionalPostcondition;
@@ -322,67 +316,6 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
 
     protected void checkDefaultConstructor(ClassTree node) {}
 
-    private static boolean isFieldIsExpressionQualifier(AnnotationMirror anno) {
-        return ((TypeElement) anno.getAnnotationType().asElement())
-                        .getAnnotation(FieldIsExpression.class)
-                != null;
-    }
-
-    /*
-     * Verifies that annotations relevant to the current checker on formal parameters
-     * do not use formal parameter names as expressions. Issues a warning if they do.
-     *
-     * Returns the list of formal parameter names.
-     * Returns null if the method has no formal parameters.
-     */
-    private List<String> verifyParameterAnnotationsForParameterNames(MethodTree node) {
-        List<? extends VariableTree> parameters = node.getParameters();
-
-        if (parameters != null && !parameters.isEmpty()) {
-            ArrayList<String> formalParamNames = new ArrayList<String>();
-            for (VariableTree param : parameters) {
-                formalParamNames.add(param.getName().toString());
-            }
-
-            for (VariableTree param : parameters) {
-                AnnotatedTypeMirror atm = atypeFactory.getAnnotatedType(param);
-
-                if (atm != null) {
-                    Set<AnnotationMirror> annotationMirrors = atm.getAnnotations();
-
-                    if (annotationMirrors != null) {
-                        for (AnnotationMirror anno : annotationMirrors) {
-                            if (isFieldIsExpressionQualifier(anno)
-                                    && atypeFactory.isSupportedQualifier(anno)) {
-                                List<String> expressions =
-                                        AnnotationUtils.getElementValueArray(
-                                                anno, "value", String.class, false);
-
-                                for (String expression : expressions) {
-                                    if (formalParamNames.contains(expression)) {
-                                        checker.report(
-                                                Result.warning(
-                                                        "method.declaration.expression.parameter.name",
-                                                        param.getName().toString(),
-                                                        node.getName().toString(),
-                                                        expression,
-                                                        formalParamNames.indexOf(expression) + 1,
-                                                        expression),
-                                                node);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return formalParamNames;
-        }
-
-        return null;
-    }
-
     /**
      * Performs pseudo-assignment check: checks that the method obeys override and subtype rules to
      * all overridden methods.
@@ -487,6 +420,10 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
                 validateTypeOf(thr);
             }
 
+            if (atypeFactory.getExpressionAnnotationHelper() != null) {
+                atypeFactory.getExpressionAnnotationHelper().checkMethod(node, methodType);
+            }
+
             AnnotatedDeclaredType enclosingType =
                     (AnnotatedDeclaredType)
                             atypeFactory.getAnnotatedType(methodElement.getEnclosingElement());
@@ -512,7 +449,12 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
             boolean abstractMethod =
                     methodElement.getModifiers().contains(Modifier.ABSTRACT)
                             || methodElement.getModifiers().contains(Modifier.NATIVE);
-            List<String> formalParamNames = verifyParameterAnnotationsForParameterNames(node);
+
+            // check well-formedness of pre/postcondition
+            List<String> formalParamNames = new ArrayList<String>();
+            for (VariableTree param : node.getParameters()) {
+                formalParamNames.add(param.getName().toString());
+            }
             checkContractsAtMethodDeclaration(
                     node, methodElement, formalParamNames, abstractMethod);
 
@@ -642,7 +584,7 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
      * Check that the expression's type is annotated with {@code annotation} at the regular exit
      * store.
      *
-     * @param methodTree Declaration of the method
+     * @param methodTree declaration of the method
      * @param annotation expression's type must have this annotation
      * @param expression the expression that the postcondition concerns
      */
@@ -757,6 +699,11 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
                 Pair.of((Tree) node, atypeFactory.getAnnotatedType(node)));
 
         try {
+            if (atypeFactory.getExpressionAnnotationHelper() != null) {
+                atypeFactory
+                        .getExpressionAnnotationHelper()
+                        .checkType(visitorState.getAssignmentContext().second, node);
+            }
             // If there's no assignment in this variable declaration, skip it.
             if (node.getInitializer() != null) {
                 commonAssignmentCheck(node, node.getInitializer(), "assignment.type.incompatible");
@@ -879,37 +826,21 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
      * @param tree the Tree immediately prior to which the preconditions must hold true
      * @param preconditions the preconditions to be checked
      */
-    protected void checkPreconditions(Tree tree, Set<Precondition> preconditions) {
+    protected void checkPreconditions(MethodInvocationTree tree, Set<Precondition> preconditions) {
         // This check is needed for the GUI effects and Units Checkers tests to pass.
         // TODO: Remove this check and investigate the root cause.
         if (preconditions.isEmpty()) {
             return;
         }
 
-        checkPreconditions(tree, atypeFactory.getNodeForTree(tree), preconditions);
-    }
+        Node node = atypeFactory.getNodeForTree(tree);
 
-    /**
-     * Checks that all the given {@code preconditions} hold true immediately prior to the method
-     * invocation or variable access at {@code node}. Errors are reported with respect to {@code
-     * treeForErrorReporting}, which does not need to correspond to {@code node}.
-     *
-     * @param treeForErrorReporting the Tree used to report the error via checker.report.
-     * @param node the Node immediately prior to which the preconditions must hold true
-     * @param preconditions the preconditions to be checked
-     */
-    protected void checkPreconditions(
-            Tree treeForErrorReporting, Node node, Set<Precondition> preconditions) {
-        if (preconditions.isEmpty()) {
-            return;
-        }
-
-        FlowExpressionContext flowExprContext = getFlowExpressionContextFromNode(node);
+        FlowExpressionContext flowExprContext =
+                FlowExpressionContext.buildContextForMethodUse(
+                        (MethodInvocationNode) node, checker.getContext());
 
         if (flowExprContext == null) {
-            checker.report(
-                    Result.failure("flowexpr.parse.context.not.determined", node),
-                    treeForErrorReporting);
+            checker.report(Result.failure("flowexpr.parse.context.not.determined", node), tree);
             return;
         }
 
@@ -919,13 +850,8 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
 
             try {
                 FlowExpressions.Receiver expr =
-                        parseExpressionString(
-                                expression,
-                                flowExprContext,
-                                getCurrentPath(),
-                                node,
-                                treeForErrorReporting,
-                                false);
+                        FlowExpressionParseUtil.parse(
+                                expression, flowExprContext, getCurrentPath(), false);
 
                 CFAbstractStore<?, ?> store = atypeFactory.getStoreBefore(node);
 
@@ -940,101 +866,16 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
                 if (!checkContract(expr, anno, inferredAnno, store)) {
                     checker.report(
                             Result.failure(
-                                    treeForErrorReporting.getKind() == Tree.Kind.METHOD_INVOCATION
-                                            ? "contracts.precondition.not.satisfied"
-                                            : "contracts.precondition.not.satisfied.field",
-                                    treeForErrorReporting.toString(),
+                                    "contracts.precondition.not.satisfied",
+                                    tree.toString(),
                                     expr == null ? expression : expr.toString()),
-                            treeForErrorReporting);
+                            tree);
                 }
             } catch (FlowExpressionParseException e) {
                 // report errors here
-                checker.report(e.getResult(), treeForErrorReporting);
+                checker.report(e.getResult(), tree);
             }
         }
-    }
-
-    /**
-     * Returns a flow expression context corresponding to the given {@code node}. Only handles the
-     * kinds of Nodes for which a precondition check is applicable and for which values are stored
-     * in {@link CFAbstractStore}. Returns null if the Node kind is not handled.
-     *
-     * @param node the Node to generate the flow expression context for
-     * @return the resulting flow expression context, or null if the Node kind is not handled.
-     */
-    private FlowExpressionContext getFlowExpressionContextFromNode(Node node) {
-        FlowExpressionContext flowExprContext = null;
-
-        if (node instanceof MethodInvocationNode) {
-            flowExprContext =
-                    FlowExpressionContext.buildContextForMethodUse(
-                            (MethodInvocationNode) node, checker.getContext());
-        } else if (node instanceof FieldAccessNode) {
-            // Adapted from FlowExpressionParseUtil.buildContextForMethodUse
-
-            Receiver internalReceiver =
-                    FlowExpressions.internalReprOf(
-                            atypeFactory, ((FieldAccessNode) node).getReceiver());
-
-            flowExprContext =
-                    new FlowExpressionContext(internalReceiver, null, checker.getContext());
-        } else if (node instanceof LocalVariableNode) {
-            // Adapted from org.checkerframework.dataflow.cfg.CFGBuilder.CFGTranslationPhaseOne.visitVariable
-
-            ClassTree enclosingClass = TreeUtils.enclosingClass(getCurrentPath());
-            TypeElement classElem = TreeUtils.elementFromDeclaration(enclosingClass);
-            Node receiver = new ImplicitThisLiteralNode(classElem.asType());
-
-            Receiver internalReceiver = FlowExpressions.internalReprOf(atypeFactory, receiver);
-
-            flowExprContext =
-                    new FlowExpressionContext(internalReceiver, null, checker.getContext());
-        } else if (node instanceof ArrayAccessNode) {
-            // Adapted from FlowExpressionParseUtil.buildContextForMethodUse
-
-            Receiver internalReceiver =
-                    FlowExpressions.internalReprOfArrayAccess(atypeFactory, (ArrayAccessNode) node);
-
-            flowExprContext =
-                    new FlowExpressionContext(internalReceiver, null, checker.getContext());
-        } else if (node instanceof ExplicitThisLiteralNode
-                || node instanceof ImplicitThisLiteralNode
-                || node instanceof ThisLiteralNode) {
-            Receiver internalReceiver = FlowExpressions.internalReprOf(atypeFactory, node, false);
-
-            flowExprContext =
-                    new FlowExpressionContext(internalReceiver, null, checker.getContext());
-        }
-
-        return flowExprContext;
-    }
-
-    /**
-     * * Returns the flow expression receiver for the {@code expression} given the {@code
-     * flowExprContext}. The expression "this" is allowed and is handled. {@code node} refers to the
-     * method invocation or variable access being analyzed. It can be used by an overriding method
-     * for special handling of expressions such as {@code "<self>"} which may indicate a reference
-     * to {@code node}.
-     *
-     * @param expression the flow expression string to be parsed
-     * @param flowExprContext the flow expression context with respect to which the expression
-     *     string is to be evaluated
-     * @param node the Node immediately prior to which the preconditions checked by the calling
-     *     method must hold true. Used by overriding implementations. Allowed to be null.
-     * @param path the TreePath from which to obtain the scope relative to which local variables are
-     *     parsed
-     * @param treeForErrorReporting the Tree used to report parsing errors via checker.report. Used
-     *     by overriding implementations.
-     */
-    protected FlowExpressions.Receiver parseExpressionString(
-            String expression,
-            FlowExpressionContext flowExprContext,
-            TreePath path,
-            Node node,
-            Tree treeForErrorReporting,
-            boolean use)
-            throws FlowExpressionParseException {
-        return FlowExpressionParseUtil.parse(expression, flowExprContext, path, use);
     }
 
     /**
@@ -1145,6 +986,9 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
 
         if (valid) {
             AnnotatedDeclaredType dt = atypeFactory.getAnnotatedType(node);
+            if (atypeFactory.getExpressionAnnotationHelper() != null) {
+                atypeFactory.getExpressionAnnotationHelper().checkType(dt, node);
+            }
             checkConstructorInvocation(dt, constructor, node);
         }
 
@@ -1398,9 +1242,15 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
     @Override
     public Void visitNewArray(NewArrayTree node, Void p) {
         boolean valid = validateTypeOf(node);
-        if (valid && node.getType() != null && node.getInitializers() != null) {
+
+        if (valid && node.getType() != null) {
             AnnotatedArrayType arrayType = atypeFactory.getAnnotatedType(node);
-            checkArrayInitialization(arrayType.getComponentType(), node.getInitializers());
+            if (atypeFactory.getExpressionAnnotationHelper() != null) {
+                atypeFactory.getExpressionAnnotationHelper().checkType(arrayType, node);
+            }
+            if (node.getInitializers() != null) {
+                checkArrayInitialization(arrayType.getComponentType(), node.getInitializers());
+            }
         }
 
         return super.visitNewArray(node, p);
@@ -1514,6 +1364,10 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
         if (valid) {
             checkTypecastSafety(node, p);
             checkTypecastRedundancy(node, p);
+        }
+        if (atypeFactory.getExpressionAnnotationHelper() != null) {
+            AnnotatedTypeMirror type = atypeFactory.getAnnotatedType(node);
+            atypeFactory.getExpressionAnnotationHelper().checkType(type, node.getType());
         }
         return super.visitTypeCast(node, p);
         // return scan(node.getExpression(), p);
@@ -1822,17 +1676,76 @@ public class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?
 
         // Use an error key only if it's overridden by a checker.
         if (!success) {
-            String valueTypeString = valueType.toString();
-            String varTypeString = varType.toString();
-            // If both types as strings are the same, try printing verbosely.
-            if (valueTypeString.equals(varTypeString)
-                    // or if neither string contains an annotation
-                    || (!valueTypeString.contains("@") && !varTypeString.contains("@"))) {
+            String valueTypeString;
+            String varTypeString;
+            if (shouldPrintVerbose(varType, valueType)) {
                 valueTypeString = valueType.toString(true);
                 varTypeString = varType.toString(true);
+            } else {
+                valueTypeString = valueType.toString();
+                varTypeString = varType.toString();
             }
             checker.report(Result.failure(errorKey, valueTypeString, varTypeString), valueTree);
         }
+    }
+
+    /**
+     * Return whether or not the verbose toString should be used when printing the two annotated
+     * types.
+     *
+     * @param atm1 the first AnnotatedTypeMirror
+     * @param atm2 the second AnnotatedTypeMirror
+     * @return true iff there are two annotated types (in either ATM) such that their toStrings are
+     *     the same but their verbose toStrings differ
+     */
+    private boolean shouldPrintVerbose(AnnotatedTypeMirror atm1, AnnotatedTypeMirror atm2) {
+        String atm1ToString = atm1.toString();
+        String atm2ToString = atm2.toString();
+        // If both types as strings are the same, use verbose toString.
+        if (atm2ToString.equals(atm1ToString)
+                // or if neither string contains an annotation
+                || (!atm2ToString.contains("@") && !atm1ToString.contains("@"))) {
+            return true;
+        }
+
+        SimpleAnnotatedTypeScanner<Boolean, Void> checkForMismatchedToStrings =
+                new SimpleAnnotatedTypeScanner<Boolean, Void>() {
+                    /** Maps from a type's toString to its verbose toString */
+                    Map<String, String> map = new HashMap<>();
+
+                    @Override
+                    protected Boolean reduce(Boolean r1, Boolean r2) {
+                        r1 = r1 == null ? false : r1;
+                        r2 = r2 == null ? false : r2;
+                        return r1 || r2;
+                    }
+
+                    @Override
+                    protected Boolean defaultAction(AnnotatedTypeMirror type, Void avoid) {
+                        if (type == null) {
+                            return false;
+                        }
+                        String simple = type.toString();
+                        String verbose = map.get(simple);
+                        if (verbose == null) {
+                            map.put(simple, type.toString(true));
+                            return false;
+                        } else {
+                            return !verbose.equals(type.toString(true));
+                        }
+                    }
+                };
+        Boolean r1 = checkForMismatchedToStrings.visit(atm1);
+        if (r1 != null && r1) {
+            return true;
+        }
+        // Call reset to clear the visitor history, but not the map from Strings to types.
+        checkForMismatchedToStrings.reset();
+        Boolean r2 = checkForMismatchedToStrings.visit(atm2);
+
+        // SimpleAnnotatedTypeScanner#scan returns null if it encounters a null AnnotatedTypeMirror.
+        // This shouldn't happen if the atm1 and atm2 are well-formed.
+        return r2 == null ? false : r2;
     }
 
     protected void checkArrayInitialization(

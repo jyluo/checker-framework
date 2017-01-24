@@ -23,6 +23,7 @@ import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
@@ -30,15 +31,19 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
 import com.sun.tools.javac.tree.JCTree;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 
 /** A utility class made for helping to analyze a given {@code Tree}. */
@@ -676,18 +681,7 @@ public final class TreeUtils {
         }
         MethodInvocationTree methInvok = (MethodInvocationTree) tree;
         ExecutableElement invoked = TreeUtils.elementFromUse(methInvok);
-        return isMethod(invoked, method, env);
-    }
-
-    /** Returns true if the given element is, or overrides, method. */
-    private static boolean isMethod(
-            ExecutableElement questioned, ExecutableElement method, ProcessingEnvironment env) {
-        return (questioned.equals(method)
-                || env.getElementUtils()
-                        .overrides(
-                                questioned,
-                                method,
-                                (TypeElement) questioned.getEnclosingElement()));
+        return ElementUtils.isMethod(invoked, method, env);
     }
 
     /**
@@ -699,13 +693,28 @@ public final class TreeUtils {
      */
     public static ExecutableElement getMethod(
             String typeName, String methodName, int params, ProcessingEnvironment env) {
-        TypeElement mapElt = env.getElementUtils().getTypeElement(typeName);
-        for (ExecutableElement exec : ElementFilter.methodsIn(mapElt.getEnclosedElements())) {
+        TypeElement typeElt = env.getElementUtils().getTypeElement(typeName);
+        for (ExecutableElement exec : ElementFilter.methodsIn(typeElt.getEnclosedElements())) {
             if (exec.getSimpleName().contentEquals(methodName)
-                    && exec.getParameters().size() == params) return exec;
+                    && exec.getParameters().size() == params) {
+                return exec;
+            }
         }
         ErrorReporter.errorAbort("TreeUtils.getMethod: shouldn't be here!");
         return null; // dead code
+    }
+
+    public static List<ExecutableElement> getMethodList(
+            String typeName, String methodName, int params, ProcessingEnvironment env) {
+        List<ExecutableElement> methods = new ArrayList<>();
+        TypeElement typeElement = env.getElementUtils().getTypeElement(typeName);
+        for (ExecutableElement exec : ElementFilter.methodsIn(typeElement.getEnclosedElements())) {
+            if (exec.getSimpleName().contentEquals(methodName)
+                    && exec.getParameters().size() == params) {
+                methods.add(exec);
+            }
+        }
+        return methods;
     }
 
     /**
@@ -943,5 +952,53 @@ public final class TreeUtils {
                         .toString();
         return ownerName.equals("java.lang.Object")
                 && declarationElement.getSimpleName().toString().equals("getClass");
+    }
+
+    /**
+     * Returns whether or not the leaf of the tree path is in a static scope.
+     *
+     * @param path TreePath whose leaf may or may not be in static scope
+     * @return returns whether or not the leaf of the tree path is in a static scope
+     */
+    public static boolean isTreeInStaticScope(TreePath path) {
+        MethodTree enclosingMethod = TreeUtils.enclosingMethod(path);
+
+        if (enclosingMethod != null) {
+            return enclosingMethod.getModifiers().getFlags().contains(Modifier.STATIC);
+        }
+        // no enclosing method, check for static or initializer block
+        BlockTree block = enclosingTopLevelBlock(path);
+        if (block != null) {
+            return block.isStatic();
+        }
+
+        // check if its in a variable initializer
+        Tree t = enclosingVariable(path);
+        if (t != null) {
+            return ((VariableTree) t).getModifiers().getFlags().contains((Modifier.STATIC));
+        }
+        ClassTree classTree = enclosingClass(path);
+        if (classTree != null) {
+            return classTree.getModifiers().getFlags().contains((Modifier.STATIC));
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether or not tree is an access of array length.
+     *
+     * @param tree tree to check
+     * @return Returns whether or not tree is an access of array length.
+     */
+    public static boolean isArrayLengthAccess(Tree tree) {
+        if (tree.getKind() == Kind.MEMBER_SELECT
+                && isFieldAccess(tree)
+                && getFieldName(tree).equals("length")) {
+            ExpressionTree expressionTree = ((MemberSelectTree) tree).getExpression();
+            if (InternalUtils.typeOf(expressionTree).getKind() == TypeKind.ARRAY) {
+                return true;
+            }
+        }
+        return false;
     }
 }

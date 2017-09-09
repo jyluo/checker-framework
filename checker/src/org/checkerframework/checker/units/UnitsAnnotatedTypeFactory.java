@@ -27,14 +27,15 @@ import org.checkerframework.framework.type.treeannotator.PropagationTreeAnnotato
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
+import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 
 /** Annotated type factory for the Units Checker. */
 public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     protected final AnnotationMirror unknownUnits =
-            AnnotationUtils.fromClass(elements, UnknownUnits.class);
+            AnnotationBuilder.fromClass(elements, UnknownUnits.class);
     protected final AnnotationMirror unitsBottom =
-            AnnotationUtils.fromClass(elements, UnitsBottom.class);
+            AnnotationBuilder.fromClass(elements, UnitsBottom.class);
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker, true);

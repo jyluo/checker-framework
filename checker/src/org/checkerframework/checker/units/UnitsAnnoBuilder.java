@@ -3,7 +3,7 @@ package org.checkerframework.checker.units;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.checker.units.qual.Unit;
-import org.checkerframework.framework.util.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationBuilder;
 
 public class UnitsAnnoBuilder {
 

@@ -20,14 +20,6 @@ import org.checkerframework.common.basetype.BaseTypeVisitor;
  */
 @SupportedOptions({"units", "unitsDirs"})
 public class UnitsChecker extends BaseTypeChecker {
-
-    /*
-    @Override
-    public void initChecker() {
-        super.initChecker();
-    }
-    */
-
     /**
      * Copied from SubtypingChecker; cannot reuse it, because SubtypingChecker is final. TODO:
      * SubtypingChecker might also want to always call super.

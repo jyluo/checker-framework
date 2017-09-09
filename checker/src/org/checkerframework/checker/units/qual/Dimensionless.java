@@ -7,12 +7,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.SubtypeOf;
 
+// TODO: this might not be necessary at all
 /** SI base unit of seconds. */
 @Documented
 @Retention(RUNTIME)
 @Target({TYPE_PARAMETER, TYPE_USE})
-@BaseUnit
-@SubtypeOf(Unit.class) // hack
-public @interface s {}
+@UnitAlias("1")
+public @interface Dimensionless {}

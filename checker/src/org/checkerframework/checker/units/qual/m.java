@@ -1,26 +1,18 @@
 package org.checkerframework.checker.units.qual;
 
+import static java.lang.annotation.ElementType.TYPE_PARAMETER;
+import static java.lang.annotation.ElementType.TYPE_USE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.SubtypeOf;
 
-/**
- * Meter.
- *
- * @checker_framework.manual #units-checker Units Checker
- */
+/** SI base unit of meters. */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(Length.class)
-// This is the default:
-// @UnitsRelations(org.checkerframework.checker.units.UnitsRelationsDefault.class)
-// If you want an alias for "m", e.g. "Meter", simply create that
-// annotation and add this meta-annotation:
-// @UnitsMultiple(quantity=m.class, prefix=Prefix.one)
-public @interface m {
-    Prefix value() default Prefix.one;
-}
+@Retention(RUNTIME)
+@Target({TYPE_PARAMETER, TYPE_USE})
+@BaseUnit
+@SubtypeOf(Unit.class) // hack
+public @interface m {}

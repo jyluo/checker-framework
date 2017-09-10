@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.units.parser.ast.UnitsASTDivNode;
 import org.checkerframework.checker.units.parser.ast.UnitsASTMulNode;
 import org.checkerframework.checker.units.parser.ast.UnitsASTNode;
+import org.checkerframework.checker.units.parser.ast.UnitsASTTermNode;
 import org.checkerframework.checker.units.parser.ast.UnitsASTUnitNameNode;
 import org.checkerframework.checker.units.parser.token.DivToken;
 import org.checkerframework.checker.units.parser.token.LeftParenToken;
@@ -27,10 +28,11 @@ public class UnitsParser {
 
     // EBNF Grammar:
     // Expression := Term { ("*" | "/") Term }
-    // Term := UnitName [ "^" Power ] | "(" Expression ")"
+    // Term := Factor [ "^" Power ]
+    // Factor = "(" Expression ")" | UnitName
     // UnitName := "m" | "s" | "km" | "mm" | "ms" | ...
     // Power := [ "-" ] Digit{Digit}
-    // Digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+    // Digit := INT
     //
     // Notes:
     // - UnitName is a finite generated list of accepted unit names, each consisting of a sequence
@@ -88,17 +90,22 @@ public class UnitsParser {
         return term;
     }
 
-    // Term := UnitName [ "^" Power ] | "(" Expression ")"
+    // Term := Factor [ "^" Power ]
     public UnitsASTNode parseTerm() throws Exception {
-        if (walker.isNextOfType(UnitNameToken.class)) {
-            UnitsASTUnitNameNode unitName = parseUnitName();
-            if (walker.isNextOfType(PowerToken.class)) {
-                walker.getNext(); // skip the power token
-                int power = parsePower();
-                unitName.setPower(power);
-            }
-            return unitName;
-        } else if (walker.isNextOfType(LeftParenToken.class)) {
+        UnitsASTTermNode term = new UnitsASTTermNode(parseFactor());
+
+        if (walker.isNextOfType(PowerToken.class)) {
+            walker.getNext(); // skip the power token
+            int power = parsePower();
+            term.setPower(power);
+        }
+
+        return term;
+    }
+
+    // Factor = "(" Expression ")" | UnitName
+    public UnitsASTNode parseFactor() throws Exception {
+        if (walker.isNextOfType(LeftParenToken.class)) {
             walker.getNext(); // skip the left parenthesis
             UnitsASTNode expr = parseExpression();
             if (!walker.isNextOfType(RightParenToken.class)) {
@@ -106,6 +113,8 @@ public class UnitsParser {
             }
             walker.getNext(); // skip the right parenthesis
             return expr;
+        } else if (walker.isNextOfType(UnitNameToken.class)) {
+            return parseUnitName();
         } else {
             throw new Exception(
                     "Expecting a unit or a ')' in expression, instead got " + peekNextToken());
@@ -118,9 +127,7 @@ public class UnitsParser {
             UnitNameToken name = (UnitNameToken) walker.getNext();
             // TODO: validation of name here??
 
-            UnitsASTUnitNameNode node = new UnitsASTUnitNameNode(name.Name());
-            node.setPower(1);
-            return node;
+            return new UnitsASTUnitNameNode(name.Name());
         }
         return null;
     }

@@ -54,7 +54,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             assert tokens.size() == 3;
             processingEnv.getMessager().printMessage(Kind.NOTE, " tokens: " + tokens.toString());
 
-            UnitsASTNode tree = parser.parse("s^-2^2", processingEnv.getMessager());
+            UnitsASTNode tree =
+                    parser.parse(
+                            "((a*((b^0/c)*d^20))*(e^1/f^-2))/((g/(h*i))/j)",
+                            processingEnv.getMessager());
             processingEnv.getMessager().printMessage(Kind.NOTE, " tree: " + tree.toString());
 
         } catch (Exception e) {

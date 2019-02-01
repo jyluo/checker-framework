@@ -74,6 +74,14 @@ public class UnitsRepresentationUtils {
     private final Map<AnnotationMirror, TypecheckUnit> unitsRepAnnoToTypecheckUnitMap =
             AnnotationUtils.createAnnotationMap();
 
+    /**
+     * A 1 to 1 mapping between a {@link UnitsRep} annotation mirror and its corresponding typecheck
+     * unit for pretty printing: the {@link UnitsRep} annotation mirror omits default annotation
+     * values.
+     */
+    private final Map<AnnotationMirror, TypecheckUnit> prettyPrintUnitsRepAnnoToTypecheckUnitMap =
+            AnnotationUtils.createAnnotationMap();
+
     /** The set of base units */
     private final Map<String, Class<? extends Annotation>> baseUnits = new TreeMap<>();
 
@@ -264,8 +272,8 @@ public class UnitsRepresentationUtils {
      * available, otherwise returns the given annotation unchanged.
      *
      * @param anno an {@link AnnotationMirror} of a {@link UnitsRep} annotation
-     * @return the surface representation unit if available, otherwise the @UnitsRep annotation
-     *     unchanged
+     * @return the surface representation unit if available, otherwise the {@link UnitsRep}
+     *     annotation unchanged
      */
     public AnnotationMirror getSurfaceUnit(AnnotationMirror anno) {
         for (Entry<AnnotationMirror, AnnotationMirror> pair : unitsAnnotationMirrorMap.entrySet()) {
@@ -275,6 +283,27 @@ public class UnitsRepresentationUtils {
         }
 
         return anno;
+    }
+
+    /**
+     * Returns a pretty print unit representation for the given {@link UnitsRep} annotation with all
+     * default annotation values omitted, if available, otherwise returns the given annotation
+     * unchanged.
+     *
+     * @param anno an {@link AnnotationMirror} of a {@link UnitsRep} annotation
+     * @return the pretty print representation unit if available, otherwise the {@link UnitsRep}
+     *     annotation unchanged
+     */
+    public AnnotationMirror getPrettyPrintUnit(AnnotationMirror anno) {
+        AnnotationMirror surfaceUnit = getSurfaceUnit(anno);
+        // if surfaceUnit is the same as anno, then remove all default annotation values
+        if (AnnotationUtils.areSameByClass(surfaceUnit, UnitsRep.class)) {
+            TypecheckUnit unit = createTypecheckUnit(surfaceUnit);
+            AnnotationMirror prettyPrintUnit = createPrettyPrintUnitsRepAnno(unit);
+            return prettyPrintUnit;
+        } else {
+            return surfaceUnit;
+        }
     }
 
     /**
@@ -429,7 +458,7 @@ public class UnitsRepresentationUtils {
 
     /** Create a {@link UnitsRep} annotation for the given normalized representation values. */
     public AnnotationMirror createUnitsRepAnno(
-            boolean top, boolean bot, int prefixExponent, Map<String, Integer> exponents) {
+            boolean top, boolean bot, int e, Map<String, Integer> buc) {
         // not allowed to set both a UU and UB to true on the same annotation
         if (top && bot) {
             throw new BugInCF("Cannot set top and bottom both to true at the same time");
@@ -437,20 +466,72 @@ public class UnitsRepresentationUtils {
 
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, UnitsRep.class);
 
-        List<AnnotationMirror> expos = new ArrayList<>();
-        for (String key : exponents.keySet()) {
+        List<AnnotationMirror> bu = new ArrayList<>();
+        for (String baseUnit : buc.keySet()) {
             /** Construct {@link BUC} annotations for each exponent */
             AnnotationBuilder bucBuilder = new AnnotationBuilder(processingEnv, BUC.class);
-            bucBuilder.setValue("u", key);
-            bucBuilder.setValue("e", exponents.get(key));
-            expos.add(bucBuilder.build());
+            bucBuilder.setValue("u", baseUnit);
+            bucBuilder.setValue("e", buc.get(baseUnit));
+            bu.add(bucBuilder.build());
         }
 
         // See {@link UnitsRep}
         builder.setValue("top", top);
         builder.setValue("bot", bot);
-        builder.setValue("p", prefixExponent);
-        builder.setValue("bu", expos);
+        builder.setValue("p", e);
+        builder.setValue("bu", bu);
+        return builder.build();
+    }
+
+    /** Create a {@link UnitsRep} annotation for the given {@link TypecheckUnit}. */
+    public AnnotationMirror createPrettyPrintUnitsRepAnno(TypecheckUnit unit) {
+        // see if cache already has a mapping, if so return from cache
+        for (Entry<AnnotationMirror, TypecheckUnit> entry :
+                prettyPrintUnitsRepAnnoToTypecheckUnitMap.entrySet()) {
+            if (unit.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+
+        // otherwise create an {@link UnitsRep} for the typecheck unit and add to cache
+        AnnotationMirror anno =
+                createPrettyPrintUnitsRepAnno(
+                        unit.isTop(),
+                        unit.isBottom(),
+                        unit.getPrefixExponent(),
+                        unit.getExponents());
+
+        prettyPrintUnitsRepAnnoToTypecheckUnitMap.put(anno, unit);
+        return anno;
+    }
+
+    /** Create a {@link UnitsRep} annotation for the given normalized representation values. */
+    public AnnotationMirror createPrettyPrintUnitsRepAnno(
+            boolean top, boolean bot, int e, Map<String, Integer> buc) {
+        // not allowed to set both a UU and UB to true on the same annotation
+        if (top && bot) {
+            throw new BugInCF("Cannot set top and bottom both to true at the same time");
+        }
+
+        AnnotationBuilder builder = new AnnotationBuilder(processingEnv, UnitsRep.class);
+
+        List<AnnotationMirror> bu = new ArrayList<>();
+        for (String baseUnit : buc.keySet()) {
+            int exponent = buc.get(baseUnit);
+            if (exponent != 0) {
+                /** Construct {@link BUC} annotations for each exponent */
+                AnnotationBuilder bucBuilder = new AnnotationBuilder(processingEnv, BUC.class);
+                bucBuilder.setValue("u", baseUnit);
+                bucBuilder.setValue("e", exponent);
+                bu.add(bucBuilder.build());
+            }
+        }
+
+        // See {@link UnitsRep}
+        if (top) builder.setValue("top", top);
+        if (bot) builder.setValue("bot", bot);
+        if (e != 0) builder.setValue("p", e);
+        if (!bu.isEmpty()) builder.setValue("bu", bu);
         return builder.build();
     }
 }

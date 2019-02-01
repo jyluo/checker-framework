@@ -11,8 +11,7 @@ import java.lang.annotation.Target;
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-// TODO: replace @UnitsAlias with @UnitsRep
-@UnitsAlias(baseUnitComponents = {})
+@UnitsAlias()
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})

@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
  */
 @SuppressWarnings("checkstyle:typename")
 @UnitsAlias(
-        prefixExponent = -6,
-        baseUnitComponents = {@BUC(u = "s", e = 1)})
+        p = -6,
+        bu = {@BUC(u = "s", e = 1)})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})

@@ -1,28 +1,44 @@
 package org.checkerframework.checker.units;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.checker.units.qual.BaseUnit;
 import org.checkerframework.checker.units.qual.UnitsAlias;
-import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotationClassLoader;
 
 public class UnitsAnnotationClassLoader extends AnnotationClassLoader {
 
-    /** reference to the units representation utilities library */
-    protected final UnitsRepresentationUtils unitsRepUtils;
+    protected Set<Class<? extends Annotation>> baseUnits;
+    protected Set<Class<? extends Annotation>> aliasUnits;
+    protected final Set<Class<? extends Annotation>> externalUnits = new HashSet<>();
 
-    protected final Map<String, Class<? extends Annotation>> externalUnitsMap = new HashMap<>();
-
-    public UnitsAnnotationClassLoader(
-            BaseTypeChecker checker, UnitsRepresentationUtils unitsRepUtils) {
+    public UnitsAnnotationClassLoader(BaseTypeChecker checker) {
         super(checker);
-        this.unitsRepUtils = unitsRepUtils;
+    }
+
+    /**
+     * @return initializes and returns {@link #baseUnits}. This method is necessary as {@link
+     *     #isSupportedAnnotationClass(Class)} is called during super constructor.
+     */
+    protected Set<Class<? extends Annotation>> getBaseUnits() {
+        if (baseUnits == null) {
+            baseUnits = new HashSet<>();
+        }
+        return baseUnits;
+    }
+
+    /**
+     * @return initializes and returns {@link #aliasUnits}. This method is necessary as {@link
+     *     #isSupportedAnnotationClass(Class)} is called during super constructor.
+     */
+    protected Set<Class<? extends Annotation>> getAliasUnits() {
+        if (aliasUnits == null) {
+            aliasUnits = new HashSet<>();
+        }
+        return aliasUnits;
     }
 
     /**
@@ -37,17 +53,14 @@ public class UnitsAnnotationClassLoader extends AnnotationClassLoader {
      */
     @Override
     protected boolean isSupportedAnnotationClass(Class<? extends Annotation> annoClass) {
-
         if (annoClass.getAnnotation(BaseUnit.class) != null) {
-            unitsRepUtils.addBaseUnit(annoClass);
+            getBaseUnits().add(annoClass);
             return false;
         }
-
         if (annoClass.getAnnotation(UnitsAlias.class) != null) {
-            unitsRepUtils.addAliasUnit(annoClass);
+            getAliasUnits().add(annoClass);
             return false;
         }
-
         // Not an alias unit
         return true;
     }
@@ -73,8 +86,7 @@ public class UnitsAnnotationClassLoader extends AnnotationClassLoader {
         // loadExternalAnnotationClass() returns null for alias units
         Class<? extends Annotation> loadedClass = loadExternalAnnotationClass(annoName);
         if (loadedClass != null) {
-            System.err.println(loadedClass);
-            //            addUnitToExternalQualMap(loadedClass);
+            externalUnits.add(loadedClass);
         }
     }
 
@@ -84,12 +96,12 @@ public class UnitsAnnotationClassLoader extends AnnotationClassLoader {
                 loadExternalAnnotationClassesFromDirectory(directoryName);
 
         for (Class<? extends Annotation> loadedClass : annoClassSet) {
-            System.err.println(loadedClass);
-            //            addUnitToExternalQualMap(annoClass);
+            externalUnits.add(loadedClass);
         }
     }
 
-    public Collection<? extends Class<? extends Annotation>> getExternalUnits() {
-        return externalUnitsMap.values();
+    /** @return the set of externally loaded units */
+    public Set<? extends Class<? extends Annotation>> getExternalUnits() {
+        return externalUnits;
     }
 }

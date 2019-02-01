@@ -14,7 +14,7 @@ import org.checkerframework.framework.qual.TypeUseLocation;
  * @checker_framework.manual #units-checker Units Checker
  * @checker_framework.manual #bottom-type the bottom type
  */
-@UnitsAlias(baseUnitComponents = {})
+@UnitsAlias(bot = true)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})

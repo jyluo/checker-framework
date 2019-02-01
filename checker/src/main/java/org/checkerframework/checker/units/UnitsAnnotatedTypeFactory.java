@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.checker.units.qual.BaseUnit;
-import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsRep;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
@@ -45,7 +44,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     /** reference to the units representation utilities library */
     protected UnitsRepresentationUtils unitsRepUtils;
 
-    /** reference to the units typecheck utilities library */
+    /** reference to the units type check utilities library */
     protected UnitsTypecheckUtils unitsTypecheckUtils;
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
@@ -53,7 +52,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         unitsRepUtils = new UnitsRepresentationUtils(processingEnv, elements);
         postInit();
 
-        // add implicits for exceptions
+        unitsTypecheckUtils = new UnitsTypecheckUtils(unitsRepUtils);
+
+        // add implicit units for exceptions and void
         addTypeNameImplicit(java.lang.Exception.class, unitsRepUtils.DIMENSIONLESS);
         addTypeNameImplicit(java.lang.Throwable.class, unitsRepUtils.DIMENSIONLESS);
         addTypeNameImplicit(java.lang.Void.class, unitsRepUtils.BOTTOM);
@@ -63,10 +64,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return unitsRepUtils;
     }
 
+    /** Use the Units Annotated Type Loader instead of the default one */
     @Override
     protected AnnotationClassLoader createAnnotationClassLoader() {
-        // Use the Units Annotated Type Loader instead of the default one
-        unitsAnnotationClassLoader = new UnitsAnnotationClassLoader(checker, unitsRepUtils);
+        unitsAnnotationClassLoader = new UnitsAnnotationClassLoader(checker);
         return unitsAnnotationClassLoader;
     }
 
@@ -80,7 +81,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         unitsAnnotationClassLoader.loadAllExternalUnits(
                 checker.getOption("units"), checker.getOption("unitsDirs"));
 
-        unitsRepUtils.postInit();
+        unitsRepUtils.postInit(
+                unitsAnnotationClassLoader.getBaseUnits(),
+                unitsAnnotationClassLoader.getAliasUnits());
 
         // copy all loaded external Units to qual set
         qualSet.addAll(unitsAnnotationClassLoader.getExternalUnits());
@@ -93,15 +96,15 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return qualSet;
     }
 
-    // Make sure only @UnitsRep annotations with all base units defined are considered supported
-    // any @UnitsRep annotations without all base units should go through aliasing to have the
-    // base units filled in.
+    // Make sure only {@link UnitsRep} annotations with all base units defined are considered
+    // supported any {@link UnitsRep} annotations without all base units should go through aliasing
+    // to have the base units filled in.
     @Override
     public boolean isSupportedQualifier(AnnotationMirror anno) {
-        /*
-         * getQualifierHierarchy().getTypeQualifiers() contains PolyAll, PolyUnit, and the AMs of
-         * Top and Bottom. We need to check all other instances of @UnitsRep AMs that are
-         * supported qualifiers here.
+        /**
+         * getQualifierHierarchy().getTypeQualifiers() contains {@link PolyAll}, {@link PolyUnit},
+         * and the AMs of Top and Bottom. We need to check all other instances of {@link UnitsRep}
+         * AMs that are supported qualifiers here.
          */
         if (!super.isSupportedQualifier(anno)) {
             return false;
@@ -109,7 +112,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (AnnotationUtils.areSameByClass(anno, UnitsRep.class)) {
             return unitsRepUtils.hasAllBaseUnits(anno);
         }
-        // Anno is PolyAll or PolyUnit
+        /** Anno is {@link PolyAll} or {@link PolyUnit} */
         return AnnotationUtils.containsSame(this.getQualifierHierarchy().getTypeQualifiers(), anno);
     }
 
@@ -121,13 +124,15 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             return unitsRepUtils.fillMissingBaseUnits(anno);
         }
 
-        // check to see if it's a surface annotation such as @m or @UnknownUnits
+        /** check to see if it's a surface annotation such as {@link m} or {@link UnknownUnits} */
         for (AnnotationMirror metaAnno :
                 anno.getAnnotationType().asElement().getAnnotationMirrors()) {
 
-            // if it has a UnitsAlias or IsBaseUnit meta-annotation, then it must have been prebuilt
-            // return the prebuilt internal annotation
-            if (AnnotationUtils.areSameByClass(metaAnno, UnitsAlias.class)
+            /**
+             * if it has a {@link UnitsRep} or {@link BaseUnit} meta-annotation, then it must have
+             * been prebuilt return the prebuilt internal annotation
+             */
+            if (AnnotationUtils.areSameByClass(metaAnno, UnitsRep.class)
                     || AnnotationUtils.areSameByClass(metaAnno, BaseUnit.class)) {
                 return unitsRepUtils.getInternalAliasUnit(anno);
             }
@@ -166,7 +171,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         defs.addCheckedCodeDefault(unitsRepUtils.TOP, TypeUseLocation.IMPLICIT_UPPER_BOUND);
         // defaults for lower bounds is BOTTOM, individual bounds can be manually set
         defs.addCheckedCodeDefault(unitsRepUtils.BOTTOM, TypeUseLocation.LOWER_BOUND);
-        // exceptions are always dimensionless
+        // exceptions are always DIMENSIONLESS
         defs.addCheckedCodeDefault(
                 unitsRepUtils.DIMENSIONLESS, TypeUseLocation.EXCEPTION_PARAMETER);
         // set TOP as the default qualifier for local variables, for dataflow refinement
@@ -188,7 +193,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         defs.addUncheckedCodeDefault(unitsRepUtils.TOP, TypeUseLocation.PARAMETER);
         defs.addUncheckedCodeDefault(unitsRepUtils.BOTTOM, TypeUseLocation.RETURN);
 
-        // dimensionless is default for all other locations
+        // DIMENSIONLESS is default for all other locations
         defs.addUncheckedCodeDefault(unitsRepUtils.DIMENSIONLESS, TypeUseLocation.OTHERWISE);
     }
 
@@ -202,7 +207,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             super(mgf, unitsRepUtils.BOTTOM);
         }
 
-        // Programmatically set UnitsRepresentationUtils.BOTTOM as the bottom
+        /** Programmatically set {@link UnitsRepresentationUtils#BOTTOM} as the bottom */
         @Override
         protected Set<AnnotationMirror> findBottoms(
                 Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
@@ -218,7 +223,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             return newBottoms;
         }
 
-        // Programmatically set UnitsRepresentationUtils.TOP as the top
+        /** Programmatically set {@link UnitsRepresentationUtils#TOP} as the top */
         @Override
         protected void finish(
                 QualifierHierarchy qualHierarchy,
@@ -236,7 +241,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             supertypesMap.remove(unitsRepUtils.RAWUNITSREP);
 
             // Set direct supertypes of PolyAll
-            // replace raw @UnitsRep with UnitsTop in super of PolyAll
+            // replace raw {@link UnitsRep} with UnitsTop in super of PolyAll
             assert supertypesMap.containsKey(unitsRepUtils.POLYALL);
             Set<AnnotationMirror> polyAllSupers = AnnotationUtils.createAnnotationSet();
             polyAllSupers.addAll(supertypesMap.get(unitsRepUtils.POLYALL));
@@ -245,7 +250,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             supertypesMap.put(unitsRepUtils.POLYALL, Collections.unmodifiableSet(polyAllSupers));
 
             // Set direct supertypes of PolyUnit
-            // replace raw @UnitsRep with UnitsTop in super of PolyUnit
+            // replace raw {@link UnitsRep} with UnitsTop in super of PolyUnit
             assert supertypesMap.containsKey(unitsRepUtils.POLYUNIT);
             Set<AnnotationMirror> polyUnitSupers = AnnotationUtils.createAnnotationSet();
             polyUnitSupers.addAll(supertypesMap.get(unitsRepUtils.POLYUNIT));
@@ -296,17 +301,25 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 return true;
             }
 
-            // Case: @PolyAll <: All units
-            // Case: @PolyUnit <: PolyAll and All units
-            // Case: All units <: @PolyAll and @PolyUnit
+            // TODO: find out how annos take on poly all or poly unit and flow to here
             if (AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYALL)
                     || AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYUNIT)
                     || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYALL)
                     || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYUNIT)) {
-                return true;
+                assert false;
             }
 
-            // Case: @UnitsRep(x) <: @UnitsRep(y)
+            //            // Case: {@link PolyAll} <: All units
+            //            // Case: {@link PolyUnit} <: {@link PolyAll} and All units
+            //            // Case: All units <: {@link PolyAll} and {@link PolyUnit}
+            //            if (AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYALL)
+            //                    || AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYUNIT)
+            //                    || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYALL)
+            //                    || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYUNIT)) {
+            //                return true;
+            //            }
+
+            // Case: {@link UnitsRep}(x) <: {@link UnitsRep}(y)
             if (AnnotationUtils.areSameByClass(subAnno, UnitsRep.class)
                     && AnnotationUtils.areSameByClass(superAnno, UnitsRep.class)
                     && AnnotationUtils.areSameByName(subAnno, superAnno)) {
@@ -362,6 +375,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             super(UnitsAnnotatedTypeFactory.this);
         }
 
+        @SuppressWarnings("fallthrough")
         @Override
         public Void visitBinary(BinaryTree binaryTree, AnnotatedTypeMirror type) {
             Kind kind = binaryTree.getKind();
@@ -373,7 +387,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             switch (kind) {
                 case PLUS:
-                    // if it is a string concatenation, result is dimensionless
+                    // if it is a string concatenation, result is DIMENSIONLESS
                     if (TreeUtils.isStringConcatenation(binaryTree)) {
                         type.replaceAnnotation(unitsRepUtils.DIMENSIONLESS);
                     } else {
@@ -414,7 +428,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 case GREATER_THAN_EQUAL: // >=
                 case LESS_THAN: // <
                 case LESS_THAN_EQUAL: // <=
-                    // output of comparisons is a dimensionless binary
+                    // output of comparisons is a DIMENSIONLESS binary
                     type.replaceAnnotation(unitsRepUtils.DIMENSIONLESS);
                     break;
                 default:

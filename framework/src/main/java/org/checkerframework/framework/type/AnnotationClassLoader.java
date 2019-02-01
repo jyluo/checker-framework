@@ -55,7 +55,7 @@ import org.checkerframework.javacutil.UserError;
  */
 public class AnnotationClassLoader {
     // For issuing errors to the user
-    private final BaseTypeChecker checker;
+    protected final BaseTypeChecker checker;
 
     // For loading from a source package directory
     private final String packageName;

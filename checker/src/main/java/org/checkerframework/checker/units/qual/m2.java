@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @checker_framework.manual #units-checker Units Checker
  */
 @SuppressWarnings("checkstyle:typename")
-@UnitsAlias(baseUnitComponents = {@BUC(u = "m", e = 2)})
+@UnitsAlias(bu = {@BUC(u = "m", e = 2)})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})

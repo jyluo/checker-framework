@@ -9,7 +9,7 @@ import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Internal representation of a Unit. All units annotations are normalized to this annotation
+ * Internal representation of a Unit. All units annotations are normalized to this annotation.
  *
  * @checker_framework.manual #units-checker Units Checker
  */

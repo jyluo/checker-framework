@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.util.Elements;
+import org.checkerframework.checker.units.UnitsAnnotationClassLoader;
 import org.checkerframework.checker.units.qual.BUC;
 import org.checkerframework.checker.units.qual.Dimensionless;
 import org.checkerframework.checker.units.qual.PolyUnit;
@@ -105,21 +106,25 @@ public class UnitsRepresentationUtils {
         this.elements = elements;
     }
 
-    /** Creates {@link AnnotationMirror}s for all of the annotations in this class */
-    public void postInit() {
+    /**
+     * Creates {@link AnnotationMirror}s for all of the annotations in this class
+     *
+     * @param loadedBaseUnits the set of base units loaded by {@link UnitsAnnotationClassLoader}
+     * @param loadedAliasUnits the set of alias units loaded by {@link UnitsAnnotationClassLoader}
+     */
+    public void postInit(
+            Set<Class<? extends Annotation>> loadedBaseUnits,
+            Set<Class<? extends Annotation>> loadedAliasUnits) {
         POLYALL = AnnotationBuilder.fromClass(elements, PolyAll.class);
         POLYUNIT = AnnotationBuilder.fromClass(elements, PolyUnit.class);
 
         RAWUNITSREP = AnnotationBuilder.fromClass(elements, UnitsRep.class);
 
+        // Create and add annotation mirrors for TOP, BOT, and DIMENSIONLESS
         Map<String, Integer> zeroBaseDimensions = createZeroFilledBaseUnitsMap();
         TOP = createUnitsRepAnno(true, false, 0, zeroBaseDimensions);
         BOTTOM = createUnitsRepAnno(false, true, 0, zeroBaseDimensions);
         DIMENSIONLESS = createUnitsRepAnno(false, false, 0, zeroBaseDimensions);
-
-        // Map<String, Integer> meterDimensions = createZeroFilledBaseUnitsMap();
-        // meterDimensions.put("m", 1);
-        // METER = createInternalUnit("Meter", false, false, 0, meterDimensions);
 
         unitsAnnotationMirrorMap.put(
                 AnnotationBuilder.fromClass(elements, UnknownUnits.class), TOP);
@@ -132,15 +137,18 @@ public class UnitsRepresentationUtils {
         surfaceUnitsSet.add(UnitsBottom.class);
         surfaceUnitsSet.add(Dimensionless.class);
 
-        for (Class<? extends Annotation> baseUnit : baseUnits.values()) {
+        // Create and add annotation mirrors for loaded base units and alias units
+        for (Class<? extends Annotation> baseUnit : loadedBaseUnits) {
+            addBaseUnit(baseUnit);
             createInternalBaseUnit(baseUnit);
         }
-        surfaceUnitsSet.addAll(baseUnits.values());
+        surfaceUnitsSet.addAll(loadedBaseUnits);
 
-        for (Class<? extends Annotation> aliasUnit : aliasUnits) {
+        for (Class<? extends Annotation> aliasUnit : loadedAliasUnits) {
+            addAliasUnit(aliasUnit);
             createInternalAliasUnit(aliasUnit);
         }
-        surfaceUnitsSet.addAll(aliasUnits);
+        surfaceUnitsSet.addAll(loadedAliasUnits);
 
         // for (Entry<AnnotationMirror, AnnotationMirror> entry : unitsAnnotationMirrorMap
         // .entrySet()) {
@@ -148,21 +156,17 @@ public class UnitsRepresentationUtils {
         // }
     }
 
-    public static Set<Class<? extends Annotation>> createSortedBaseUnitSet() {
+    public Set<Class<? extends Annotation>> createSortedBaseUnitSet() {
         return new TreeSet<>(annoClassComparator);
     }
 
-    public static <TVal> Map<String, TVal> createSortedBaseUnitMap() {
+    public <TVal> Map<String, TVal> createSortedBaseUnitMap() {
         return new TreeMap<>();
     }
 
     public void addBaseUnit(Class<? extends Annotation> baseUnit) {
         baseUnits.put(baseUnit.getSimpleName(), baseUnit);
     }
-
-    // public Class<? extends Annotation> getBaseUnitClass(String simpleClassName) {
-    // return baseUnits.get(simpleClassName);
-    // }
 
     public Set<String> baseUnits() {
         if (baseUnitNames == null) {
@@ -224,12 +228,12 @@ public class UnitsRepresentationUtils {
         Map<String, Integer> exponents = createZeroFilledBaseUnitsMap();
 
         // replace default base unit exponents from anno, and accumulate prefixes
-        UnitsAlias aliasInfo = aliasUnitClass.getAnnotation(UnitsAlias.class);
-        for (BUC baseUnitComponent : aliasInfo.baseUnitComponents()) {
+        UnitsAlias unitsRep = aliasUnitClass.getAnnotation(UnitsAlias.class);
+        for (BUC baseUnitComponent : unitsRep.bu()) {
             exponents.put(baseUnitComponent.u(), baseUnitComponent.e());
         }
 
-        int prefix = aliasInfo.prefixExponent();
+        int prefix = unitsRep.p();
 
         unitsAnnotationMirrorMap.put(
                 aliasUnitAM, createUnitsRepAnno(false, false, prefix, exponents));
@@ -353,6 +357,10 @@ public class UnitsRepresentationUtils {
 
     /** Create a {@link TypecheckUnit} for the given {@link UnitsRep} annotation. */
     public TypecheckUnit createTypecheckUnit(AnnotationMirror anno) {
+
+        System.err.println(unitsRepAnnoToTypecheckUnitMap.keySet());
+        System.err.println(anno);
+
         if (unitsRepAnnoToTypecheckUnitMap.containsKey(anno)) {
             return unitsRepAnnoToTypecheckUnitMap.get(anno);
         }

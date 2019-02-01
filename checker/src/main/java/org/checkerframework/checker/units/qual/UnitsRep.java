@@ -24,7 +24,7 @@ public @interface UnitsRep {
 
     boolean bot() default false;
 
-    int prefixExponent() default 0;
+    int p() default 0;
 
-    BUC[] baseUnitComponents() default {};
+    BUC[] bu() default {};
 }

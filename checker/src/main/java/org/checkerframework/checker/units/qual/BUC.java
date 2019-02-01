@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface BUC {
     // TODO: use Class<? extends Annotation> when annotation inserter can properly
     // insert class literals as values in annotations
-    String unit();
+    String u();
 
-    int exponent() default 0;
+    int e() default 0;
 }

@@ -38,7 +38,7 @@ public class TypecheckUnit {
         uu = val;
     }
 
-    public boolean isUnknownUnits() {
+    public boolean isTop() {
         return uu;
     }
 
@@ -49,7 +49,7 @@ public class TypecheckUnit {
         ub = val;
     }
 
-    public boolean isUnitsBottom() {
+    public boolean isBottom() {
         return ub;
     }
 

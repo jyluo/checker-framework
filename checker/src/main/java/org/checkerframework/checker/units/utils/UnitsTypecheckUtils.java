@@ -15,20 +15,20 @@ public class UnitsTypecheckUtils {
     public AnnotationMirror multiplication(AnnotationMirror lhsAM, AnnotationMirror rhsAM) {
         TypecheckUnit lhs = unitsRepUtils.createTypecheckUnit(lhsAM);
         TypecheckUnit rhs = unitsRepUtils.createTypecheckUnit(rhsAM);
-        return unitsRepUtils.createInternalUnit(multiplication(lhs, rhs));
+        return unitsRepUtils.createUnitsRepAnno(multiplication(lhs, rhs));
     }
 
     private TypecheckUnit multiplication(TypecheckUnit lhs, TypecheckUnit rhs) {
         TypecheckUnit result = new TypecheckUnit(unitsRepUtils);
 
         // if either lhs or rhs is UnknownUnits, then result is UnknownUnits
-        if (lhs.isUnknownUnits() || rhs.isUnknownUnits()) {
+        if (lhs.isTop() || rhs.isTop()) {
             result.setUnknownUnits(true);
             return result;
         }
 
         // if either lhs or rhs is UnitsBottom, then result is UnitsBottom
-        if (lhs.isUnitsBottom() || rhs.isUnitsBottom()) {
+        if (lhs.isBottom() || rhs.isBottom()) {
             result.setUnitsBottom(true);
             return result;
         }
@@ -45,20 +45,20 @@ public class UnitsTypecheckUtils {
     public AnnotationMirror division(AnnotationMirror lhsAM, AnnotationMirror rhsAM) {
         TypecheckUnit lhs = unitsRepUtils.createTypecheckUnit(lhsAM);
         TypecheckUnit rhs = unitsRepUtils.createTypecheckUnit(rhsAM);
-        return unitsRepUtils.createInternalUnit(division(lhs, rhs));
+        return unitsRepUtils.createUnitsRepAnno(division(lhs, rhs));
     }
 
     private TypecheckUnit division(TypecheckUnit lhs, TypecheckUnit rhs) {
         TypecheckUnit result = new TypecheckUnit(unitsRepUtils);
 
         // if either lhs or rhs is UnknownUnits, then result is UnknownUnits
-        if (lhs.isUnknownUnits() || rhs.isUnknownUnits()) {
+        if (lhs.isTop() || rhs.isTop()) {
             result.setUnknownUnits(true);
             return result;
         }
 
         // if either lhs or rhs is UnitsBottom, then result is UnitsBottom
-        if (lhs.isUnitsBottom() || rhs.isUnitsBottom()) {
+        if (lhs.isBottom() || rhs.isBottom()) {
             result.setUnitsBottom(true);
             return result;
         }

@@ -115,6 +115,20 @@ public class UnitsRepresentationUtils {
     public void postInit(
             Set<Class<? extends Annotation>> loadedBaseUnits,
             Set<Class<? extends Annotation>> loadedAliasUnits) {
+
+        // Create and add annotation mirrors for loaded base units and alias units
+        for (Class<? extends Annotation> baseUnit : loadedBaseUnits) {
+            addBaseUnit(baseUnit);
+            createInternalBaseUnit(baseUnit);
+        }
+        surfaceUnitsSet.addAll(loadedBaseUnits);
+
+        for (Class<? extends Annotation> aliasUnit : loadedAliasUnits) {
+            addAliasUnit(aliasUnit);
+            createInternalAliasUnit(aliasUnit);
+        }
+        surfaceUnitsSet.addAll(loadedAliasUnits);
+
         POLYALL = AnnotationBuilder.fromClass(elements, PolyAll.class);
         POLYUNIT = AnnotationBuilder.fromClass(elements, PolyUnit.class);
 
@@ -137,21 +151,7 @@ public class UnitsRepresentationUtils {
         surfaceUnitsSet.add(UnitsBottom.class);
         surfaceUnitsSet.add(Dimensionless.class);
 
-        // Create and add annotation mirrors for loaded base units and alias units
-        for (Class<? extends Annotation> baseUnit : loadedBaseUnits) {
-            addBaseUnit(baseUnit);
-            createInternalBaseUnit(baseUnit);
-        }
-        surfaceUnitsSet.addAll(loadedBaseUnits);
-
-        for (Class<? extends Annotation> aliasUnit : loadedAliasUnits) {
-            addAliasUnit(aliasUnit);
-            createInternalAliasUnit(aliasUnit);
-        }
-        surfaceUnitsSet.addAll(loadedAliasUnits);
-
-        // for (Entry<AnnotationMirror, AnnotationMirror> entry : unitsAnnotationMirrorMap
-        // .entrySet()) {
+        // for (Entry<?, ?> entry : unitsAnnotationMirrorMap.entrySet()) {
         // System.err.println(" == built map " + entry.getKey() + " --> " + entry.getValue());
         // }
     }
@@ -350,17 +350,13 @@ public class UnitsRepresentationUtils {
 
             return filledInAM;
         } else {
-            // not an {@link UnitsRep}s annotation
+            // not a {@link UnitsRep} annotation
             return null;
         }
     }
 
     /** Create a {@link TypecheckUnit} for the given {@link UnitsRep} annotation. */
     public TypecheckUnit createTypecheckUnit(AnnotationMirror anno) {
-
-        System.err.println(unitsRepAnnoToTypecheckUnitMap.keySet());
-        System.err.println(anno);
-
         if (unitsRepAnnoToTypecheckUnitMap.containsKey(anno)) {
             return unitsRepAnnoToTypecheckUnitMap.get(anno);
         }

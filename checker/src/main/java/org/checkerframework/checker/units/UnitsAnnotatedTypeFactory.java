@@ -207,80 +207,89 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             super(mgf, unitsRepUtils.BOTTOM);
         }
 
+        /** Programmatically set {@link UnitsRepresentationUtils#TOP} as the top */
+        @Override
+        protected Set<AnnotationMirror> findTops(
+                Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+            Set<AnnotationMirror> tops = AnnotationUtils.createAnnotationSet();
+
+            tops.add(unitsRepUtils.TOP);
+
+            // remove RAWUNITSREP in supertypes
+            assert supertypes.containsKey(unitsRepUtils.RAWUNITSREP);
+            supertypes.remove(unitsRepUtils.RAWUNITSREP);
+            // add TOP to supertypes
+            supertypes.put(unitsRepUtils.TOP, Collections.emptySet());
+
+            return tops;
+        }
+
         /** Programmatically set {@link UnitsRepresentationUtils#BOTTOM} as the bottom */
         @Override
         protected Set<AnnotationMirror> findBottoms(
                 Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
-            newBottoms.remove(unitsRepUtils.RAWUNITSREP);
-            newBottoms.add(unitsRepUtils.BOTTOM);
+            Set<AnnotationMirror> bottoms = AnnotationUtils.createAnnotationSet();
 
-            // set direct supertypes of bottom
-            Set<AnnotationMirror> supertypesOfBottom = new LinkedHashSet<>();
-            supertypesOfBottom.add(unitsRepUtils.TOP);
-            supertypes.put(unitsRepUtils.BOTTOM, supertypesOfBottom);
+            bottoms.add(unitsRepUtils.BOTTOM);
 
-            return newBottoms;
+            // set direct supertypes of BOTTOM and add to supertypes
+            Set<AnnotationMirror> bottomSupers = new LinkedHashSet<>();
+            bottomSupers.add(unitsRepUtils.POLYUNIT);
+            bottomSupers.add(unitsRepUtils.POLYALL);
+            bottomSupers.add(unitsRepUtils.TOP);
+            supertypes.put(unitsRepUtils.BOTTOM, Collections.unmodifiableSet(bottomSupers));
+
+            return bottoms;
         }
 
-        /** Programmatically set {@link UnitsRepresentationUtils#TOP} as the top */
+        /**
+         * Programmatically set {@link UnitsRepresentationUtils#POLYUNIT} and {@link
+         * UnitsRepresentationUtils#POLYALL} as the polymorphic qualifiers
+         */
         @Override
-        protected void finish(
+        protected void addPolyRelations(
                 QualifierHierarchy qualHierarchy,
-                Map<AnnotationMirror, Set<AnnotationMirror>> supertypesMap,
+                Map<AnnotationMirror, Set<AnnotationMirror>> supertypes,
                 Map<AnnotationMirror, AnnotationMirror> polyQualifiers,
                 Set<AnnotationMirror> tops,
-                Set<AnnotationMirror> bottoms,
-                Object... args) {
-            super.finish(qualHierarchy, supertypesMap, polyQualifiers, tops, bottoms, args);
+                Set<AnnotationMirror> bottoms) {
 
-            // swap every instance of RAWUNITSREP with TOP
-            assert supertypesMap.containsKey(unitsRepUtils.RAWUNITSREP);
-            // Set direct supertypes of TOP
-            supertypesMap.put(unitsRepUtils.TOP, supertypesMap.get(unitsRepUtils.RAWUNITSREP));
-            supertypesMap.remove(unitsRepUtils.RAWUNITSREP);
-
-            // Set direct supertypes of PolyAll
-            // replace raw {@link UnitsRep} with UnitsTop in super of PolyAll
-            assert supertypesMap.containsKey(unitsRepUtils.POLYALL);
-            Set<AnnotationMirror> polyAllSupers = AnnotationUtils.createAnnotationSet();
-            polyAllSupers.addAll(supertypesMap.get(unitsRepUtils.POLYALL));
-            polyAllSupers.add(unitsRepUtils.TOP);
-            polyAllSupers.remove(unitsRepUtils.RAWUNITSREP);
-            supertypesMap.put(unitsRepUtils.POLYALL, Collections.unmodifiableSet(polyAllSupers));
-
-            // Set direct supertypes of PolyUnit
-            // replace raw {@link UnitsRep} with UnitsTop in super of PolyUnit
-            assert supertypesMap.containsKey(unitsRepUtils.POLYUNIT);
-            Set<AnnotationMirror> polyUnitSupers = AnnotationUtils.createAnnotationSet();
-            polyUnitSupers.addAll(supertypesMap.get(unitsRepUtils.POLYUNIT));
-            polyUnitSupers.add(unitsRepUtils.TOP);
-            polyUnitSupers.remove(unitsRepUtils.RAWUNITSREP);
-            supertypesMap.put(unitsRepUtils.POLYUNIT, Collections.unmodifiableSet(polyUnitSupers));
-
-            // Set direct supertypes of BOTTOM
-            Set<AnnotationMirror> bottomSupers = AnnotationUtils.createAnnotationSet();
-            bottomSupers.addAll(supertypesMap.get(unitsRepUtils.BOTTOM));
-            // bottom already has top in its super set
-            bottomSupers.remove(unitsRepUtils.RAWUNITSREP);
-            supertypesMap.put(unitsRepUtils.BOTTOM, Collections.unmodifiableSet(bottomSupers));
-
-            // Update polyQualifiers
+            // polyQualifiers {null=@PolyAll, @UnitsRep=@PolyUnit}
+            // replace RAWUNITSREP -> @PolyUnit with TOP -> @PolyUnit
             assert polyQualifiers.containsKey(unitsRepUtils.RAWUNITSREP);
             polyQualifiers.put(unitsRepUtils.TOP, polyQualifiers.get(unitsRepUtils.RAWUNITSREP));
             polyQualifiers.remove(unitsRepUtils.RAWUNITSREP);
 
-            // Update tops
-            tops.remove(unitsRepUtils.RAWUNITSREP);
-            tops.add(unitsRepUtils.TOP);
+            // add @PolyAll -> TOP to supertypes
+            Set<AnnotationMirror> polyAllSupers = AnnotationUtils.createAnnotationSet();
+            polyAllSupers.add(unitsRepUtils.TOP);
+            supertypes.put(unitsRepUtils.POLYALL, Collections.unmodifiableSet(polyAllSupers));
+
+            // add @PolyUnit -> {@PolyAll, TOP} to supertypes
+            Set<AnnotationMirror> polyUnitSupers = AnnotationUtils.createAnnotationSet();
+            polyUnitSupers.add(unitsRepUtils.POLYALL);
+            polyUnitSupers.add(unitsRepUtils.TOP);
+            supertypes.put(unitsRepUtils.POLYUNIT, Collections.unmodifiableSet(polyUnitSupers));
+
+            // System.err.println(" POST ");
+            // System.err.println(" supertypes {");
+            // for (Entry<?, ?> e : supertypes.entrySet()) {
+            // System.err.println(" " + e.getKey() + " -> " + e.getValue());
+            // }
+            // System.err.println(" }");
+            // System.err.println(" polyQualifiers " + polyQualifiers);
+            // System.err.println(" tops " + tops);
+            // System.err.println(" bottoms " + bottoms);
+            // System.err.println();
         }
 
         // TODO: remove commented code
         @Override
         public boolean isSubtype(AnnotationMirror subAnno, AnnotationMirror superAnno) {
-            // System.err.println(" === checking SUBTYPE \n "
-            // + getAnnotationFormatter().formatAnnotationMirror(subAnno) + " <:\n"
-            // + getAnnotationFormatter().formatAnnotationMirror(superAnno) + "\n");
+            // System.err.println(" === checking SUBTYPE ");
+            // System.err.println(subAnno + " <:");
+            // System.err.println(superAnno);
+            // System.err.println();
 
             // replace RAWUNITSREP with DIMENSIONLESS
             // for some reason this shows up in inference mode when building the lattice
@@ -309,15 +318,15 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 assert false;
             }
 
-            //            // Case: {@link PolyAll} <: All units
-            //            // Case: {@link PolyUnit} <: {@link PolyAll} and All units
-            //            // Case: All units <: {@link PolyAll} and {@link PolyUnit}
-            //            if (AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYALL)
-            //                    || AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYUNIT)
-            //                    || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYALL)
-            //                    || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYUNIT)) {
-            //                return true;
-            //            }
+            // // Case: {@link PolyAll} <: All units
+            // // Case: {@link PolyUnit} <: {@link PolyAll} and All units
+            // // Case: All units <: {@link PolyAll} and {@link PolyUnit}
+            // if (AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYALL)
+            // || AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYUNIT)
+            // || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYALL)
+            // || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYUNIT)) {
+            // return true;
+            // }
 
             // Case: {@link UnitsRep}(x) <: {@link UnitsRep}(y)
             if (AnnotationUtils.areSameByClass(subAnno, UnitsRep.class)

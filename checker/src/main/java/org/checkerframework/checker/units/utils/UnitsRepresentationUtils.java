@@ -376,7 +376,7 @@ public class UnitsRepresentationUtils {
                 return unitsRepToCompleteUnitsRepMap.get(anno);
             }
 
-            TypecheckUnit unit = createTypecheckUnit(anno);
+            TypecheckUnit unit = createTypecheckUnitNoCache(anno);
             AnnotationMirror filledInAM = createUnitsRepAnno(unit);
 
             unitsRepToCompleteUnitsRepMap.put(anno, filledInAM);
@@ -388,12 +388,22 @@ public class UnitsRepresentationUtils {
         }
     }
 
-    /** Create a {@link TypecheckUnit} for the given {@link UnitsRep} annotation. */
+    /**
+     * Create a {@link TypecheckUnit} for the given complete {@link UnitsRep} annotation and caches
+     * the pair.
+     */
     public TypecheckUnit createTypecheckUnit(AnnotationMirror anno) {
         if (unitsRepAnnoToTypecheckUnitMap.containsKey(anno)) {
             return unitsRepAnnoToTypecheckUnitMap.get(anno);
         }
 
+        TypecheckUnit unit = createTypecheckUnitNoCache(anno);
+        unitsRepAnnoToTypecheckUnitMap.put(anno, unit);
+        return unit;
+    }
+
+    /** Create a {@link TypecheckUnit} for the given {@link UnitsRep} annotation. */
+    public TypecheckUnit createTypecheckUnitNoCache(AnnotationMirror anno) {
         TypecheckUnit unit = new TypecheckUnit(this);
 
         // if it is a polymorphic annotation, generate top as we are type checking the body of
@@ -401,6 +411,7 @@ public class UnitsRepresentationUtils {
         if (AnnotationUtils.areSameByClass(anno, PolyUnit.class)
                 || AnnotationUtils.areSameByClass(anno, PolyAll.class)) {
             unit.setUnknownUnits(true);
+            return unit;
         }
         // if it is a {@link UnitsRep} annotation, generate the equivalent {@link TypecheckUnit}
         else if (AnnotationUtils.areSameByClass(anno, UnitsRep.class)) {
@@ -425,13 +436,11 @@ public class UnitsRepresentationUtils {
             for (String bu : exponents.keySet()) {
                 unit.setExponent(bu, exponents.get(bu));
             }
+            return unit;
         } else {
             // not a units annotation
             return null;
         }
-        unitsRepAnnoToTypecheckUnitMap.put(anno, unit);
-
-        return unit;
     }
 
     /** Create a {@link UnitsRep} annotation for the given {@link TypecheckUnit}. */

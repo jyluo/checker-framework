@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
  * Meter.
@@ -13,15 +12,8 @@ import org.checkerframework.framework.qual.SubtypeOf;
  * @checker_framework.manual #units-checker Units Checker
  */
 @SuppressWarnings("checkstyle:typename")
+@BaseUnit
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(Length.class)
-// This is the default:
-// @UnitsRelations(org.checkerframework.checker.units.UnitsRelationsDefault.class)
-// If you want an alias for "m", e.g. "Meter", simply create that
-// annotation and add this meta-annotation:
-// @UnitsMultiple(quantity=m.class, prefix=Prefix.one)
-public @interface m {
-    Prefix value() default Prefix.one;
-}
+public @interface m {}

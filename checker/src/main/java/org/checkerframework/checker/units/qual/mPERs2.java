@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
  * Meter per second squared.
@@ -13,10 +12,8 @@ import org.checkerframework.framework.qual.SubtypeOf;
  * @checker_framework.manual #units-checker Units Checker
  */
 @SuppressWarnings("checkstyle:typename")
+@UnitsAlias(baseUnitComponents = {@BUC(unit = "m", exponent = 1), @BUC(unit = "s", exponent = -2)})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(Acceleration.class)
-public @interface mPERs2 {
-    Prefix value() default Prefix.one;
-}
+public @interface mPERs2 {}

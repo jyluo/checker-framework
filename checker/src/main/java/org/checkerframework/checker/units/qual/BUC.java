@@ -1,19 +1,20 @@
 package org.checkerframework.checker.units.qual;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Units of time.
+ * Base unit component
  *
  * @checker_framework.manual #units-checker Units Checker
  */
-@SubtypeOf(UnknownUnits.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-public @interface Time {}
+public @interface BUC {
+    // TODO: use Class<? extends Annotation> when annotation inserter can properly
+    // insert class literals as values in annotations
+    String unit();
+
+    int exponent() default 0;
+}

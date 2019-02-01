@@ -1,0 +1,19 @@
+import units.qual.*;
+
+package java.io;
+
+class PrintStream {
+    void print(@UnknownUnits int arg0);
+    void print(@UnknownUnits long arg0);
+    void print(@UnknownUnits float arg0);
+    void print(@UnknownUnits double arg0);
+    void print(@UnknownUnits Object arg0);
+    void println(@UnknownUnits int arg0);
+    void println(@UnknownUnits long arg0);
+    void println(@UnknownUnits float arg0);
+    void println(@UnknownUnits double arg0);
+    PrintStream printf(String arg0, @UnknownUnits Object[] arg1);
+    PrintStream printf(Locale arg0, String arg1, @UnknownUnits Object[] arg2);
+    PrintStream format(String arg0, @UnknownUnits Object[] arg1);
+    PrintStream format(Locale arg0, String arg1, @UnknownUnits Object[] arg2);
+}

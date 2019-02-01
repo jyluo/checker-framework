@@ -1,0 +1,24 @@
+import units.qual.*;
+
+package java.lang;
+
+class System {
+    static @ms long currentTimeMillis();
+    static @ns long nanoTime();
+}
+
+// Throwable is implicitly @UnknownUnits
+class Throwable implements Serializable {
+    void printStackTrace(@UnknownUnits Throwable this);
+    void printStackTrace(@UnknownUnits Throwable this, PrintStream arg0);
+    void printStackTrace(@UnknownUnits Throwable this, PrintWriter arg0);
+}
+
+class String implements Serializable, Comparable<String>, CharSequence {
+    static String format(String arg0, @UnknownUnits Object[] arg1);
+    static String format(Locale arg0, String arg1, @UnknownUnits Object[] arg2);
+    static String valueOf(@UnknownUnits int arg0);
+    static String valueOf(@UnknownUnits long arg0);
+    static String valueOf(@UnknownUnits float arg0);
+    static String valueOf(@UnknownUnits double arg0);
+}

@@ -9,7 +9,7 @@ public class Multiplication {
         // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
-                bu = {@BUC(unit = "g", exponent = 1)})
+                bu = {@BUC(u = "g", e = 1)})
         int z = 3 * UnitsTools.m;
         int notkg = kg;
         // :: error: (assignment.type.incompatible)
@@ -18,12 +18,12 @@ public class Multiplication {
 
         // g
         @g int g = 5 * UnitsTools.g;
-        @UnitsRep(bu = {@BUC(unit = "g", exponent = 1)})
+        @UnitsRep(bu = {@BUC(u = "g", e = 1)})
         int alsog = g;
         // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = -3,
-                bu = {@BUC(unit = "g", exponent = 1)})
+                bu = {@BUC(u = "g", e = 1)})
         int notg = g;
         // :: error: (assignment.type.incompatible)
         notg = g;
@@ -31,12 +31,12 @@ public class Multiplication {
 
         // m
         @m int m = 5 * UnitsTools.m;
-        @UnitsRep(bu = {@BUC(unit = "m", exponent = 1)})
+        @UnitsRep(bu = {@BUC(u = "m", e = 1)})
         int alsom = m;
         // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
-                bu = {@BUC(unit = "m", exponent = 1)})
+                bu = {@BUC(u = "m", e = 1)})
         int notm = m;
         // :: error: (assignment.type.incompatible)
         m = notm;
@@ -46,12 +46,12 @@ public class Multiplication {
         @km int km = 5 * UnitsTools.km;
         @UnitsRep(
                 p = 3,
-                bu = {@BUC(unit = "m", exponent = 1)})
+                bu = {@BUC(u = "m", e = 1)})
         int alsokm = km;
         // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
-                bu = {@BUC(unit = "m", exponent = 1)})
+                bu = {@BUC(u = "m", e = 1)})
         int notkm = km;
         // :: error: (assignment.type.incompatible)
         km = notkm;
@@ -61,12 +61,12 @@ public class Multiplication {
         @mm int mm = 5 * UnitsTools.mm;
         @UnitsRep(
                 p = -3,
-                bu = {@BUC(unit = "m", exponent = 1)})
+                bu = {@BUC(u = "m", e = 1)})
         int alsomm = mm;
         // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
-                bu = {@BUC(unit = "m", exponent = 1)})
+                bu = {@BUC(u = "m", e = 1)})
         int notmm = mm;
         // :: error: (assignment.type.incompatible)
         mm = notmm;

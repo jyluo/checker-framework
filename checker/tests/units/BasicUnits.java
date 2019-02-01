@@ -96,9 +96,9 @@ public class BasicUnits {
         @m int x = 5 * UnitsTools.m;
         @UnitsRep(
                 p = 3,
-                bu = {@BUC(unit = "m", exponent = 1)})
+                bu = {@BUC(u = "m", e = 1)})
         int y = 2 * UnitsTools.km;
-        @UnitsRep(bu = {@BUC(unit = "m", exponent = 1)})
+        @UnitsRep(bu = {@BUC(u = "m", e = 1)})
         int z = 3 * UnitsTools.m;
         @km int y2 = 3 * UnitsTools.km;
 

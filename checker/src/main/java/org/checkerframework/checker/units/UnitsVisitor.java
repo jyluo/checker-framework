@@ -42,6 +42,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
     }
 
+    @SuppressWarnings("fallthrough")
     @Override
     public Void visitBinary(BinaryTree binaryTree, Void p) {
         AnnotatedTypeMirror lhsATM = atypeFactory.getAnnotatedType(binaryTree.getLeftOperand());

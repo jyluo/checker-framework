@@ -9,7 +9,6 @@ import com.sun.source.tree.UnaryTree;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.checker.units.qual.Dimensionless;
-import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
@@ -128,7 +127,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                         Result.failure("compound.assignment.type.incompatible", varType, exprType),
                         node);
             }
-        } else if (exprType.getAnnotation(UnknownUnits.class) == null) {
+        } else if (AnnotationUtils.areSame(
+                exprType.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP), unitsRepUtils.TOP)) {
             // Only allow mul/div with unqualified units
             checker.report(
                     Result.failure("compound.assignment.type.incompatible", varType, exprType),

@@ -3,6 +3,7 @@ package org.checkerframework.checker.units;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.UnaryTree;
 import java.util.Set;
@@ -13,6 +14,7 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.source.Result;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.javacutil.AnnotationUtils;
 
 /**
@@ -27,6 +29,17 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     public UnitsVisitor(BaseTypeChecker checker) {
         super(checker);
         unitsRepUtils = atypeFactory.getUnitsRepresentationUtils();
+    }
+
+    /** override to allow uses of classes declared as {@link Dimensionless} with units */
+    @Override
+    public boolean isValidUse(
+            AnnotatedDeclaredType declarationType, AnnotatedDeclaredType useType, Tree tree) {
+        AnnotatedDeclaredType erasedDeclaredType = declarationType.getErased();
+        AnnotationMirror anno =
+                erasedDeclaredType.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+        return AnnotationUtils.areSame(anno, unitsRepUtils.DIMENSIONLESS)
+                || super.isValidUse(declarationType, useType, tree);
     }
 
     @Override

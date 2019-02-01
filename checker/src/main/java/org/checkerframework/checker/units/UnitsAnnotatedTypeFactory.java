@@ -55,14 +55,23 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker, true);
         unitsRepUtils = new UnitsRepresentationUtils(processingEnv, elements);
+        unitsAnnotationFormatter.postInit(unitsRepUtils);
         postInit();
 
         unitsTypecheckUtils = new UnitsTypecheckUtils(unitsRepUtils);
-        unitsAnnotationFormatter.postInit(unitsRepUtils);
 
-        // add implicit units for exceptions and void
+        // strings, chars, and bools are implicitly DIMENSIONLESS
+        addTypeNameImplicit(java.lang.String.class, unitsRepUtils.DIMENSIONLESS);
+        addTypeNameImplicit(java.lang.Character.class, unitsRepUtils.DIMENSIONLESS);
+        addTypeNameImplicit(java.lang.Boolean.class, unitsRepUtils.DIMENSIONLESS);
+
+        // TODO: add implicits for typekind string char, bool, and null via implicitsTypeAnnotator
+
+        // exceptions are implicitly DIMENSIONLESS
         addTypeNameImplicit(java.lang.Exception.class, unitsRepUtils.DIMENSIONLESS);
         addTypeNameImplicit(java.lang.Throwable.class, unitsRepUtils.DIMENSIONLESS);
+
+        // void is implicitly BOTTOM
         addTypeNameImplicit(java.lang.Void.class, unitsRepUtils.BOTTOM);
     }
 
@@ -161,7 +170,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // for use in generating error outputs
     @Override
     protected AnnotationFormatter createAnnotationFormatter() {
-        unitsAnnotationFormatter = new UnitsAnnotationFormatter();
+        if (unitsAnnotationFormatter == null) {
+            unitsAnnotationFormatter = new UnitsAnnotationFormatter();
+        }
         return unitsAnnotationFormatter;
     }
 
@@ -170,14 +181,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     protected void addCheckedCodeDefaults(QualifierDefaults defs) {
         // set DIMENSIONLESS as the default qualifier in hierarchy
         defs.addCheckedCodeDefault(unitsRepUtils.DIMENSIONLESS, TypeUseLocation.OTHERWISE);
-        // defaults for upper bounds is DIMENSIONLESS, individual bounds can be manually set to
-        // UnknownUnits if they want to use units
-        // defs.addCheckedCodeDefault(unitsRepUtils.DIMENSIONLESS, TypeUseLocation.UPPER_BOUND);
         defs.addCheckedCodeDefault(
                 unitsRepUtils.DIMENSIONLESS, TypeUseLocation.EXPLICIT_UPPER_BOUND);
         defs.addCheckedCodeDefault(unitsRepUtils.TOP, TypeUseLocation.IMPLICIT_UPPER_BOUND);
-        // defaults for lower bounds is BOTTOM, individual bounds can be manually set
         defs.addCheckedCodeDefault(unitsRepUtils.BOTTOM, TypeUseLocation.LOWER_BOUND);
+
         // exceptions are always DIMENSIONLESS
         defs.addCheckedCodeDefault(
                 unitsRepUtils.DIMENSIONLESS, TypeUseLocation.EXCEPTION_PARAMETER);
@@ -294,8 +302,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         @Override
         public boolean isSubtype(AnnotationMirror subAnno, AnnotationMirror superAnno) {
             // System.err.println(" === checking SUBTYPE ");
-            // System.err.println(subAnno + " <:");
-            // System.err.println(superAnno);
+            // // System.err.println(subAnno + " <: ");
+            // // System.err.println(superAnno);
+            // System.err.println(getAnnotationFormatter().formatAnnotationMirror(subAnno) + " <: "
+            // + getAnnotationFormatter().formatAnnotationMirror(superAnno));
             // System.err.println();
 
             // replace RAWUNITSREP with DIMENSIONLESS
@@ -333,12 +343,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
                 boolean result = unitsTypecheckUtils.unitsEqual(subAnno, superAnno);
 
-                // if (AnnotationUtils.areSame(superAnno, unitsRepUtils.METER)) {
-                // System.err.println(" === checking SUBTYPE \n "
-                // + getAnnotationFormatter().formatAnnotationMirror(subAnno) + " <:\n"
-                // + getAnnotationFormatter().formatAnnotationMirror(superAnno) + "\n"
-                // + " result: " + result);
-                // }
+                // System.err.println(" === checking SUBTYPE ");
+                // System.err.println(getAnnotationFormatter().formatAnnotationMirror(subAnno) + "
+                // <: "
+                // + getAnnotationFormatter().formatAnnotationMirror(superAnno));
+                // System.err.println();
 
                 return result;
             }
@@ -351,7 +360,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                             + getAnnotationFormatter().formatAnnotationMirror(superAnno));
         }
 
-        private boolean isPolymorphic(AnnotationMirror anno) {
+        protected boolean isPolymorphic(AnnotationMirror anno) {
             return AnnotationUtils.areSame(anno, unitsRepUtils.POLYALL)
                     || AnnotationUtils.areSame(anno, unitsRepUtils.POLYUNIT);
         }
@@ -370,6 +379,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // set BOTTOM as the implicit qualifier for null literals
             addLiteralKind(LiteralKind.NULL, unitsRepUtils.BOTTOM);
+
+            // set DIMENSIONLESS for the non number literals
             addLiteralKind(LiteralKind.STRING, unitsRepUtils.DIMENSIONLESS);
             addLiteralKind(LiteralKind.CHAR, unitsRepUtils.DIMENSIONLESS);
             addLiteralKind(LiteralKind.BOOLEAN, unitsRepUtils.DIMENSIONLESS);

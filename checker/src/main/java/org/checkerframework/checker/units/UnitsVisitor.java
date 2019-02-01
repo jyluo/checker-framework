@@ -8,6 +8,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.UnaryTree;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import org.checkerframework.checker.units.qual.Dimensionless;
 import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -111,6 +112,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         return super.visitBinary(binaryTree, p);
     }
 
+    // TODO: check this rule
     @Override
     public Void visitCompoundAssignment(CompoundAssignmentTree node, Void p) {
         ExpressionTree var = node.getVariable();

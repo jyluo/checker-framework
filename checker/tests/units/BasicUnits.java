@@ -1,4 +1,3 @@
-import org.checkerframework.checker.units.*;
 import org.checkerframework.checker.units.qual.*;
 
 public class BasicUnits {

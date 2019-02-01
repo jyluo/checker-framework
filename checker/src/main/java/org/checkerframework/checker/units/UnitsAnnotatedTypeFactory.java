@@ -9,7 +9,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.type.TypeKind;
 import org.checkerframework.checker.units.qual.BaseUnit;
+import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsRep;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
@@ -17,6 +19,7 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.LiteralKind;
 import org.checkerframework.framework.qual.TypeUseLocation;
+import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFormatter;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotationClassLoader;
@@ -26,6 +29,9 @@ import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.PropagationTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.type.typeannotator.ImplicitsTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 import org.checkerframework.framework.util.AnnotationFormatter;
 import org.checkerframework.framework.util.GraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
@@ -59,20 +65,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         postInit();
 
         unitsTypecheckUtils = new UnitsTypecheckUtils(unitsRepUtils);
-
-        // strings, chars, and bools are implicitly DIMENSIONLESS
-        addTypeNameImplicit(java.lang.String.class, unitsRepUtils.DIMENSIONLESS);
-        addTypeNameImplicit(java.lang.Character.class, unitsRepUtils.DIMENSIONLESS);
-        addTypeNameImplicit(java.lang.Boolean.class, unitsRepUtils.DIMENSIONLESS);
-
-        // TODO: add implicits for typekind string char, bool, and null via implicitsTypeAnnotator
-
-        // exceptions are implicitly DIMENSIONLESS
-        addTypeNameImplicit(java.lang.Exception.class, unitsRepUtils.DIMENSIONLESS);
-        addTypeNameImplicit(java.lang.Throwable.class, unitsRepUtils.DIMENSIONLESS);
-
-        // void is implicitly BOTTOM
-        addTypeNameImplicit(java.lang.Void.class, unitsRepUtils.BOTTOM);
     }
 
     public UnitsRepresentationUtils getUnitsRepresentationUtils() {
@@ -147,9 +139,12 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
              * if it has a {@link UnitsRep} or {@link BaseUnit} meta-annotation, then it must have
              * been prebuilt return the prebuilt internal annotation
              */
-            if (AnnotationUtils.areSameByClass(metaAnno, UnitsRep.class)
+            if (AnnotationUtils.areSameByClass(metaAnno, UnitsAlias.class)
                     || AnnotationUtils.areSameByClass(metaAnno, BaseUnit.class)) {
-                return unitsRepUtils.getInternalAliasUnit(anno);
+                AnnotationMirror normalizedAnno = unitsRepUtils.getUnitsRepAnno(anno);
+
+                // System.err.println(anno + " is unit alias, returning " + normalizedAnno);
+                return normalizedAnno;
             }
         }
 
@@ -320,10 +315,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // When type checking body of polymorphic methods, check the types by replacing poly
             // with TOP
             if (isPolymorphic(subAnno)) {
-                return isSubtype(unitsRepUtils.TOP, superAnno);
+                subAnno = unitsRepUtils.TOP;
             }
             if (isPolymorphic(superAnno)) {
-                return isSubtype(subAnno, unitsRepUtils.TOP);
+                // superAnno = unitsRepUtils.TOP;
+                return true;
             }
 
             // Case: All units <: Top
@@ -338,7 +334,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // Case: {@link UnitsRep}(x) <: {@link UnitsRep}(y)
             if (AnnotationUtils.areSameByClass(subAnno, UnitsRep.class)
-                    && AnnotationUtils.areSameByClass(superAnno, UnitsRep.class)
                     && AnnotationUtils.areSameByName(subAnno, superAnno)) {
 
                 boolean result = unitsTypecheckUtils.unitsEqual(subAnno, superAnno);
@@ -367,17 +362,45 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
 
     @Override
-    public TreeAnnotator createTreeAnnotator() {
-        return new ListTreeAnnotator(
-                new UnitsTypecheckImplicitsTreeAnnotator(), new UnitsPropagationTreeAnnotator());
+    protected TypeAnnotator createTypeAnnotator() {
+        return new ListTypeAnnotator(
+                new UnitsImplicitsTypeAnnotator(this), super.createTypeAnnotator());
     }
 
-    protected final class UnitsTypecheckImplicitsTreeAnnotator extends ImplicitsTreeAnnotator {
+    protected class UnitsImplicitsTypeAnnotator extends ImplicitsTypeAnnotator {
+        public UnitsImplicitsTypeAnnotator(AnnotatedTypeFactory typeFactory) {
+            super(typeFactory);
+
+            // strings, chars, and bools are implicitly DIMENSIONLESS
+            addTypeName(java.lang.String.class, unitsRepUtils.DIMENSIONLESS);
+            addTypeName(java.lang.Character.class, unitsRepUtils.DIMENSIONLESS);
+            addTypeName(java.lang.Boolean.class, unitsRepUtils.DIMENSIONLESS);
+
+            addTypeKind(TypeKind.CHAR, unitsRepUtils.DIMENSIONLESS);
+            addTypeKind(TypeKind.BOOLEAN, unitsRepUtils.DIMENSIONLESS);
+            addTypeKind(TypeKind.NULL, unitsRepUtils.DIMENSIONLESS);
+
+            // exceptions are implicitly DIMENSIONLESS
+            addTypeName(java.lang.Exception.class, unitsRepUtils.DIMENSIONLESS);
+            addTypeName(java.lang.Throwable.class, unitsRepUtils.DIMENSIONLESS);
+
+            // void is implicitly BOTTOM
+            addTypeName(java.lang.Void.class, unitsRepUtils.BOTTOM);
+        }
+    }
+
+    @Override
+    public TreeAnnotator createTreeAnnotator() {
+        return new ListTreeAnnotator(
+                new UnitsImplicitsTreeAnnotator(), new UnitsPropagationTreeAnnotator());
+    }
+
+    protected class UnitsImplicitsTreeAnnotator extends ImplicitsTreeAnnotator {
         // Programmatically set the qualifier implicits
-        public UnitsTypecheckImplicitsTreeAnnotator() {
+        public UnitsImplicitsTreeAnnotator() {
             super(UnitsAnnotatedTypeFactory.this);
 
-            // set BOTTOM as the implicit qualifier for null literals
+            // set BOTTOM for null literals
             addLiteralKind(LiteralKind.NULL, unitsRepUtils.BOTTOM);
 
             // set DIMENSIONLESS for the non number literals

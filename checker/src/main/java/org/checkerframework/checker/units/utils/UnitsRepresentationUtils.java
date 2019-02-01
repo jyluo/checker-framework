@@ -117,12 +117,16 @@ public class UnitsRepresentationUtils {
             Set<Class<? extends Annotation>> loadedAliasUnits) {
 
         // Create and add annotation mirrors for loaded base units and alias units
+        // First add all the base units so that the size of the base unit exponent map is correct
         for (Class<? extends Annotation> baseUnit : loadedBaseUnits) {
             addBaseUnit(baseUnit);
+        }
+        // Then create {@link UnitsRep} annotation mirrors for each base unit
+        for (Class<? extends Annotation> baseUnit : loadedBaseUnits) {
             createInternalBaseUnit(baseUnit);
         }
         surfaceUnitsSet.addAll(loadedBaseUnits);
-
+        // Finally add and create {@link UnitsRep} annotation mirrors for each alias unit
         for (Class<? extends Annotation> aliasUnit : loadedAliasUnits) {
             addAliasUnit(aliasUnit);
             createInternalAliasUnit(aliasUnit);
@@ -246,7 +250,7 @@ public class UnitsRepresentationUtils {
      * @param anno an {@link AnnotationMirror} of an annotation
      * @return the internal representation unit as an {@link AnnotationMirror}
      */
-    public AnnotationMirror getInternalAliasUnit(AnnotationMirror anno) {
+    public AnnotationMirror getUnitsRepAnno(AnnotationMirror anno) {
         // check to see if the annotation has already been mapped before
         if (unitsAnnotationMirrorMap.containsKey(anno)) {
             return unitsAnnotationMirrorMap.get(anno);

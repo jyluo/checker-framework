@@ -38,8 +38,13 @@ import org.checkerframework.javacutil.UserError;
 /** Annotated type factory for the Units Checker. */
 public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
-    /** reference to the UnitsAnnotationClassLoader instance for loading external units */
+    /** reference to the {@link UnitsAnnotationClassLoader} instance for loading external units */
     protected UnitsAnnotationClassLoader unitsAnnotationClassLoader;
+
+    /**
+     * reference to the {@link UnitsAnnotationFormatter} instance for formatting units in warnings
+     */
+    protected UnitsAnnotationFormatter unitsAnnotationFormatter;
 
     /** reference to the units representation utilities library */
     protected UnitsRepresentationUtils unitsRepUtils;
@@ -53,6 +58,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         postInit();
 
         unitsTypecheckUtils = new UnitsTypecheckUtils(unitsRepUtils);
+        unitsAnnotationFormatter.postInit(unitsRepUtils);
 
         // add implicit units for exceptions and void
         addTypeNameImplicit(java.lang.Exception.class, unitsRepUtils.DIMENSIONLESS);
@@ -155,7 +161,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // for use in generating error outputs
     @Override
     protected AnnotationFormatter createAnnotationFormatter() {
-        return new UnitsAnnotationFormatter(checker, unitsRepUtils);
+        unitsAnnotationFormatter = new UnitsAnnotationFormatter();
+        return unitsAnnotationFormatter;
     }
 
     // Programmatically set the qualifier defaults
@@ -300,6 +307,15 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 superAnno = unitsRepUtils.DIMENSIONLESS;
             }
 
+            // When type checking body of polymorphic methods, check the types by replacing poly
+            // with TOP
+            if (isPolymorphic(subAnno)) {
+                return isSubtype(unitsRepUtils.TOP, superAnno);
+            }
+            if (isPolymorphic(superAnno)) {
+                return isSubtype(subAnno, unitsRepUtils.TOP);
+            }
+
             // Case: All units <: Top
             if (AnnotationUtils.areSame(superAnno, unitsRepUtils.TOP)) {
                 return true;
@@ -309,24 +325,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             if (AnnotationUtils.areSame(subAnno, unitsRepUtils.BOTTOM)) {
                 return true;
             }
-
-            // TODO: find out how annos take on poly all or poly unit and flow to here
-            if (AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYALL)
-                    || AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYUNIT)
-                    || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYALL)
-                    || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYUNIT)) {
-                assert false;
-            }
-
-            // // Case: {@link PolyAll} <: All units
-            // // Case: {@link PolyUnit} <: {@link PolyAll} and All units
-            // // Case: All units <: {@link PolyAll} and {@link PolyUnit}
-            // if (AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYALL)
-            // || AnnotationUtils.areSame(subAnno, unitsRepUtils.POLYUNIT)
-            // || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYALL)
-            // || AnnotationUtils.areSame(superAnno, unitsRepUtils.POLYUNIT)) {
-            // return true;
-            // }
 
             // Case: {@link UnitsRep}(x) <: {@link UnitsRep}(y)
             if (AnnotationUtils.areSameByClass(subAnno, UnitsRep.class)
@@ -351,6 +349,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                             + getAnnotationFormatter().formatAnnotationMirror(subAnno)
                             + "\n    supertype: "
                             + getAnnotationFormatter().formatAnnotationMirror(superAnno));
+        }
+
+        private boolean isPolymorphic(AnnotationMirror anno) {
+            return AnnotationUtils.areSame(anno, unitsRepUtils.POLYALL)
+                    || AnnotationUtils.areSame(anno, unitsRepUtils.POLYUNIT);
         }
     }
 

@@ -363,14 +363,14 @@ public class UnitsRepresentationUtils {
 
         TypecheckUnit unit = new TypecheckUnit(this);
 
-        // if it is a polyunit annotation, generate top
-        // if (AnnotationUtils.areSameByClass(anno, PolyUnit.class)
-        // || AnnotationUtils.areSameByClass(anno, PolyAll.class)) {
-        // unit.setUnknownUnits(true);
-        // }
-        // if it is a units internal annotation, generate the {@link UnitsRep}
-        // else
-        if (AnnotationUtils.areSameByClass(anno, UnitsRep.class)) {
+        // if it is a polymorphic annotation, generate top as we are type checking the body of
+        // a polymorphic method
+        if (AnnotationUtils.areSameByClass(anno, PolyUnit.class)
+                || AnnotationUtils.areSameByClass(anno, PolyAll.class)) {
+            unit.setUnknownUnits(true);
+        }
+        // if it is a {@link UnitsRep} annotation, generate the equivalent {@link TypecheckUnit}
+        else if (AnnotationUtils.areSameByClass(anno, UnitsRep.class)) {
             unit.setUnknownUnits(AnnotationUtils.getElementValue(anno, "top", Boolean.class, true));
             unit.setUnitsBottom(AnnotationUtils.getElementValue(anno, "bot", Boolean.class, true));
             unit.setPrefixExponent(AnnotationUtils.getElementValue(anno, "p", Integer.class, true));

@@ -5,16 +5,16 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.VariableElement;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
-import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.util.DefaultAnnotationFormatter;
 
 public class UnitsAnnotationFormatter extends DefaultAnnotationFormatter {
 
     /** reference to the units representation utilities library */
-    protected final UnitsRepresentationUtils unitsRepUtils;
+    protected UnitsRepresentationUtils unitsRepUtils;
 
-    public UnitsAnnotationFormatter(
-            BaseTypeChecker checker, UnitsRepresentationUtils unitsRepUtils) {
+    public UnitsAnnotationFormatter() {}
+
+    public void postInit(UnitsRepresentationUtils unitsRepUtils) {
         this.unitsRepUtils = unitsRepUtils;
     }
 

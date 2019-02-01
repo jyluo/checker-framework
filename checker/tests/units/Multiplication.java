@@ -1,50 +1,73 @@
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
-public class Multiples {
-    void m() {
+public class Multiplication {
+    void multiply() {
         // Prefix assignment tests
         // kg
         @kg int kg = 5 * UnitsTools.kg;
-        @g(Prefix.kilo) int alsokg = kg;
         // :: error: (assignment.type.incompatible)
-        @g(Prefix.giga) int notkg = kg;
+        @UnitsRep(
+                p = 9,
+                bu = {@BUC(unit = "g", exponent = 1)})
+        int z = 3 * UnitsTools.m;
+        int notkg = kg;
         // :: error: (assignment.type.incompatible)
         kg = notkg;
         kg = alsokg;
 
         // g
         @g int g = 5 * UnitsTools.g;
-        @g(Prefix.one) int alsog = g;
+        @UnitsRep(bu = {@BUC(unit = "g", exponent = 1)})
+        int alsog = g;
         // :: error: (assignment.type.incompatible)
-        @g(Prefix.milli) int notg = g;
+        @UnitsRep(
+                p = -3,
+                bu = {@BUC(unit = "g", exponent = 1)})
+        int notg = g;
         // :: error: (assignment.type.incompatible)
         notg = g;
         g = alsog;
 
         // m
         @m int m = 5 * UnitsTools.m;
-        @m(Prefix.one) int alsom = m;
+        @UnitsRep(bu = {@BUC(unit = "m", exponent = 1)})
+        int alsom = m;
         // :: error: (assignment.type.incompatible)
-        @m(Prefix.giga) int notm = m;
+        @UnitsRep(
+                p = 9,
+                bu = {@BUC(unit = "m", exponent = 1)})
+        int notm = m;
         // :: error: (assignment.type.incompatible)
         m = notm;
         m = alsom;
 
         // km
         @km int km = 5 * UnitsTools.km;
-        @m(Prefix.kilo) int alsokm = km;
+        @UnitsRep(
+                p = 3,
+                bu = {@BUC(unit = "m", exponent = 1)})
+        int alsokm = km;
         // :: error: (assignment.type.incompatible)
-        @m(Prefix.giga) int notkm = km;
+        @UnitsRep(
+                p = 9,
+                bu = {@BUC(unit = "m", exponent = 1)})
+        int notkm = km;
         // :: error: (assignment.type.incompatible)
         km = notkm;
         km = alsokm;
 
         // mm
         @mm int mm = 5 * UnitsTools.mm;
-        @m(Prefix.milli) int alsomm = mm;
+        @UnitsRep(
+                p = -3,
+                bu = {@BUC(unit = "m", exponent = 1)})
+        int alsomm = mm;
         // :: error: (assignment.type.incompatible)
-        @m(Prefix.giga) int notmm = mm;
+        @UnitsRep(
+                p = 9,
+                bu = {@BUC(unit = "m", exponent = 1)})
+        int notmm = mm;
         // :: error: (assignment.type.incompatible)
         mm = notmm;
         mm = alsomm;

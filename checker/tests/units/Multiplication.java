@@ -3,39 +3,35 @@ import org.checkerframework.checker.units.qual.*;
 
 public class Multiplication {
     void multiply() {
-        // Prefix assignment tests
         // kg
         @kg int kg = 5 * UnitsTools.kg;
-        // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
                 bu = {@BUC(u = "g", e = 1)})
-        int z = 3 * UnitsTools.m;
-        int notkg = kg;
         // :: error: (assignment.type.incompatible)
-        kg = notkg;
+        int z = 3 * UnitsTools.m;
 
         // g
         @g int g = 5 * UnitsTools.g;
         @UnitsRep(bu = {@BUC(u = "g", e = 1)})
         int alsog = g;
-        // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = -3,
                 bu = {@BUC(u = "g", e = 1)})
+        // :: error: (assignment.type.incompatible)
         int notg = g;
         // :: error: (assignment.type.incompatible)
-        notg = g;
+        g = notg;
         g = alsog;
 
         // m
         @m int m = 5 * UnitsTools.m;
         @UnitsRep(bu = {@BUC(u = "m", e = 1)})
         int alsom = m;
-        // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
                 bu = {@BUC(u = "m", e = 1)})
+        // :: error: (assignment.type.incompatible)
         int notm = m;
         // :: error: (assignment.type.incompatible)
         m = notm;
@@ -47,10 +43,10 @@ public class Multiplication {
                 p = 3,
                 bu = {@BUC(u = "m", e = 1)})
         int alsokm = km;
-        // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
                 bu = {@BUC(u = "m", e = 1)})
+        // :: error: (assignment.type.incompatible)
         int notkm = km;
         // :: error: (assignment.type.incompatible)
         km = notkm;
@@ -62,10 +58,10 @@ public class Multiplication {
                 p = -3,
                 bu = {@BUC(u = "m", e = 1)})
         int alsomm = mm;
-        // :: error: (assignment.type.incompatible)
         @UnitsRep(
                 p = 9,
                 bu = {@BUC(u = "m", e = 1)})
+        // :: error: (assignment.type.incompatible)
         int notmm = mm;
         // :: error: (assignment.type.incompatible)
         mm = notmm;
@@ -124,13 +120,8 @@ public class Multiplication {
         @mm int lengthkmbad2 = h * speedkm;
 
         // s * s * mPERs2 = m
-        // TODO: fix checker so it is insensitive to order of operations as long as final results'
-        // unit makes sense.
-        // Currently due to left associativity, and the lack of an s2 annotation, this tries to
-        // evaluate (s * s) * mPERs2 which causes the type assignment incompatible error.
-        // :: error: (assignment.type.incompatible)
         @m int distance = s * s * accelm;
-        // if we bracket for order of operations, it works fine
+        // if we bracket for order of operations, it also works
         distance = s * (s * accelm);
     }
 }

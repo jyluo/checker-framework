@@ -189,7 +189,7 @@ public class Subtraction {
 
         // Candela
         // :: error: (assignment.type.incompatible)
-        @cd int sCandela = aTemperature - bCandela;
+        @cd int sCandela = aAmpere - bCandela;
 
         // Celsius
         // :: error: (assignment.type.incompatible)

@@ -14,7 +14,6 @@ public class Multiplication {
         int notkg = kg;
         // :: error: (assignment.type.incompatible)
         kg = notkg;
-        kg = alsokg;
 
         // g
         @g int g = 5 * UnitsTools.g;

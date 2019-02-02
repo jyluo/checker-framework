@@ -375,10 +375,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             addTypeName(java.lang.String.class, unitsRepUtils.DIMENSIONLESS);
             addTypeName(java.lang.Character.class, unitsRepUtils.DIMENSIONLESS);
             addTypeName(java.lang.Boolean.class, unitsRepUtils.DIMENSIONLESS);
-
             addTypeKind(TypeKind.CHAR, unitsRepUtils.DIMENSIONLESS);
             addTypeKind(TypeKind.BOOLEAN, unitsRepUtils.DIMENSIONLESS);
-            addTypeKind(TypeKind.NULL, unitsRepUtils.DIMENSIONLESS);
 
             // exceptions are implicitly DIMENSIONLESS
             addTypeName(java.lang.Exception.class, unitsRepUtils.DIMENSIONLESS);
@@ -386,6 +384,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // void is implicitly BOTTOM
             addTypeName(java.lang.Void.class, unitsRepUtils.BOTTOM);
+            addTypeKind(TypeKind.NULL, unitsRepUtils.BOTTOM);
         }
     }
 

@@ -110,6 +110,7 @@ public class UnitsTools {
     }
 
     // Time
+    public static final @ms int ms = 1;
     public static final @s int s = 1;
     public static final @min int min = 1;
     public static final @h int h = 1;

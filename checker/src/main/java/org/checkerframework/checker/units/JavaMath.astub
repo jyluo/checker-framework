@@ -3,29 +3,7 @@ import units.qual.*;
 package java.lang;
 
 /**
- * This stub file provides units annotations for Java 7 and Java 8 Math class.
- *
- * New methods in Java 8:
- *
- * addExact(int x, int y)
- * addExact(long x, long y)
- * decrementExact(int a)
- * decrementExact(long a)
- * floorDiv(int x, int y)
- * floorDiv(long x, long y)
- * floorMod(int x, int y)
- * floorMod(long x, long y)
- * incrementExact(int a)
- * incrementExact(long a)
- * multiplyExact(int x, int y)
- * multiplyExact(long x, long y)
- * negateExact(int a)
- * negateExact(long a)
- * nextDown(double d)
- * nextDown(float f)
- * subtractExact(int x, int y)
- * subtractExact(long x, long y)
- * toIntExact(long value)
+ * This stub file provides units annotations for Java 8 Math class.
  */
 class Math {
     // Scalar Constants
@@ -33,6 +11,29 @@ class Math {
     static final @Dimensionless double PI;
 
     // Methods ========
+
+    // Trigonometry
+    static @Dimensionless double sin(@rad double a);
+    static @Dimensionless double cos(@rad double a);
+    static @Dimensionless double tan(@rad double a);
+
+    // Inverse Trigonometry
+    static @rad double asin(@Dimensionless double a);
+    static @rad double acos(@Dimensionless double a);
+    static @rad double atan(@Dimensionless double a);
+
+    static @rad double atan2(@UnknownUnits double y, @UnknownUnits double x);
+
+    // Hyperbolic Trigonometry
+    // takes as input a hyperbolic angle which is also in radians for Math lib
+    // implementation
+    static @Dimensionless double sinh(@rad double x);
+    static @Dimensionless double cosh(@rad double x);
+    static @Dimensionless double tanh(@rad double x);
+
+    // Angle Conversion
+    static @deg double toDegrees(@rad double angrad);
+    static @rad double toRadians(@deg double angdeg);
 
     // Absolute Val
     static @PolyUnit double abs(@PolyUnit double a);
@@ -42,7 +43,8 @@ class Math {
 
     // both x & y must be same unit and if so returns that unit, else returns
     // the LUB of the units
-    static @PolyUnit double hypot(@PolyUnit double x, @PolyUnit double y);
+    // TODO: res = sqrt( x^2 + y^2 ); compute as such
+    // static @PolyUnit double hypot(@PolyUnit double x, @PolyUnit double y);
 
     // Exact operations
     // returns a++ or exception if it overflows, same unit as a
@@ -55,37 +57,36 @@ class Math {
     static @PolyUnit int negateExact(@PolyUnit int a);
     static @PolyUnit long negateExact(@PolyUnit long a);
 
-//    // The following uses Units Relations
-//    // same as addition, throws exception if it overflows
-//    static int addExact(@UnknownUnits int x, @UnknownUnits int y);
-//    static long addExact(@UnknownUnits long x, @UnknownUnits long y);
-//    // same as subtraction, throws exception if it overflows
-//    static int subtractExact(@UnknownUnits int x, @UnknownUnits int y);
-//    static long subtractExact(@UnknownUnits long x, @UnknownUnits long y);
-//    // same as multiplication, throws exception if it overflows
-//    static int multiplyExact(@UnknownUnits int x, @UnknownUnits int y);
-//    static long multiplyExact(@UnknownUnits long x, @UnknownUnits long y);
+    // // The following uses Units Relations
+    // // same as addition, throws exception if it overflows
+    // static int addExact(@UnknownUnits int x, @UnknownUnits int y);
+    // static long addExact(@UnknownUnits long x, @UnknownUnits long y);
+    // // same as subtraction, throws exception if it overflows
+    // static int subtractExact(@UnknownUnits int x, @UnknownUnits int y);
+    // static long subtractExact(@UnknownUnits long x, @UnknownUnits long y);
+    // // same as multiplication, throws exception if it overflows
+    // static int multiplyExact(@UnknownUnits int x, @UnknownUnits int y);
+    // static long multiplyExact(@UnknownUnits long x, @UnknownUnits long y);
 
-//    // The following uses Units Relations as well
-//    // returns largest value Q such that Q <= [x / y] in integer division, the
-//    // returned unit is the same as the unit resulting from x / y
-//    static int floorDiv(@UnknownUnits int x, @UnknownUnits int y);
-//    static long floorDiv(@UnknownUnits long x, @UnknownUnits long y);
-//    // returns the IEEE spec remainder of f1 / f2; ie the exact value of
-//    // f1 – [round[f1 / f2] * f2]. same unit as f1
-//    static double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);
+    // // The following uses Units Relations as well
+    // // returns largest value Q such that Q <= [x / y] in integer division, the
+    // // returned unit is the same as the unit resulting from x / y
+    // static int floorDiv(@UnknownUnits int x, @UnknownUnits int y);
+    // static long floorDiv(@UnknownUnits long x, @UnknownUnits long y);
+    // // returns the IEEE spec remainder of f1 / f2; ie the exact value of
+    // // f1 – [round[f1 / f2] * f2]. same unit as f1
+    // static double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);
 
     // similar to modulus, returns [x - [floorDiv[x, y] * y]], ie unit of x
     static @PolyUnit int floorMod(@PolyUnit int x, @UnknownUnits int y);
     static @PolyUnit long floorMod(@PolyUnit long x, @UnknownUnits long y);
 
-    // Units Checker code has special support for these 2 methods, which will
+    // TODO: special support for these 2 methods, which will
     // return the square root and cubic root of any supported units eg m2, km3
     // if the user wants to take the square root of just the magnitude without
     // affecting the unit, then they can surpress the warning
-    // TODO: special support in inference
-    static @UnitsBottom double sqrt(@UnknownUnits double a);
-    static @UnitsBottom double cbrt(@UnknownUnits double a);
+    // static @UnitsBottom double sqrt(@UnknownUnits double a);
+    // static @UnitsBottom double cbrt(@UnknownUnits double a);
 
     static @PolyUnit double ceil(@PolyUnit double a);
     static @PolyUnit double floor(@PolyUnit double a);
@@ -98,31 +99,32 @@ class Math {
     // returns the sign of the argument, the sign is a unitless scalar
     // Note: in some physics calculations, the sign denotes the relative
     // direction of a vector component (Future idea: vector mathematics support)
-    static double signum(@UnknownUnits double d);
-    static float signum(@UnknownUnits float f);
+    static @Dimensionless double signum(@UnknownUnits double d);
+    static @Dimensionless float signum(@UnknownUnits float f);
 
-    // powers, exponents, and logarithms
+    // TODO: powers, exponents, and logarithms
     // returns the value of a ^ b, for specific cases of a having the units of
     // m, mm, and km we return m2, mm2, and km2, for everything else we return
     // UnknownUnits
-    // TODO: special support in inference
-    static @UnitsBottom double pow(@UnknownUnits double a, @UnknownUnits double b);
+    // static @UnitsBottom double pow(@UnknownUnits double a, @UnknownUnits double b);
 
     // calculates e^a == e * e * e .... which is a unitless scalar
-    static double exp(@UnknownUnits double a);
+    static @Dimensionless double exp(@UnknownUnits double a);
     // calculates e^x - 1 ... which is also a unitless scalar
-    static double expm1(@UnknownUnits double x);
+    static @Dimensionless double expm1(@UnknownUnits double x);
+
     // returns unbiased exponent used in the representation of a double, ie the
     // exponent in base 2 arithmetic => unitless constant
-    static int getExponent(@UnknownUnits double d);
-    static int getExponent(@UnknownUnits float f);
+    static @Dimensionless int getExponent(@UnknownUnits double d);
+    static @Dimensionless int getExponent(@UnknownUnits float f);
 
+    // TODO: support logs?
     // log[a] = y where e^y = a, unitless?, this is log with base e
-    static double log(@UnknownUnits double a);
+    // static double log(@UnknownUnits double a);
     // log with base 10, log10[x] = y where 10^y = x
-    static double log10(@UnknownUnits double a);
+    // static double log10(@UnknownUnits double a);
     // returns log[1.0 + x]
-    static double log1p(@UnknownUnits double x);
+    // static double log1p(@UnknownUnits double x);
 
     // Future TODO: support retainment of units in these identifies
     // identity: exp(log(a)) == a

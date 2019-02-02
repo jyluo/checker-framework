@@ -19,7 +19,6 @@ import org.checkerframework.framework.qual.StubFiles;
     "JavaIOPrintstream.astub",
     "JavaLang.astub",
     "JavaMath.astub",
-    "JavaMathTrig.astub",
     "JavaThread.astub",
     "JavaUtil.astub",
     "JavaUtilConcurrent.astub",

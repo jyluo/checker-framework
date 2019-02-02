@@ -7,12 +7,12 @@ class System {
     static @ns long nanoTime();
 }
 
-// Throwable is implicitly @UnknownUnits
-class Throwable implements Serializable {
-    void printStackTrace(@UnknownUnits Throwable this);
-    void printStackTrace(@UnknownUnits Throwable this, PrintStream arg0);
-    void printStackTrace(@UnknownUnits Throwable this, PrintWriter arg0);
-}
+//// Throwable is implicitly @Dimensionless
+//class Throwable implements Serializable {
+//    void printStackTrace(@UnknownUnits Throwable this);
+//    void printStackTrace(@UnknownUnits Throwable this, PrintStream arg0);
+//    void printStackTrace(@UnknownUnits Throwable this, PrintWriter arg0);
+//}
 
 class String implements Serializable, Comparable<String>, CharSequence {
     static String format(String arg0, @UnknownUnits Object[] arg1);

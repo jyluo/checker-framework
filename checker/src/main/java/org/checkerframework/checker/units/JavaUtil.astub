@@ -5,8 +5,8 @@ package java.util;
 class Objects {
     // TODO: enforce comparable constraint
     static boolean equals(@UnknownUnits Object arg0, @UnknownUnits Object arg1);
-    // TODO: enforce comparable constraint
     static boolean deepEquals(@UnknownUnits Object arg0, @UnknownUnits Object arg1);
+
     static int hashCode(@UnknownUnits Object arg0);
     static int hash(@UnknownUnits Object[] arg0);
     static String toString(@UnknownUnits Object arg0);

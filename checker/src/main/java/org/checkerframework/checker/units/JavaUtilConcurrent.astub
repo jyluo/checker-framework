@@ -7,8 +7,8 @@ enum TimeUnit {
     @us MICROSECONDS,
     @ms MILLISECONDS,
     @s SECONDS,
-    MINUTES,
-    HOURS,
+    @min MINUTES,
+    @h HOURS,
     DAYS;
 
     // For example, to convert 10 minutes to milliseconds, use:
@@ -26,9 +26,9 @@ enum TimeUnit {
 
     @s long toSeconds(@UnknownUnits long duration);
 
-    long toMinutes(@UnknownUnits long duration);
+    @min long toMinutes(@UnknownUnits long duration);
 
-    long toHours(@UnknownUnits long duration);
+    @h long toHours(@UnknownUnits long duration);
 
     long toDays(@UnknownUnits long duration);
 

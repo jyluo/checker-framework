@@ -565,65 +565,55 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         protected void propagateUnitsAsAddition(
                 AnnotationMirror addition, List<AnnotatedTypeMirror> atms) {
-            int resultPos = getIntElementValue(addition, "res");
-            int leftOperandPos = getIntElementValue(addition, "larg");
-            int rightOperandPos = getIntElementValue(addition, "rarg");
-
-            AnnotatedTypeMirror result = atms.get(resultPos + 1);
-            AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
-            AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
-            AnnotationMirror lhsAM =
-                    leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
-            AnnotationMirror rhsAM =
-                    rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
-
-            if (resultPos == -1) {
-                result.replaceAnnotation(unitsTypecheckUtils.addition(atypeFactory, lhsAM, rhsAM));
-            } else {
-                throw new BugInCF("this case isn't handled yet");
-            }
+            propagateUnitsAsArithmetic(Kind.PLUS, addition, atms);
         }
 
         protected void propagateUnitsAsSubtraction(
                 AnnotationMirror subtraction, List<AnnotatedTypeMirror> atms) {
-            int resultPos = getIntElementValue(subtraction, "res");
-            int leftOperandPos = getIntElementValue(subtraction, "larg");
-            int rightOperandPos = getIntElementValue(subtraction, "rarg");
-
-            AnnotatedTypeMirror result = atms.get(resultPos + 1);
-            AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
-            AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
-            AnnotationMirror lhsAM =
-                    leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
-            AnnotationMirror rhsAM =
-                    rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
-
-            if (resultPos == -1) {
-                result.replaceAnnotation(
-                        unitsTypecheckUtils.subtraction(atypeFactory, lhsAM, rhsAM));
-            } else {
-                throw new BugInCF("this case isn't handled yet");
-            }
+            propagateUnitsAsArithmetic(Kind.MINUS, subtraction, atms);
         }
 
         protected void propagateUnitsAsMultiplication(
                 AnnotationMirror multiplication, List<AnnotatedTypeMirror> atms) {
-            int resultPos = getIntElementValue(multiplication, "res");
-            int leftOperandPos = getIntElementValue(multiplication, "larg");
-            int rightOperandPos = getIntElementValue(multiplication, "rarg");
+            propagateUnitsAsArithmetic(Kind.MULTIPLY, multiplication, atms);
+        }
 
-            AnnotatedTypeMirror result = atms.get(resultPos + 1);
+        protected void propagateUnitsAsArithmetic(
+                Kind op, AnnotationMirror metaanno, List<AnnotatedTypeMirror> atms) {
+            int leftOperandPos = getIntElementValue(metaanno, "larg");
+            int rightOperandPos = getIntElementValue(metaanno, "rarg");
+            int resultPos = getIntElementValue(metaanno, "res");
+
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
             AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
+            AnnotatedTypeMirror result = atms.get(resultPos + 1);
+
             AnnotationMirror lhsAM =
                     leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
             AnnotationMirror rhsAM =
                     rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+            AnnotationMirror resultAM;
+            switch (op) {
+                case PLUS:
+                    resultAM = unitsTypecheckUtils.addition(atypeFactory, lhsAM, rhsAM);
+                    break;
+                case MINUS:
+                    resultAM = unitsTypecheckUtils.subtraction(atypeFactory, lhsAM, rhsAM);
+                    break;
+                case MULTIPLY:
+                    resultAM = unitsTypecheckUtils.multiplication(lhsAM, rhsAM);
+                    break;
+                case DIVIDE:
+                    resultAM = unitsTypecheckUtils.division(lhsAM, rhsAM);
+                    break;
+                default:
+                    throw new BugInCF("unsupported operation " + op);
+            }
 
             if (resultPos == -1) {
-                result.replaceAnnotation(unitsTypecheckUtils.multiplication(lhsAM, rhsAM));
+                result.replaceAnnotation(resultAM);
             } else {
-                throw new BugInCF("this case isn't handled yet");
+                throw new BugInCF("result index " + resultPos + " is not yet supported");
             }
         }
 

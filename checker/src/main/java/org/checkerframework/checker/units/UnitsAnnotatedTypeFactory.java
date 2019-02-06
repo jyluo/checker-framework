@@ -1,17 +1,23 @@
 package org.checkerframework.checker.units;
 
 import com.sun.source.tree.BinaryTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree.Kind;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeKind;
 import org.checkerframework.checker.units.qual.BaseUnit;
 import org.checkerframework.checker.units.qual.UnitsAlias;
+import org.checkerframework.checker.units.qual.UnitsMultiply;
 import org.checkerframework.checker.units.qual.UnitsRep;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
@@ -22,6 +28,7 @@ import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFormatter;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.AnnotationClassLoader;
 import org.checkerframework.framework.type.DefaultAnnotatedTypeFormatter;
 import org.checkerframework.framework.type.QualifierHierarchy;
@@ -69,6 +76,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     public UnitsRepresentationUtils getUnitsRepresentationUtils() {
         return unitsRepUtils;
+    }
+
+    public UnitsTypecheckUtils getUnitsTypecheckUtils() {
+        return unitsTypecheckUtils;
     }
 
     /** Use the Units Annotated Type Loader instead of the default one */
@@ -482,6 +493,80 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
 
             return null;
+        }
+
+        /** propagate units in specially tagged methods */
+        @Override
+        public Void visitMethodInvocation(
+                MethodInvocationTree node, AnnotatedTypeMirror returnATM) {
+            // System.err.println(" visit method invoke " + node);
+            // System.err.println(" returnATM " + returnATM);
+            // System.err.println(" args " + node.getArguments());
+            // System.err.println(" args " + node.getMethodSelect());
+
+            ParameterizedMethodType mType = atypeFactory.methodFromUse(node);
+            AnnotatedExecutableType invokedMethod = mType.methodType;
+            // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
+
+            // ExecutableElement invokedMethod = TreeUtils.elementFromUse(node);
+            // System.err.println(" invokedMethod " + invokedMethod);
+
+            // Build up a list of ATMs corresponding to the index convention used in the Units
+            // method meta-annotations. null values are inserted if there is no possible ATM for
+            // that index position.
+            List<AnnotatedTypeMirror> atms = new ArrayList<>();
+            atms.add(returnATM);
+
+            boolean isStaticMethod =
+                    invokedMethod.getElement().getModifiers().contains(Modifier.STATIC);
+            // System.err.println(" isStaticMethod " + isStaticMethod);
+
+            ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+            // System.err.println(" receiver " + receiver);
+
+            // ATM for argument to the formal "this" parameter
+            if (receiver != null && !isStaticMethod) {
+                AnnotatedTypeMirror receiverATM = getAnnotatedType(receiver);
+                atms.add(receiverATM);
+            } else {
+                atms.add(null);
+            }
+
+            for (ExpressionTree arg : node.getArguments()) {
+                AnnotatedTypeMirror argATM = getAnnotatedType(arg);
+                // System.err.println(" arg " + arg + " type " + argATM);
+                atms.add(argATM);
+            }
+
+            UnitsMultiply unitsMultiply =
+                    invokedMethod.getElement().getAnnotation(UnitsMultiply.class);
+            if (unitsMultiply != null) {
+                propagateUnitsAsMultiplication(unitsMultiply, atms);
+            }
+
+            // System.err.println();
+
+            return super.visitMethodInvocation(node, returnATM);
+        }
+
+        protected void propagateUnitsAsMultiplication(
+                UnitsMultiply checkMultiply, List<AnnotatedTypeMirror> atms) {
+            int resultPos = checkMultiply.res();
+            int leftOperandPos = checkMultiply.larg();
+            int rightOperandPos = checkMultiply.rarg();
+
+            AnnotatedTypeMirror result = atms.get(resultPos + 1);
+            AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
+            AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
+
+            if (resultPos == -1) {
+                result.replaceAnnotation(
+                        unitsTypecheckUtils.multiplication(
+                                leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP),
+                                rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP)));
+            } else {
+                throw new BugInCF("this case isn't handled yet");
+            }
         }
     }
 }

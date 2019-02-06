@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeKind;
 import org.checkerframework.checker.units.qual.BaseUnit;
+import org.checkerframework.checker.units.qual.UnitsAddition;
 import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
@@ -448,7 +450,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                         type.replaceAnnotation(unitsRepUtils.DIMENSIONLESS);
                     } else {
                         type.replaceAnnotation(
-                                atypeFactory.getQualifierHierarchy().leastUpperBound(lhsAM, rhsAM));
+                                unitsTypecheckUtils.addition(atypeFactory, lhsAM, rhsAM));
                     }
                     //
                     // else if (AnnotationUtils.areSame(lhsAM, rhsAM)) {
@@ -464,7 +466,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     // type.replaceAnnotation(unitsRepUtils.TOP);
                     // }
                     type.replaceAnnotation(
-                            atypeFactory.getQualifierHierarchy().leastUpperBound(lhsAM, rhsAM));
+                            unitsTypecheckUtils.subtraction(atypeFactory, lhsAM, rhsAM));
                     break;
                 case MULTIPLY:
                     type.replaceAnnotation(unitsTypecheckUtils.multiplication(lhsAM, rhsAM));
@@ -506,6 +508,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             ParameterizedMethodType mType = atypeFactory.methodFromUse(node);
             AnnotatedExecutableType invokedMethod = mType.methodType;
+            ExecutableElement invokedMethodElement = invokedMethod.getElement();
             // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
 
             // ExecutableElement invokedMethod = TreeUtils.elementFromUse(node);
@@ -517,8 +520,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             List<AnnotatedTypeMirror> atms = new ArrayList<>();
             atms.add(returnATM);
 
-            boolean isStaticMethod =
-                    invokedMethod.getElement().getModifiers().contains(Modifier.STATIC);
+            boolean isStaticMethod = invokedMethodElement.getModifiers().contains(Modifier.STATIC);
             // System.err.println(" isStaticMethod " + isStaticMethod);
 
             ExpressionTree receiver = TreeUtils.getReceiverTree(node);
@@ -538,8 +540,13 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 atms.add(argATM);
             }
 
+            UnitsAddition addition = invokedMethodElement.getAnnotation(UnitsAddition.class);
             UnitsMultiplication multiplication =
-                    invokedMethod.getElement().getAnnotation(UnitsMultiplication.class);
+                    invokedMethodElement.getAnnotation(UnitsMultiplication.class);
+
+            if (addition != null) {
+                propagateUnitsAsAddition(addition, atms);
+            }
             if (multiplication != null) {
                 propagateUnitsAsMultiplication(multiplication, atms);
             }
@@ -547,6 +554,27 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // System.err.println();
 
             return super.visitMethodInvocation(node, returnATM);
+        }
+
+        protected void propagateUnitsAsAddition(
+                UnitsAddition addition, List<AnnotatedTypeMirror> atms) {
+            int resultPos = addition.res();
+            int leftOperandPos = addition.larg();
+            int rightOperandPos = addition.rarg();
+
+            AnnotatedTypeMirror result = atms.get(resultPos + 1);
+            AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
+            AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
+            AnnotationMirror lhsAM =
+                    leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+            AnnotationMirror rhsAM =
+                    rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+
+            if (resultPos == -1) {
+                result.replaceAnnotation(unitsTypecheckUtils.addition(atypeFactory, lhsAM, rhsAM));
+            } else {
+                throw new BugInCF("this case isn't handled yet");
+            }
         }
 
         protected void propagateUnitsAsMultiplication(
@@ -558,12 +586,13 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             AnnotatedTypeMirror result = atms.get(resultPos + 1);
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
             AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
+            AnnotationMirror lhsAM =
+                    leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+            AnnotationMirror rhsAM =
+                    rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
 
             if (resultPos == -1) {
-                result.replaceAnnotation(
-                        unitsTypecheckUtils.multiplication(
-                                leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP),
-                                rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP)));
+                result.replaceAnnotation(unitsTypecheckUtils.multiplication(lhsAM, rhsAM));
             } else {
                 throw new BugInCF("this case isn't handled yet");
             }

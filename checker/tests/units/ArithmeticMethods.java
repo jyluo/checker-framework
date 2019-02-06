@@ -1,4 +1,3 @@
-import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
 public class ArithmeticMethods {
@@ -15,25 +14,39 @@ public class ArithmeticMethods {
         return width * height;
     }
 
-    int noAnno(int x, int y) {
-        return x;
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    @UnknownUnits int sum(@UnknownUnits int x, @UnknownUnits int y) {
+        return x + y;
     }
 
-    void test() {
-        @m int m1, m2;
-        m1 = 5 * UnitsTools.m;
-        m2 = 51 * UnitsTools.m;
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    static @UnknownUnits int sumStatic(@UnknownUnits int x, @UnknownUnits int y) {
+        return x + y;
+    }
 
-        @km int km1, km2;
-        km1 = 5 * UnitsTools.km;
-        km2 = 5 * UnitsTools.km;
+    @m int m1, m2;
+    @km int km1, km2;
+    @m2 int msq;
+    @km2 int kmsq;
 
-        @m2 int msq;
-        @km2 int kmsq;
+    void testAddition() {
+        m1 = sum(m1, m2);
 
-        int x = noAnno(10, 20);
+        // :: error: (assignment.type.incompatible)
+        m2 = sum(m1, km2);
 
-        // good
+        // :: error: (assignment.type.incompatible)
+        km1 = sum(m1, m2);
+
+        km2 = sum(km1, km2);
+
+        m1 = ArithmeticMethods.sumStatic(m1, m2);
+
+        // :: error: (assignment.type.incompatible)
+        m2 = ArithmeticMethods.sumStatic(m1, km2);
+    }
+
+    void testMultiplication() {
         msq = calcArea(m1, m2);
 
         // :: error: (assignment.type.incompatible)
@@ -42,9 +55,11 @@ public class ArithmeticMethods {
         // :: error: (assignment.type.incompatible)
         kmsq = calcArea(m1, m2);
 
-        // good
         kmsq = calcArea(km1, km2);
 
         msq = ArithmeticMethods.calcAreaStatic(m1, m2);
+
+        // :: error: (assignment.type.incompatible)
+        msq = ArithmeticMethods.calcAreaStatic(m1, km2);
     }
 }

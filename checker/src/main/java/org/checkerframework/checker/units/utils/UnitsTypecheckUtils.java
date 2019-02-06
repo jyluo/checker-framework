@@ -1,6 +1,7 @@
 package org.checkerframework.checker.units.utils;
 
 import javax.lang.model.element.AnnotationMirror;
+import org.checkerframework.framework.type.AnnotatedTypeFactory;
 
 /** Utility class with methods for computing the result unit of various arithmetic operations. */
 public class UnitsTypecheckUtils {
@@ -10,6 +11,16 @@ public class UnitsTypecheckUtils {
 
     public UnitsTypecheckUtils(UnitsRepresentationUtils unitsRepUtils) {
         this.unitsRepUtils = unitsRepUtils;
+    }
+
+    public AnnotationMirror addition(
+            AnnotatedTypeFactory atf, AnnotationMirror lhsAM, AnnotationMirror rhsAM) {
+        return atf.getQualifierHierarchy().leastUpperBound(lhsAM, rhsAM);
+    }
+
+    public AnnotationMirror subtraction(
+            AnnotatedTypeFactory atf, AnnotationMirror lhsAM, AnnotationMirror rhsAM) {
+        return atf.getQualifierHierarchy().leastUpperBound(lhsAM, rhsAM);
     }
 
     public AnnotationMirror multiplication(AnnotationMirror lhsAM, AnnotationMirror rhsAM) {

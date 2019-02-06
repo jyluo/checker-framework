@@ -21,6 +21,7 @@ import org.checkerframework.checker.units.qual.UnitsAddition;
 import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
+import org.checkerframework.checker.units.qual.UnitsSubtraction;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -504,14 +505,14 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // System.err.println(" visit method invoke " + node);
             // System.err.println(" returnATM " + returnATM);
             // System.err.println(" args " + node.getArguments());
-            // System.err.println(" args " + node.getMethodSelect());
+            // System.err.println(" methodSelect " + node.getMethodSelect());
 
             ParameterizedMethodType mType = atypeFactory.methodFromUse(node);
             AnnotatedExecutableType invokedMethod = mType.methodType;
-            ExecutableElement invokedMethodElement = invokedMethod.getElement();
+            // TreeUtils.elementFromUse(node)
+            ExecutableElement methodElement = invokedMethod.getElement();
             // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
 
-            // ExecutableElement invokedMethod = TreeUtils.elementFromUse(node);
             // System.err.println(" invokedMethod " + invokedMethod);
 
             // Build up a list of ATMs corresponding to the index convention used in the Units
@@ -520,7 +521,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             List<AnnotatedTypeMirror> atms = new ArrayList<>();
             atms.add(returnATM);
 
-            boolean isStaticMethod = invokedMethodElement.getModifiers().contains(Modifier.STATIC);
+            boolean isStaticMethod = methodElement.getModifiers().contains(Modifier.STATIC);
             // System.err.println(" isStaticMethod " + isStaticMethod);
 
             ExpressionTree receiver = TreeUtils.getReceiverTree(node);
@@ -540,12 +541,18 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 atms.add(argATM);
             }
 
-            UnitsAddition addition = invokedMethodElement.getAnnotation(UnitsAddition.class);
-            UnitsMultiplication multiplication =
-                    invokedMethodElement.getAnnotation(UnitsMultiplication.class);
+            AnnotationMirror addition =
+                    atypeFactory.getDeclAnnotation(methodElement, UnitsAddition.class);
+            AnnotationMirror subtraction =
+                    atypeFactory.getDeclAnnotation(methodElement, UnitsSubtraction.class);
+            AnnotationMirror multiplication =
+                    atypeFactory.getDeclAnnotation(methodElement, UnitsMultiplication.class);
 
             if (addition != null) {
                 propagateUnitsAsAddition(addition, atms);
+            }
+            if (subtraction != null) {
+                propagateUnitsAsSubtraction(subtraction, atms);
             }
             if (multiplication != null) {
                 propagateUnitsAsMultiplication(multiplication, atms);
@@ -557,10 +564,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         protected void propagateUnitsAsAddition(
-                UnitsAddition addition, List<AnnotatedTypeMirror> atms) {
-            int resultPos = addition.res();
-            int leftOperandPos = addition.larg();
-            int rightOperandPos = addition.rarg();
+                AnnotationMirror addition, List<AnnotatedTypeMirror> atms) {
+            int resultPos = getIntElementValue(addition, "res");
+            int leftOperandPos = getIntElementValue(addition, "larg");
+            int rightOperandPos = getIntElementValue(addition, "rarg");
 
             AnnotatedTypeMirror result = atms.get(resultPos + 1);
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
@@ -577,11 +584,33 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
         }
 
+        protected void propagateUnitsAsSubtraction(
+                AnnotationMirror subtraction, List<AnnotatedTypeMirror> atms) {
+            int resultPos = getIntElementValue(subtraction, "res");
+            int leftOperandPos = getIntElementValue(subtraction, "larg");
+            int rightOperandPos = getIntElementValue(subtraction, "rarg");
+
+            AnnotatedTypeMirror result = atms.get(resultPos + 1);
+            AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
+            AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
+            AnnotationMirror lhsAM =
+                    leftOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+            AnnotationMirror rhsAM =
+                    rightOperand.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+
+            if (resultPos == -1) {
+                result.replaceAnnotation(
+                        unitsTypecheckUtils.subtraction(atypeFactory, lhsAM, rhsAM));
+            } else {
+                throw new BugInCF("this case isn't handled yet");
+            }
+        }
+
         protected void propagateUnitsAsMultiplication(
-                UnitsMultiplication multiplication, List<AnnotatedTypeMirror> atms) {
-            int resultPos = multiplication.res();
-            int leftOperandPos = multiplication.larg();
-            int rightOperandPos = multiplication.rarg();
+                AnnotationMirror multiplication, List<AnnotatedTypeMirror> atms) {
+            int resultPos = getIntElementValue(multiplication, "res");
+            int leftOperandPos = getIntElementValue(multiplication, "larg");
+            int rightOperandPos = getIntElementValue(multiplication, "rarg");
 
             AnnotatedTypeMirror result = atms.get(resultPos + 1);
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
@@ -596,6 +625,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             } else {
                 throw new BugInCF("this case isn't handled yet");
             }
+        }
+
+        protected int getIntElementValue(AnnotationMirror anno, CharSequence name) {
+            return AnnotationUtils.getElementValue(anno, name, Integer.class, false);
         }
     }
 }

@@ -57,13 +57,18 @@ class Math {
     static @PolyUnit int negateExact(@PolyUnit int a);
     static @PolyUnit long negateExact(@PolyUnit long a);
 
-    // // The following uses Units Relations
-    // // same as addition, throws exception if it overflows
-    // static int addExact(@UnknownUnits int x, @UnknownUnits int y);
-    // static long addExact(@UnknownUnits long x, @UnknownUnits long y);
-    // // same as subtraction, throws exception if it overflows
-    // static int subtractExact(@UnknownUnits int x, @UnknownUnits int y);
-    // static long subtractExact(@UnknownUnits long x, @UnknownUnits long y);
+    // same as addition, throws exception if it overflows
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    static int addExact(@UnknownUnits int x, @UnknownUnits int y);
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    static long addExact(@UnknownUnits long x, @UnknownUnits long y);
+
+    // same as subtraction, throws exception if it overflows
+    @UnitsSubtraction(res = -1, larg = 1, rarg = 2)
+    static int subtractExact(@UnknownUnits int x, @UnknownUnits int y);
+    @UnitsSubtraction(res = -1, larg = 1, rarg = 2)
+    static long subtractExact(@UnknownUnits long x, @UnknownUnits long y);
+
     // // same as multiplication, throws exception if it overflows
     // static int multiplyExact(@UnknownUnits int x, @UnknownUnits int y);
     // static long multiplyExact(@UnknownUnits long x, @UnknownUnits long y);

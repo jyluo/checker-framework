@@ -17,7 +17,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeKind;
 import org.checkerframework.checker.units.qual.BaseUnit;
 import org.checkerframework.checker.units.qual.UnitsAlias;
-import org.checkerframework.checker.units.qual.UnitsMultiply;
+import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
@@ -538,10 +538,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 atms.add(argATM);
             }
 
-            UnitsMultiply unitsMultiply =
-                    invokedMethod.getElement().getAnnotation(UnitsMultiply.class);
-            if (unitsMultiply != null) {
-                propagateUnitsAsMultiplication(unitsMultiply, atms);
+            UnitsMultiplication multiplication =
+                    invokedMethod.getElement().getAnnotation(UnitsMultiplication.class);
+            if (multiplication != null) {
+                propagateUnitsAsMultiplication(multiplication, atms);
             }
 
             // System.err.println();
@@ -550,10 +550,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         protected void propagateUnitsAsMultiplication(
-                UnitsMultiply checkMultiply, List<AnnotatedTypeMirror> atms) {
-            int resultPos = checkMultiply.res();
-            int leftOperandPos = checkMultiply.larg();
-            int rightOperandPos = checkMultiply.rarg();
+                UnitsMultiplication multiplication, List<AnnotatedTypeMirror> atms) {
+            int resultPos = multiplication.res();
+            int leftOperandPos = multiplication.larg();
+            int rightOperandPos = multiplication.rarg();
 
             AnnotatedTypeMirror result = atms.get(resultPos + 1);
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);

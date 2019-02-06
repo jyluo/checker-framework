@@ -5,12 +5,12 @@ public class ArithmeticMethods {
 
     // The parameters and returns need to be declared @UnknownUnits to permit the passing of values
     // with units into the method, and to ensure the body type checks
-    @UnitsMultiply(res = -1, larg = 1, rarg = 2)
+    @UnitsMultiplication(res = -1, larg = 1, rarg = 2)
     @UnknownUnits int calcArea(@UnknownUnits int width, @UnknownUnits int height) {
         return width * height;
     }
 
-    @UnitsMultiply(res = -1, larg = 1, rarg = 2)
+    @UnitsMultiplication(res = -1, larg = 1, rarg = 2)
     static @UnknownUnits int calcAreaStatic(@UnknownUnits int width, @UnknownUnits int height) {
         return width * height;
     }

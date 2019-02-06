@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface UnitsMultiply {
+public @interface UnitsMultiplication {
 
     /** Index of the result */
     int res();

@@ -22,6 +22,7 @@ import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsDivision;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
+import org.checkerframework.checker.units.qual.UnitsSame;
 import org.checkerframework.checker.units.qual.UnitsSubtraction;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
@@ -227,7 +228,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return new UnitsQualifierHierarchy(factory);
     }
 
-    private final class UnitsQualifierHierarchy extends GraphQualifierHierarchy {
+    protected class UnitsQualifierHierarchy extends GraphQualifierHierarchy {
         public UnitsQualifierHierarchy(MultiGraphFactory mgf) {
             super(mgf, unitsRepUtils.BOTTOM);
         }
@@ -430,7 +431,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
     }
 
-    private final class UnitsPropagationTreeAnnotator extends PropagationTreeAnnotator {
+    protected class UnitsPropagationTreeAnnotator extends PropagationTreeAnnotator {
         public UnitsPropagationTreeAnnotator() {
             super(UnitsAnnotatedTypeFactory.this);
         }
@@ -542,27 +543,19 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 atms.add(argATM);
             }
 
-            AnnotationMirror addition =
-                    atypeFactory.getDeclAnnotation(methodElement, UnitsAddition.class);
-            AnnotationMirror subtraction =
-                    atypeFactory.getDeclAnnotation(methodElement, UnitsSubtraction.class);
-            AnnotationMirror multiplication =
-                    atypeFactory.getDeclAnnotation(methodElement, UnitsMultiplication.class);
-            AnnotationMirror division =
-                    atypeFactory.getDeclAnnotation(methodElement, UnitsDivision.class);
-
             // multiple meta-annotations are allowed on each method
-            if (addition != null) {
-                propagateUnitsAsAddition(addition, atms);
-            }
-            if (subtraction != null) {
-                propagateUnitsAsSubtraction(subtraction, atms);
-            }
-            if (multiplication != null) {
-                propagateUnitsAsMultiplication(multiplication, atms);
-            }
-            if (division != null) {
-                propagateUnitsAsDivision(division, atms);
+            for (AnnotationMirror anno : atypeFactory.getDeclAnnotations(methodElement)) {
+                if (AnnotationUtils.areSameByClass(anno, UnitsAddition.class)) {
+                    propagateUnitsAsAddition(anno, atms);
+                } else if (AnnotationUtils.areSameByClass(anno, UnitsSubtraction.class)) {
+                    propagateUnitsAsSubtraction(anno, atms);
+                } else if (AnnotationUtils.areSameByClass(anno, UnitsMultiplication.class)) {
+                    propagateUnitsAsMultiplication(anno, atms);
+                } else if (AnnotationUtils.areSameByClass(anno, UnitsDivision.class)) {
+                    propagateUnitsAsDivision(anno, atms);
+                } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
+                    propagateUnitsAsSame(anno, atms);
+                }
             }
 
             // System.err.println();
@@ -592,6 +585,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         protected void propagateUnitsAsArithmetic(
                 Kind op, AnnotationMirror metaanno, List<AnnotatedTypeMirror> atms) {
+            // TODO: validate meta annotation
             int leftOperandPos = getIntElementValue(metaanno, "larg");
             int rightOperandPos = getIntElementValue(metaanno, "rarg");
             int resultPos = getIntElementValue(metaanno, "res");
@@ -626,6 +620,24 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 result.replaceAnnotation(resultAM);
             } else {
                 throw new BugInCF("result index " + resultPos + " is not yet supported");
+            }
+        }
+
+        protected void propagateUnitsAsSame(AnnotationMirror same, List<AnnotatedTypeMirror> atms) {
+            // TODO: validate meta annotation
+            int fstPos = getIntElementValue(same, "fst");
+            int sndPos = getIntElementValue(same, "snd");
+
+            AnnotatedTypeMirror fst = atms.get(fstPos + 1);
+            AnnotatedTypeMirror snd = atms.get(sndPos + 1);
+
+            AnnotationMirror fstAM = fst.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+            AnnotationMirror sndAM = snd.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+
+            if (fstPos == -1) {
+                fst.replaceAnnotation(sndAM);
+            } else if (sndPos == -1) {
+                snd.replaceAnnotation(fstAM);
             }
         }
 

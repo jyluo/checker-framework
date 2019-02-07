@@ -82,13 +82,16 @@ class Math {
     @UnitsDivision(res = -1, larg = 1, rarg = 2)
     static @UnknownUnits long floorDiv(@UnknownUnits long x, @UnknownUnits long y);
 
-    // // returns the IEEE spec remainder of f1 / f2; ie the exact value of
-    // // f1 – [round[f1 / f2] * f2]. same unit as f1
-    // static @UnknownUnits double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);
+    // returns the IEEE spec remainder of f1 / f2; ie the exact value of
+    // f1 – [round[f1 / f2] * f2]. same unit as f1
+    @UnitsSame(fst = -1, snd = 1)
+    static @UnknownUnits double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);
 
     // similar to modulus, returns [x - [floorDiv[x, y] * y]], ie unit of x
-    static @PolyUnit int floorMod(@PolyUnit int x, @UnknownUnits int y);
-    static @PolyUnit long floorMod(@PolyUnit long x, @UnknownUnits long y);
+    @UnitsSame(fst = -1, snd = 1)
+    static @UnknownUnits int floorMod(@UnknownUnits int x, @UnknownUnits int y);
+    @UnitsSame(fst = -1, snd = 1)
+    static @UnknownUnits long floorMod(@UnknownUnits long x, @UnknownUnits long y);
 
     // TODO: special support for these 2 methods, which will
     // return the square root and cubic root of any supported units eg m2, km3

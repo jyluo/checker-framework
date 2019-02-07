@@ -69,6 +69,28 @@ public class ArithmeticMethods {
         return dist / time;
     }
 
+    // Same
+    @UnitsSame(fst = -1, snd = 1)
+    @UnknownUnits int remainder(@UnknownUnits int quo, @UnknownUnits int div) {
+        return quo % div;
+    }
+
+    @UnitsSame(fst = -1, snd = 1)
+    static @UnknownUnits long remainderStatic(@UnknownUnits long quo, @UnknownUnits long div) {
+        return quo % div;
+    }
+
+    // Compare Same
+    @UnitsSame(fst = 1, snd = 2)
+    boolean compareSame(@UnknownUnits int x, @UnknownUnits int y) {
+        return x == y;
+    }
+
+    @UnitsSame(fst = 1, snd = 2)
+    static boolean compareSameStatic(@UnknownUnits int x, @UnknownUnits int y) {
+        return x == y;
+    }
+
     @m int m1, m2;
     @km long km1, km2;
     @m2 int msq;
@@ -165,5 +187,26 @@ public class ArithmeticMethods {
 
         // :: error: (assignment.type.incompatible)
         kmph = Math.floorDiv(km1, s1);
+    }
+
+    void testRemainder() {
+        m1 = remainder(m1, s1);
+
+        // :: error: (assignment.type.incompatible)
+        s1 = remainder(m1, s1);
+
+        km1 = ArithmeticMethods.remainderStatic(km2, h1);
+
+        // :: error: (assignment.type.incompatible)
+        kmph = ArithmeticMethods.remainderStatic(km1, s1);
+
+        km1 = (long) Math.IEEEremainder(km2, h1);
+
+        // :: error: (assignment.type.incompatible)
+        kmph = (long) Math.IEEEremainder(km2, h1);
+
+        m1 = Math.floorMod(m1, s1);
+
+        km1 = Math.floorMod(km2, h1);
     }
 }

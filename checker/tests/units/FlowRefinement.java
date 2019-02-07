@@ -2,7 +2,6 @@ import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
 class FlowRefinement {
-
     void methodLocalFlowSensitiveRefinement() {
         @deg double degrees = 45.0 * UnitsTools.deg;
 

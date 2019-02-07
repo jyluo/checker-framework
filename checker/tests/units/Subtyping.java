@@ -2,9 +2,7 @@ import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.framework.qual.PolyAll;
 
 class Subtyping {
-
     @UnknownUnits Integer top;
-
     @UnknownUnits Integer uu;
     @UnitsBottom Integer bot;
     @Dimensionless Integer dim;

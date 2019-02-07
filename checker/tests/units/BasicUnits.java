@@ -2,7 +2,6 @@ import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
 public class BasicUnits {
-
     void demo() {
         // :: error: (assignment.type.incompatible)
         @m int merr = 5;

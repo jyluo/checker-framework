@@ -2,9 +2,7 @@ import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
 class UnitsToolsConstants {
-
     @UnknownUnits Integer top;
-
     @UnknownUnits Integer uu;
     @UnitsBottom Integer bot;
     @Dimensionless Integer dim;

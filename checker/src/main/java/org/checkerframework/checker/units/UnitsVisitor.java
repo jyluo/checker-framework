@@ -17,6 +17,7 @@ import org.checkerframework.checker.units.qual.Dimensionless;
 import org.checkerframework.checker.units.qual.UnitsAddition;
 import org.checkerframework.checker.units.qual.UnitsDivision;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
+import org.checkerframework.checker.units.qual.UnitsSame;
 import org.checkerframework.checker.units.qual.UnitsSames;
 import org.checkerframework.checker.units.qual.UnitsSubtraction;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
@@ -219,6 +220,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                                 anno, "value", AnnotationMirror.class, false)) {
                     checkUnitsAsSame(node, invokedMethod, same, atms);
                 }
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
+                checkUnitsAsSame(node, invokedMethod, anno, atms);
             }
         }
 
@@ -257,9 +260,13 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
     }
 
+    // TODO: varargs
     protected void validatePositionIndex(
             AnnotatedExecutableType invokedMethod, AnnotationMirror same, int pos) {
-        if (pos < -1) {
+        boolean lowerBoundValid = -1 <= pos;
+        boolean upperBoundValid = pos <= invokedMethod.getElement().getParameters().size();
+
+        if (!lowerBoundValid || (!invokedMethod.isVarArgs() && !upperBoundValid)) {
             throw new UserError(
                     "The index "
                             + pos

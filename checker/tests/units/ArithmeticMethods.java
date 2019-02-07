@@ -96,6 +96,11 @@ public class ArithmeticMethods {
     @m2 int msq;
     @km2 long kmsq;
 
+    @s int s1;
+    @h long h1;
+    @mPERs int mps;
+    @kmPERh long kmph;
+
     void testAddition() {
         m1 = sum(m1, m2);
 
@@ -162,11 +167,6 @@ public class ArithmeticMethods {
         kmsq = Math.multiplyExact(km1, m2);
     }
 
-    @s int s1;
-    @h long h1;
-    @mPERs int mps;
-    @kmPERh long kmph;
-
     void testDivision() {
         mps = calcSpeed(m1, s1);
 
@@ -189,7 +189,7 @@ public class ArithmeticMethods {
         kmph = Math.floorDiv(km1, s1);
     }
 
-    void testRemainder() {
+    void testSame() {
         m1 = remainder(m1, s1);
 
         // :: error: (assignment.type.incompatible)
@@ -208,5 +208,10 @@ public class ArithmeticMethods {
         m1 = Math.floorMod(m1, s1);
 
         km1 = Math.floorMod(km2, h1);
+
+        m1 = (int) Math.hypot(m1, m2);
+
+        // :: error: (units.not.same)
+        m1 = (int) Math.hypot(m1, s1);
     }
 }

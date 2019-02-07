@@ -22,6 +22,7 @@ import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsDivision;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
+import org.checkerframework.checker.units.qual.UnitsSame;
 import org.checkerframework.checker.units.qual.UnitsSames;
 import org.checkerframework.checker.units.qual.UnitsSubtraction;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
@@ -338,7 +339,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 subAnno = unitsRepUtils.TOP;
             }
             if (isPolymorphic(superAnno)) {
-                // superAnno = unitsRepUtils.TOP;
+                // super is replaced by TOP, hence always true
                 return true;
             }
 
@@ -519,7 +520,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             ExecutableElement methodElement = invokedMethod.getElement();
             // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
 
-            // System.err.println(" invokedMethod " + invokedMethod);
+            // System.err.println(" invokedMethod " + invokedMethod.getErased());
+            // System.err.println(" methodElement " + methodElement);
 
             // Build up a list of ATMs corresponding to the index convention used in the Units
             // method meta-annotations. null values are inserted if there is no possible ATM for
@@ -550,19 +552,21 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // multiple meta-annotations are allowed on each method
             for (AnnotationMirror anno : atypeFactory.getDeclAnnotations(methodElement)) {
                 if (AnnotationUtils.areSameByClass(anno, UnitsAddition.class)) {
-                    propagateUnitsAsAddition(anno, atms);
+                    propagateUnitsAsAddition(invokedMethod, anno, atms);
                 } else if (AnnotationUtils.areSameByClass(anno, UnitsSubtraction.class)) {
-                    propagateUnitsAsSubtraction(anno, atms);
+                    propagateUnitsAsSubtraction(invokedMethod, anno, atms);
                 } else if (AnnotationUtils.areSameByClass(anno, UnitsMultiplication.class)) {
-                    propagateUnitsAsMultiplication(anno, atms);
+                    propagateUnitsAsMultiplication(invokedMethod, anno, atms);
                 } else if (AnnotationUtils.areSameByClass(anno, UnitsDivision.class)) {
-                    propagateUnitsAsDivision(anno, atms);
+                    propagateUnitsAsDivision(invokedMethod, anno, atms);
                 } else if (AnnotationUtils.areSameByClass(anno, UnitsSames.class)) {
                     for (AnnotationMirror same :
                             AnnotationUtils.getElementValueArray(
                                     anno, "value", AnnotationMirror.class, false)) {
-                        propagateUnitsAsSame(same, atms);
+                        propagateUnitsAsSame(invokedMethod, same, atms);
                     }
+                } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
+                    propagateUnitsAsSame(invokedMethod, anno, atms);
                 }
             }
 
@@ -572,31 +576,48 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         protected void propagateUnitsAsAddition(
-                AnnotationMirror addition, List<AnnotatedTypeMirror> atms) {
-            propagateUnitsAsArithmetic(Kind.PLUS, addition, atms);
+                AnnotatedExecutableType invokedMethod,
+                AnnotationMirror addition,
+                List<AnnotatedTypeMirror> atms) {
+            propagateUnitsAsArithmetic(Kind.PLUS, invokedMethod, addition, atms);
         }
 
         protected void propagateUnitsAsSubtraction(
-                AnnotationMirror subtraction, List<AnnotatedTypeMirror> atms) {
-            propagateUnitsAsArithmetic(Kind.MINUS, subtraction, atms);
+                AnnotatedExecutableType invokedMethod,
+                AnnotationMirror subtraction,
+                List<AnnotatedTypeMirror> atms) {
+            propagateUnitsAsArithmetic(Kind.MINUS, invokedMethod, subtraction, atms);
         }
 
         protected void propagateUnitsAsMultiplication(
-                AnnotationMirror multiplication, List<AnnotatedTypeMirror> atms) {
-            propagateUnitsAsArithmetic(Kind.MULTIPLY, multiplication, atms);
+                AnnotatedExecutableType invokedMethod,
+                AnnotationMirror multiplication,
+                List<AnnotatedTypeMirror> atms) {
+            propagateUnitsAsArithmetic(Kind.MULTIPLY, invokedMethod, multiplication, atms);
         }
 
         protected void propagateUnitsAsDivision(
-                AnnotationMirror division, List<AnnotatedTypeMirror> atms) {
-            propagateUnitsAsArithmetic(Kind.DIVIDE, division, atms);
+                AnnotatedExecutableType invokedMethod,
+                AnnotationMirror division,
+                List<AnnotatedTypeMirror> atms) {
+            propagateUnitsAsArithmetic(Kind.DIVIDE, invokedMethod, division, atms);
         }
 
         protected void propagateUnitsAsArithmetic(
-                Kind op, AnnotationMirror metaanno, List<AnnotatedTypeMirror> atms) {
-            // TODO: validate meta annotation
+                Kind op,
+                AnnotatedExecutableType invokedMethod,
+                AnnotationMirror metaanno,
+                List<AnnotatedTypeMirror> atms) {
             int leftOperandPos = unitsTypecheckUtils.getIntElementValue(metaanno, "larg");
             int rightOperandPos = unitsTypecheckUtils.getIntElementValue(metaanno, "rarg");
             int resultPos = unitsTypecheckUtils.getIntElementValue(metaanno, "res");
+
+            // do nothing if position index is invalid, errors are issued in UnitsVisitor
+            if (!isPositionIndexValid(invokedMethod, leftOperandPos)
+                    || !isPositionIndexValid(invokedMethod, rightOperandPos)
+                    || !isPositionIndexValid(invokedMethod, resultPos)) {
+                return;
+            }
 
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
             AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
@@ -631,10 +652,21 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
         }
 
-        protected void propagateUnitsAsSame(AnnotationMirror same, List<AnnotatedTypeMirror> atms) {
-            // TODO: validate meta annotation
+        protected void propagateUnitsAsSame(
+                AnnotatedExecutableType invokedMethod,
+                AnnotationMirror same,
+                List<AnnotatedTypeMirror> atms) {
             int fstPos = unitsTypecheckUtils.getIntElementValue(same, "fst");
             int sndPos = unitsTypecheckUtils.getIntElementValue(same, "snd");
+
+            // System.err.println("fst valid: " + isPositionIndexValid(invokedMethod, fstPos));
+            // System.err.println("snd valid: " + isPositionIndexValid(invokedMethod, sndPos));
+
+            // do nothing if position index is invalid, errors are issued in UnitsVisitor
+            if (!isPositionIndexValid(invokedMethod, fstPos)
+                    || !isPositionIndexValid(invokedMethod, sndPos)) {
+                return;
+            }
 
             AnnotatedTypeMirror fst = atms.get(fstPos + 1);
             AnnotatedTypeMirror snd = atms.get(sndPos + 1);
@@ -647,6 +679,34 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             } else if (sndPos == -1) {
                 snd.replaceAnnotation(fstAM);
             }
+        }
+
+        /**
+         * Checks to ensure that pos is between -1 and the number of formal parameters of the
+         * invokedMethod, inclusive. If invokedMethod has a varArgs parameter, then pos must be >=
+         * -1.
+         *
+         * @param node
+         * @param invokedMethod
+         * @param pos a position index
+         * @return
+         */
+        protected boolean isPositionIndexValid(AnnotatedExecutableType invokedMethod, int pos) {
+            // System.err.println(" pos: " + pos);
+            // System.err.println(" # of params " +
+            // invokedMethod.getElement().getParameters().size()
+            // + " for " + invokedMethod);
+            // System.err.println(" is varargs " + invokedMethod.isVarArgs());
+
+            boolean lowerBoundValid = -1 <= pos;
+            boolean upperBoundValid = pos <= invokedMethod.getElement().getParameters().size();
+
+            // System.err.println(" lowerBoundValid " + lowerBoundValid);
+            // System.err.println(" upperBoundValid " + upperBoundValid);
+            // System.err.println(
+            // " varargOutcome " + (invokedMethod.isVarArgs() ? true : upperBoundValid));
+
+            return lowerBoundValid && (invokedMethod.isVarArgs() ? true : upperBoundValid);
         }
     }
 }

@@ -190,6 +190,22 @@ public class MathMethods {
         ls1 = Math.toIntExact(ls2);
         // :: error: (assignment.type.incompatible)
         im1 = Math.toIntExact(ls2);
+
+        dk1 = Math.scalb(dk2, m1);
+        // :: error: (assignment.type.incompatible)
+        fg1 = (float) Math.scalb(dk2, m1);
+
+        fg1 = Math.scalb(fg2, m1);
+        // :: error: (assignment.type.incompatible)
+        dk1 = Math.scalb(fg2, m1);
+
+        dk1 = Math.ulp(dk2);
+        // :: error: (assignment.type.incompatible)
+        fg1 = (float) Math.ulp(dk2);
+
+        fg1 = Math.ulp(fg2);
+        // :: error: (assignment.type.incompatible)
+        dk1 = Math.ulp(fg2);
     }
 
     void testRest() {

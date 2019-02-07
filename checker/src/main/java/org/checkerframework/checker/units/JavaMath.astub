@@ -59,25 +59,29 @@ class Math {
 
     // same as addition, throws exception if it overflows
     @UnitsAddition(res = -1, larg = 1, rarg = 2)
-    static int addExact(@UnknownUnits int x, @UnknownUnits int y);
+    static @UnknownUnits int addExact(@UnknownUnits int x, @UnknownUnits int y);
     @UnitsAddition(res = -1, larg = 1, rarg = 2)
-    static long addExact(@UnknownUnits long x, @UnknownUnits long y);
+    static @UnknownUnits long addExact(@UnknownUnits long x, @UnknownUnits long y);
 
     // same as subtraction, throws exception if it overflows
     @UnitsSubtraction(res = -1, larg = 1, rarg = 2)
-    static int subtractExact(@UnknownUnits int x, @UnknownUnits int y);
+    static @UnknownUnits int subtractExact(@UnknownUnits int x, @UnknownUnits int y);
     @UnitsSubtraction(res = -1, larg = 1, rarg = 2)
-    static long subtractExact(@UnknownUnits long x, @UnknownUnits long y);
+    static @UnknownUnits long subtractExact(@UnknownUnits long x, @UnknownUnits long y);
 
-    // // same as multiplication, throws exception if it overflows
-    // static int multiplyExact(@UnknownUnits int x, @UnknownUnits int y);
-    // static long multiplyExact(@UnknownUnits long x, @UnknownUnits long y);
+    // same as multiplication, throws exception if it overflows
+    @UnitsMultiplication(res = -1, larg = 1, rarg = 2)
+    static @UnknownUnits int multiplyExact(@UnknownUnits int x, @UnknownUnits int y);
+    @UnitsMultiplication(res = -1, larg = 1, rarg = 2)
+    static @UnknownUnits long multiplyExact(@UnknownUnits long x, @UnknownUnits long y);
 
-    // // The following uses Units Relations as well
-    // // returns largest value Q such that Q <= [x / y] in integer division, the
-    // // returned unit is the same as the unit resulting from x / y
-    // static int floorDiv(@UnknownUnits int x, @UnknownUnits int y);
-    // static long floorDiv(@UnknownUnits long x, @UnknownUnits long y);
+    // returns largest value Q such that Q <= [x / y] in integer division, the
+    // returned unit is the same as the unit resulting from x / y
+    @UnitsDivision(res = -1, larg = 1, rarg = 2)
+    static @UnknownUnits int floorDiv(@UnknownUnits int x, @UnknownUnits int y);
+    @UnitsDivision(res = -1, larg = 1, rarg = 2)
+    static @UnknownUnits long floorDiv(@UnknownUnits long x, @UnknownUnits long y);
+
     // // returns the IEEE spec remainder of f1 / f2; ie the exact value of
     // // f1 – [round[f1 / f2] * f2]. same unit as f1
     // static double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);

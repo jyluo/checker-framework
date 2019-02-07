@@ -19,6 +19,7 @@ import javax.lang.model.type.TypeKind;
 import org.checkerframework.checker.units.qual.BaseUnit;
 import org.checkerframework.checker.units.qual.UnitsAddition;
 import org.checkerframework.checker.units.qual.UnitsAlias;
+import org.checkerframework.checker.units.qual.UnitsDivision;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
 import org.checkerframework.checker.units.qual.UnitsSubtraction;
@@ -547,7 +548,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     atypeFactory.getDeclAnnotation(methodElement, UnitsSubtraction.class);
             AnnotationMirror multiplication =
                     atypeFactory.getDeclAnnotation(methodElement, UnitsMultiplication.class);
+            AnnotationMirror division =
+                    atypeFactory.getDeclAnnotation(methodElement, UnitsDivision.class);
 
+            // multiple meta-annotations are allowed on each method
             if (addition != null) {
                 propagateUnitsAsAddition(addition, atms);
             }
@@ -556,6 +560,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
             if (multiplication != null) {
                 propagateUnitsAsMultiplication(multiplication, atms);
+            }
+            if (division != null) {
+                propagateUnitsAsDivision(division, atms);
             }
 
             // System.err.println();
@@ -576,6 +583,11 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         protected void propagateUnitsAsMultiplication(
                 AnnotationMirror multiplication, List<AnnotatedTypeMirror> atms) {
             propagateUnitsAsArithmetic(Kind.MULTIPLY, multiplication, atms);
+        }
+
+        protected void propagateUnitsAsDivision(
+                AnnotationMirror division, List<AnnotatedTypeMirror> atms) {
+            propagateUnitsAsArithmetic(Kind.DIVIDE, division, atms);
         }
 
         protected void propagateUnitsAsArithmetic(

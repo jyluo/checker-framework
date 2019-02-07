@@ -5,6 +5,7 @@ public class ArithmeticMethods {
     // The parameters and returns need to be declared @UnknownUnits to permit the passing of values
     // with units into the method, and to ensure the body type checks
 
+    // Add
     @UnitsAddition(res = -1, larg = 1, rarg = 2)
     @UnknownUnits int sum(@UnknownUnits int x, @UnknownUnits int y) {
         return x + y;
@@ -20,6 +21,7 @@ public class ArithmeticMethods {
         return x + y;
     }
 
+    // Sub
     @UnitsSubtraction(res = -1, larg = 1, rarg = 2)
     @UnknownUnits int diff(@UnknownUnits int x, @UnknownUnits int y) {
         return x - y;
@@ -35,6 +37,7 @@ public class ArithmeticMethods {
         return x - y;
     }
 
+    // Mul
     @UnitsMultiplication(res = -1, larg = 1, rarg = 2)
     @UnknownUnits int calcArea(@UnknownUnits int width, @UnknownUnits int height) {
         return width * height;
@@ -48,6 +51,22 @@ public class ArithmeticMethods {
     @UnitsMultiplication(res = -1, larg = 1, rarg = 2)
     static @UnknownUnits long calcAreaStatic(@UnknownUnits long width, @UnknownUnits long height) {
         return width * height;
+    }
+
+    // Div
+    @UnitsDivision(res = -1, larg = 1, rarg = 2)
+    @UnknownUnits int calcSpeed(@UnknownUnits int dist, @UnknownUnits int time) {
+        return dist / time;
+    }
+
+    @UnitsDivision(res = -1, larg = 1, rarg = 2)
+    @UnknownUnits long calcSpeed(@UnknownUnits long dist, @UnknownUnits long time) {
+        return dist / time;
+    }
+
+    @UnitsDivision(res = -1, larg = 1, rarg = 2)
+    static @UnknownUnits long calcSpeedStatic(@UnknownUnits long dist, @UnknownUnits long time) {
+        return dist / time;
     }
 
     @m int m1, m2;
@@ -114,5 +133,37 @@ public class ArithmeticMethods {
 
         // :: error: (assignment.type.incompatible)
         msq = (int) ArithmeticMethods.calcAreaStatic(m1, km2);
+
+        msq = Math.multiplyExact(m1, m2);
+
+        // :: error: (assignment.type.incompatible)
+        kmsq = Math.multiplyExact(km1, m2);
+    }
+
+    @s int s1;
+    @h long h1;
+    @mPERs int spd1;
+    @kmPERh long spd2;
+
+    void testDivision() {
+        spd1 = calcSpeed(m1, s1);
+
+        // :: error: (assignment.type.incompatible)
+        spd1 = calcSpeed((int) km1, s1);
+
+        // :: error: (assignment.type.incompatible)
+        spd2 = calcSpeed(m1, s1);
+
+        spd2 = calcSpeed(km2, h1);
+
+        spd2 = ArithmeticMethods.calcSpeedStatic(km2, h1);
+
+        // :: error: (assignment.type.incompatible)
+        spd2 = ArithmeticMethods.calcSpeedStatic(km1, s1);
+
+        spd1 = Math.floorDiv(m1, s1);
+
+        // :: error: (assignment.type.incompatible)
+        spd2 = Math.floorDiv(km1, s1);
     }
 }

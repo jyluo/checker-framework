@@ -207,13 +207,13 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         // multiple meta-annotations are allowed on each method
         for (AnnotationMirror anno : atypeFactory.getDeclAnnotations(methodElement)) {
             if (AnnotationUtils.areSameByClass(anno, UnitsAddition.class)) {
-                // propagateUnitsAsAddition(anno, atms);
+                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsSubtraction.class)) {
-                // propagateUnitsAsSubtraction(anno, atms);
+                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsMultiplication.class)) {
-                // propagateUnitsAsMultiplication(anno, atms);
+                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsDivision.class)) {
-                // propagateUnitsAsDivision(anno, atms);
+                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsSames.class)) {
                 for (AnnotationMirror same :
                         AnnotationUtils.getElementValueArray(
@@ -226,6 +226,30 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
 
         return super.visitMethodInvocation(node, p);
+    }
+
+    protected void checkUnitsAsArithmetic(
+            MethodInvocationTree node,
+            AnnotatedExecutableType invokedMethod,
+            AnnotationMirror anno,
+            List<AnnotatedTypeMirror> atms) {
+        int leftOperandPos = unitsTypecheckUtils.getIntElementValue(anno, "larg");
+        int rightOperandPos = unitsTypecheckUtils.getIntElementValue(anno, "rarg");
+        int resultPos = unitsTypecheckUtils.getIntElementValue(anno, "res");
+
+        // The check is done here instead of visitMethod() in case an improper meta-annotation was
+        // declared in a stub
+        validatePositionIndex(invokedMethod, anno, leftOperandPos);
+        validatePositionIndex(invokedMethod, anno, rightOperandPos);
+        validatePositionIndex(invokedMethod, anno, resultPos);
+
+        if (leftOperandPos == rightOperandPos) {
+            throw new UserError(
+                    "The indices larg and rarg cannot be the same for meta-annotation "
+                            + anno
+                            + " declared on method "
+                            + invokedMethod);
+        }
     }
 
     protected void checkUnitsAsSame(

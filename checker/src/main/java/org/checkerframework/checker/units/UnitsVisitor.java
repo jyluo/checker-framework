@@ -207,28 +207,28 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         // multiple meta-annotations are allowed on each method
         for (AnnotationMirror anno : atypeFactory.getDeclAnnotations(methodElement)) {
             if (AnnotationUtils.areSameByClass(anno, UnitsAddition.class)) {
-                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsSubtraction.class)) {
-                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsMultiplication.class)) {
-                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsDivision.class)) {
-                checkUnitsAsArithmetic(node, invokedMethod, anno, atms);
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
             } else if (AnnotationUtils.areSameByClass(anno, UnitsSames.class)) {
                 for (AnnotationMirror same :
                         AnnotationUtils.getElementValueArray(
                                 anno, "value", AnnotationMirror.class, false)) {
-                    checkUnitsAsSame(node, invokedMethod, same, atms);
+                    checkMethodUnitsSame(node, invokedMethod, same, atms);
                 }
             } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
-                checkUnitsAsSame(node, invokedMethod, anno, atms);
+                checkMethodUnitsSame(node, invokedMethod, anno, atms);
             }
         }
 
         return super.visitMethodInvocation(node, p);
     }
 
-    protected void checkUnitsAsArithmetic(
+    protected void checkMethodUnitsArithmetic(
             MethodInvocationTree node,
             AnnotatedExecutableType invokedMethod,
             AnnotationMirror anno,
@@ -252,7 +252,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
     }
 
-    protected void checkUnitsAsSame(
+    protected void checkMethodUnitsSame(
             MethodInvocationTree node,
             AnnotatedExecutableType invokedMethod,
             AnnotationMirror same,

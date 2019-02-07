@@ -199,19 +199,5 @@ public class ArithmeticMethods {
 
         // :: error: (assignment.type.incompatible)
         kmph = ArithmeticMethods.remainderStatic(km1, s1);
-
-        km1 = (long) Math.IEEEremainder(km2, h1);
-
-        // :: error: (assignment.type.incompatible)
-        kmph = (long) Math.IEEEremainder(km2, h1);
-
-        m1 = Math.floorMod(m1, s1);
-
-        km1 = Math.floorMod(km2, h1);
-
-        m1 = (int) Math.hypot(m1, m2);
-
-        // :: error: (units.differ)
-        m1 = (int) Math.hypot(m1, s1);
     }
 }

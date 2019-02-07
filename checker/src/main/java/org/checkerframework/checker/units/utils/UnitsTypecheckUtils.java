@@ -2,6 +2,7 @@ package org.checkerframework.checker.units.utils;
 
 import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
+import org.checkerframework.javacutil.AnnotationUtils;
 
 /** Utility class with methods for computing the result unit of various arithmetic operations. */
 public class UnitsTypecheckUtils {
@@ -87,5 +88,9 @@ public class UnitsTypecheckUtils {
         TypecheckUnit lhs = unitsRepUtils.createTypecheckUnit(lhsAM);
         TypecheckUnit rhs = unitsRepUtils.createTypecheckUnit(rhsAM);
         return lhs.equals(rhs);
+    }
+
+    public int getIntElementValue(AnnotationMirror anno, CharSequence name) {
+        return AnnotationUtils.getElementValue(anno, name, Integer.class, false);
     }
 }

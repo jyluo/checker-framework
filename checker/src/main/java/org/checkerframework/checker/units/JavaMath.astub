@@ -41,10 +41,11 @@ class Math {
     static @PolyUnit int abs(@PolyUnit int a);
     static @PolyUnit long abs(@PolyUnit long a);
 
-    // both x & y must be same unit and if so returns that unit, else returns
-    // the LUB of the units
-    // TODO: res = sqrt( x^2 + y^2 ); compute as such
-    // static @PolyUnit double hypot(@PolyUnit double x, @PolyUnit double y);
+    // both x & y must be same unit and if so returns that unit
+    // res = sqrt( x^2 + y^2 )
+    @UnitsSame(fst = -1, snd = 1)
+    @UnitsSame(fst = 1, snd = 2)
+    static @PolyUnit double hypot(@PolyUnit double x, @PolyUnit double y);
 
     // Exact operations
     // returns a++ or exception if it overflows, same unit as a

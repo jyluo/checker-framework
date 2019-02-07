@@ -1,10 +1,10 @@
 package org.checkerframework.checker.units;
 
-import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.C;
 import org.checkerframework.checker.units.qual.K;
 import org.checkerframework.checker.units.qual.cd;
+import org.checkerframework.checker.units.qual.deg;
 import org.checkerframework.checker.units.qual.g;
 import org.checkerframework.checker.units.qual.h;
 import org.checkerframework.checker.units.qual.kg;
@@ -19,6 +19,9 @@ import org.checkerframework.checker.units.qual.min;
 import org.checkerframework.checker.units.qual.mm;
 import org.checkerframework.checker.units.qual.mm2;
 import org.checkerframework.checker.units.qual.mol;
+import org.checkerframework.checker.units.qual.ms;
+import org.checkerframework.checker.units.qual.rad;
+import org.checkerframework.checker.units.qual.s;
 
 /** Utility methods to generate annotated types and to convert between them. */
 @SuppressWarnings({"units", "checkstyle:constantname"})

@@ -22,7 +22,7 @@ import org.checkerframework.checker.units.qual.UnitsAlias;
 import org.checkerframework.checker.units.qual.UnitsDivision;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsRep;
-import org.checkerframework.checker.units.qual.UnitsSame;
+import org.checkerframework.checker.units.qual.UnitsSames;
 import org.checkerframework.checker.units.qual.UnitsSubtraction;
 import org.checkerframework.checker.units.utils.UnitsRepresentationUtils;
 import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
@@ -65,15 +65,17 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     protected UnitsAnnotationFormatter unitsAnnotationFormatter;
 
     /** reference to the units representation utilities library */
-    protected UnitsRepresentationUtils unitsRepUtils;
+    protected final UnitsRepresentationUtils unitsRepUtils;
 
     /** reference to the units type check utilities library */
-    protected UnitsTypecheckUtils unitsTypecheckUtils;
+    protected final UnitsTypecheckUtils unitsTypecheckUtils;
 
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker, true);
+
         unitsRepUtils = new UnitsRepresentationUtils(processingEnv, elements);
         unitsAnnotationFormatter.postInit(unitsRepUtils);
+
         postInit();
 
         unitsTypecheckUtils = new UnitsTypecheckUtils(unitsRepUtils);
@@ -90,7 +92,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     /** Use the Units Annotated Type Loader instead of the default one */
     @Override
     protected AnnotationClassLoader createAnnotationClassLoader() {
-        unitsAnnotationClassLoader = new UnitsAnnotationClassLoader(checker);
+        if (unitsAnnotationClassLoader == null) {
+            unitsAnnotationClassLoader = new UnitsAnnotationClassLoader(checker);
+        }
         return unitsAnnotationClassLoader;
     }
 
@@ -553,8 +557,12 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     propagateUnitsAsMultiplication(anno, atms);
                 } else if (AnnotationUtils.areSameByClass(anno, UnitsDivision.class)) {
                     propagateUnitsAsDivision(anno, atms);
-                } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
-                    propagateUnitsAsSame(anno, atms);
+                } else if (AnnotationUtils.areSameByClass(anno, UnitsSames.class)) {
+                    for (AnnotationMirror same :
+                            AnnotationUtils.getElementValueArray(
+                                    anno, "value", AnnotationMirror.class, false)) {
+                        propagateUnitsAsSame(same, atms);
+                    }
                 }
             }
 
@@ -586,9 +594,9 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         protected void propagateUnitsAsArithmetic(
                 Kind op, AnnotationMirror metaanno, List<AnnotatedTypeMirror> atms) {
             // TODO: validate meta annotation
-            int leftOperandPos = getIntElementValue(metaanno, "larg");
-            int rightOperandPos = getIntElementValue(metaanno, "rarg");
-            int resultPos = getIntElementValue(metaanno, "res");
+            int leftOperandPos = unitsTypecheckUtils.getIntElementValue(metaanno, "larg");
+            int rightOperandPos = unitsTypecheckUtils.getIntElementValue(metaanno, "rarg");
+            int resultPos = unitsTypecheckUtils.getIntElementValue(metaanno, "res");
 
             AnnotatedTypeMirror leftOperand = atms.get(leftOperandPos + 1);
             AnnotatedTypeMirror rightOperand = atms.get(rightOperandPos + 1);
@@ -625,8 +633,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         protected void propagateUnitsAsSame(AnnotationMirror same, List<AnnotatedTypeMirror> atms) {
             // TODO: validate meta annotation
-            int fstPos = getIntElementValue(same, "fst");
-            int sndPos = getIntElementValue(same, "snd");
+            int fstPos = unitsTypecheckUtils.getIntElementValue(same, "fst");
+            int sndPos = unitsTypecheckUtils.getIntElementValue(same, "snd");
 
             AnnotatedTypeMirror fst = atms.get(fstPos + 1);
             AnnotatedTypeMirror snd = atms.get(sndPos + 1);
@@ -639,10 +647,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             } else if (sndPos == -1) {
                 snd.replaceAnnotation(fstAM);
             }
-        }
-
-        protected int getIntElementValue(AnnotationMirror anno, CharSequence name) {
-            return AnnotationUtils.getElementValue(anno, name, Integer.class, false);
         }
     }
 }

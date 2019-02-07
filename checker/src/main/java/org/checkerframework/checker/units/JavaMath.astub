@@ -84,7 +84,7 @@ class Math {
 
     // // returns the IEEE spec remainder of f1 / f2; ie the exact value of
     // // f1 – [round[f1 / f2] * f2]. same unit as f1
-    // static double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);
+    // static @UnknownUnits double IEEEremainder(@UnknownUnits double f1, @UnknownUnits double f2);
 
     // similar to modulus, returns [x - [floorDiv[x, y] * y]], ie unit of x
     static @PolyUnit int floorMod(@PolyUnit int x, @UnknownUnits int y);

@@ -142,28 +142,28 @@ public class ArithmeticMethods {
 
     @s int s1;
     @h long h1;
-    @mPERs int spd1;
-    @kmPERh long spd2;
+    @mPERs int mps;
+    @kmPERh long kmph;
 
     void testDivision() {
-        spd1 = calcSpeed(m1, s1);
+        mps = calcSpeed(m1, s1);
 
         // :: error: (assignment.type.incompatible)
-        spd1 = calcSpeed((int) km1, s1);
+        mps = calcSpeed((int) km1, s1);
 
         // :: error: (assignment.type.incompatible)
-        spd2 = calcSpeed(m1, s1);
+        kmph = calcSpeed(m1, s1);
 
-        spd2 = calcSpeed(km2, h1);
+        kmph = calcSpeed(km2, h1);
 
-        spd2 = ArithmeticMethods.calcSpeedStatic(km2, h1);
-
-        // :: error: (assignment.type.incompatible)
-        spd2 = ArithmeticMethods.calcSpeedStatic(km1, s1);
-
-        spd1 = Math.floorDiv(m1, s1);
+        kmph = ArithmeticMethods.calcSpeedStatic(km2, h1);
 
         // :: error: (assignment.type.incompatible)
-        spd2 = Math.floorDiv(km1, s1);
+        kmph = ArithmeticMethods.calcSpeedStatic(km1, s1);
+
+        mps = Math.floorDiv(m1, s1);
+
+        // :: error: (assignment.type.incompatible)
+        kmph = Math.floorDiv(km1, s1);
     }
 }

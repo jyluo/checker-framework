@@ -211,7 +211,7 @@ public class ArithmeticMethods {
 
         m1 = (int) Math.hypot(m1, m2);
 
-        // :: error: (units.not.same)
+        // :: error: (units.differ)
         m1 = (int) Math.hypot(m1, s1);
     }
 }

@@ -256,7 +256,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         AnnotationMirror sndAM = snd.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
 
         if (fstPos != -1 && sndPos != -1 && !unitsTypecheckUtils.unitsEqual(fstAM, sndAM)) {
-            checker.report(Result.failure("units.not.same", fst, snd), node);
+            checker.report(Result.failure("units.differ", fst, snd), node);
         }
     }
 

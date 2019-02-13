@@ -287,9 +287,13 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // polyQualifiers {null=@PolyAll, @UnitsRep=@PolyUnit}
             // replace RAWUNITSREP -> @PolyUnit with TOP -> @PolyUnit
-            assert polyQualifiers.containsKey(unitsRepUtils.RAWUNITSREP);
-            polyQualifiers.put(unitsRepUtils.TOP, polyQualifiers.get(unitsRepUtils.RAWUNITSREP));
-            polyQualifiers.remove(unitsRepUtils.RAWUNITSREP);
+            // Must loop through polyQualifiers as it is a simple hash map
+            for (AnnotationMirror am : polyQualifiers.keySet()) {
+                if (AnnotationUtils.areSame(am, unitsRepUtils.RAWUNITSREP)) {
+                    polyQualifiers.put(unitsRepUtils.TOP, polyQualifiers.get(am));
+                    polyQualifiers.remove(am);
+                }
+            }
 
             // add @PolyAll -> TOP to supertypes
             Set<AnnotationMirror> polyAllSupers = AnnotationUtils.createAnnotationSet();

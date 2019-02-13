@@ -15,6 +15,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import org.checkerframework.checker.units.qual.Dimensionless;
 import org.checkerframework.checker.units.qual.UnitsAddition;
+import org.checkerframework.checker.units.qual.UnitsCompare;
 import org.checkerframework.checker.units.qual.UnitsDivision;
 import org.checkerframework.checker.units.qual.UnitsMultiplication;
 import org.checkerframework.checker.units.qual.UnitsSame;
@@ -108,20 +109,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             case GREATER_THAN_EQUAL: // >=
             case LESS_THAN: // <
             case LESS_THAN_EQUAL: // <=
-                // comparable constraint: lhs <: rhs, or rhs <: lhs
-                if (!(atypeFactory.getQualifierHierarchy().isSubtype(lhsAM, rhsAM)
-                        || atypeFactory.getQualifierHierarchy().isSubtype(rhsAM, lhsAM))) {
-                    checker.report(
-                            Result.failure(
-                                    "comparison.unit.mismatch",
-                                    atypeFactory
-                                            .getAnnotationFormatter()
-                                            .formatAnnotationMirror(lhsAM),
-                                    atypeFactory
-                                            .getAnnotationFormatter()
-                                            .formatAnnotationMirror(rhsAM)),
-                            binaryTree);
-                }
+                checkCompare(binaryTree, lhsAM, rhsAM);
                 // if (!AnnotationUtils.areSame(lhsAM, rhsAM)) {
                 // }
             default:
@@ -222,6 +210,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                 }
             } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
                 checkMethodUnitsSame(node, invokedMethod, anno, atms);
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsCompare.class)) {
+                checkMethodUnitsCompare(node, invokedMethod, anno, atms);
             }
         }
 
@@ -281,6 +271,48 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
 
         if (fstPos != -1 && sndPos != -1 && !unitsTypecheckUtils.unitsEqual(fstAM, sndAM)) {
             checker.report(Result.failure("units.differ", fst, snd), node);
+        }
+    }
+
+    protected void checkMethodUnitsCompare(
+            MethodInvocationTree node,
+            AnnotatedExecutableType invokedMethod,
+            AnnotationMirror same,
+            List<AnnotatedTypeMirror> atms) {
+        int fstPos = unitsTypecheckUtils.getIntElementValue(same, "fst");
+        int sndPos = unitsTypecheckUtils.getIntElementValue(same, "snd");
+
+        // TODO: for compare, -1 is not allowed
+        // The check is done here instead of visitMethod() in case an improper meta-annotation was
+        // declared in a stub
+        validatePositionIndex(invokedMethod, same, fstPos);
+        validatePositionIndex(invokedMethod, same, sndPos);
+
+        if (fstPos == sndPos) {
+            throw new UserError(
+                    "The indices fst and snd cannot be the same for meta-annotation "
+                            + same
+                            + " declared on method "
+                            + invokedMethod);
+        }
+
+        AnnotatedTypeMirror fst = atms.get(fstPos + 1);
+        AnnotatedTypeMirror snd = atms.get(sndPos + 1);
+
+        AnnotationMirror fstAM = fst.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+        AnnotationMirror sndAM = snd.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP);
+
+        checkCompare(node, fstAM, sndAM);
+    }
+
+    protected void checkCompare(Tree node, AnnotationMirror fstAM, AnnotationMirror sndAM) {
+        if (!unitsTypecheckUtils.unitsComparable(atypeFactory, fstAM, sndAM)) {
+            checker.report(
+                    Result.failure(
+                            "comparison.unit.mismatch",
+                            atypeFactory.getAnnotationFormatter().formatAnnotationMirror(fstAM),
+                            atypeFactory.getAnnotationFormatter().formatAnnotationMirror(sndAM)),
+                    node);
         }
     }
 

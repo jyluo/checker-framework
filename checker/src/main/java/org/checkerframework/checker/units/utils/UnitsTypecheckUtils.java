@@ -90,6 +90,13 @@ public class UnitsTypecheckUtils {
         return lhs.equals(rhs);
     }
 
+    public boolean unitsComparable(
+            AnnotatedTypeFactory atf, AnnotationMirror lhsAM, AnnotationMirror rhsAM) {
+        // comparable constraint: lhs <: rhs, or rhs <: lhs
+        return atf.getQualifierHierarchy().isSubtype(lhsAM, rhsAM)
+                || atf.getQualifierHierarchy().isSubtype(rhsAM, lhsAM);
+    }
+
     public int getIntElementValue(AnnotationMirror anno, CharSequence name) {
         return AnnotationUtils.getElementValue(anno, name, Integer.class, false);
     }

@@ -16,7 +16,8 @@ class Number {
 
 class Byte {
     static @PolyUnit Byte valueOf(@PolyUnit byte arg0);
-    @PolyUnit Byte(@PolyUnit byte arg0);
+    // TODO: this does not work, but poly constructors in source does
+    // @PolyUnit Byte(@PolyUnit byte arg0);
 
     @PolyUnit byte byteValue(@PolyUnit Byte this);
     @PolyUnit short shortValue(@PolyUnit Byte this);
@@ -30,10 +31,14 @@ class Byte {
     int hashCode(@UnknownUnits Byte this);
     static int hashCode(@UnknownUnits byte arg0);
 
-    // TODO: handle in units checker like comparison operators
-    // boolean equals(@UnknownUnits Byte this, @UnknownUnits Object arg0);
-    // int compareTo(@UnknownUnits Byte this, @UnknownUnits Byte arg0);
-    // static int compare(@UnknownUnits byte arg0, @UnknownUnits byte arg1);
+    @UnitsCompare(fst=0, snd=1)
+    boolean equals(@UnknownUnits Byte this, @UnknownUnits Object arg0);
+
+    @UnitsCompare(fst=0, snd=1)
+    int compareTo(@UnknownUnits Byte this, @UnknownUnits Byte arg0);
+
+    @UnitsCompare(fst=1, snd=2)
+    static int compare(@UnknownUnits byte arg0, @UnknownUnits byte arg1);
 
     static @PolyUnit int toUnsignedInt(@PolyUnit byte arg0);
     static @PolyUnit long toUnsignedLong(@PolyUnit byte arg0);

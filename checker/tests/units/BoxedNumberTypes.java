@@ -155,4 +155,97 @@ public class BoxedNumberTypes {
         mI = Short.toUnsignedInt(ms);
         mL = Short.toUnsignedLong(ms);
     }
+
+    void testInteger() {
+        // autobox
+        mI = mi;
+        // autounbox
+        mi = mI;
+
+        mI = Integer.valueOf(mi);
+        // mI = new Integer(mi);
+
+        mb = mI.byteValue();
+        ms = mI.shortValue();
+        mi = mI.intValue();
+        ml = mI.longValue();
+        mf = mI.floatValue();
+        md = mI.doubleValue();
+
+        // :: error: (assignment.type.incompatible)
+        sI = Integer.valueOf(mi);
+        // :: error: (assignment.type.incompatible)
+        sb = mI.byteValue();
+        // :: error: (assignment.type.incompatible)
+        ss = mI.shortValue();
+        // :: error: (assignment.type.incompatible)
+        si = mI.intValue();
+        // :: error: (assignment.type.incompatible)
+        sl = mI.longValue();
+        // :: error: (assignment.type.incompatible)
+        sf = mI.floatValue();
+        // :: error: (assignment.type.incompatible)
+        sd = mI.doubleValue();
+
+        System.out.println(mI.toString());
+        System.out.println(Integer.toString(mi));
+        System.out.println(Integer.toString(mi, 30));
+        System.out.println(Integer.toUnsignedString(mi));
+        System.out.println(Integer.toUnsignedString(mi, 40));
+        System.out.println(Integer.toHexString(mi));
+        System.out.println(Integer.toOctalString(mi));
+        System.out.println(Integer.toBinaryString(mi));
+        System.out.println(mI.hashCode());
+        System.out.println(Integer.hashCode(mi));
+
+        mI.equals(mI);
+        // :: error: (comparison.unit.mismatch)
+        mI.equals(sI);
+
+        mI.compareTo(mI);
+        // :: error: (comparison.unit.mismatch)
+        mI.compareTo(sI);
+
+        Integer.compare(mi, mi);
+        // :: error: (comparison.unit.mismatch)
+        Integer.compare(mi, si);
+
+        Integer.compareUnsigned(mi, mi);
+        // :: error: (comparison.unit.mismatch)
+        Integer.compareUnsigned(mi, si);
+
+        mi = Integer.sum(mi, mi);
+        // :: error: (assignment.type.incompatible)
+        mi = Integer.sum(mi, si);
+
+        @Dimensionless int a = Integer.divideUnsigned(mi, mi);
+        // :: error: (assignment.type.incompatible)
+        mi = Integer.divideUnsigned(mi, mi);
+
+        mi = Integer.remainderUnsigned(mi, si);
+        // :: error: (assignment.type.incompatible)
+        si = Integer.remainderUnsigned(mi, mi);
+
+        mi = Integer.highestOneBit(mi);
+        mi = Integer.lowestOneBit(mi);
+
+        @Dimensionless int x = Integer.numberOfLeadingZeros(mi);
+        x = Integer.numberOfTrailingZeros(mi);
+        x = Integer.bitCount(mi);
+        x = Integer.signum(mi);
+
+        mi = Integer.rotateLeft(mi, 10);
+        mi = Integer.rotateRight(mi, 20);
+        mi = Integer.reverse(mi);
+        mi = Integer.reverseBytes(mi);
+        mL = Integer.toUnsignedLong(mi);
+
+        mi = Integer.max(mi, mi);
+        // :: error: (assignment.type.incompatible)
+        mi = Integer.max(mi, si);
+
+        mi = Integer.min(mi, mi);
+        // :: error: (assignment.type.incompatible)
+        mi = Integer.min(mi, si);
+    }
 }

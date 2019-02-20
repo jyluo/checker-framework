@@ -518,8 +518,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // System.err.println(" args " + node.getArguments());
             // System.err.println(" methodSelect " + node.getMethodSelect());
 
-            ParameterizedMethodType mType = atypeFactory.methodFromUse(node);
-            AnnotatedExecutableType invokedMethod = mType.methodType;
+            ParameterizedExecutableType mType = atypeFactory.methodFromUse(node);
+            AnnotatedExecutableType invokedMethod = mType.executableType;
             // TreeUtils.elementFromUse(node)
             ExecutableElement methodElement = invokedMethod.getElement();
             // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;

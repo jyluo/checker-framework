@@ -26,7 +26,7 @@ import org.checkerframework.checker.units.utils.UnitsTypecheckUtils;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.source.Result;
-import org.checkerframework.framework.type.AnnotatedTypeFactory.ParameterizedMethodType;
+import org.checkerframework.framework.type.AnnotatedTypeFactory.ParameterizedExecutableType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
@@ -157,8 +157,8 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree node, Void p) {
-        ParameterizedMethodType mType = atypeFactory.methodFromUse(node);
-        AnnotatedExecutableType invokedMethod = mType.methodType;
+        ParameterizedExecutableType mType = atypeFactory.methodFromUse(node);
+        AnnotatedExecutableType invokedMethod = mType.executableType;
         // TreeUtils.elementFromUse(node)
         ExecutableElement methodElement = invokedMethod.getElement();
         // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;

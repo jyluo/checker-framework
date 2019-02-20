@@ -247,7 +247,7 @@ class Float {
 
 class Double {
     static @PolyUnit Double valueOf(@PolyUnit double arg0);
-    @PolyUnit Double(@PolyUnit double arg0);
+    // @PolyUnit Double(@PolyUnit double arg0);
 
     @PolyUnit byte byteValue(@PolyUnit Double this);
     @PolyUnit short shortValue(@PolyUnit Double this);
@@ -269,17 +269,21 @@ class Double {
     static boolean isInfinite(@UnknownUnits double arg0);
     static boolean isFinite(@UnknownUnits double arg0);
 
-    // TODO: handle in units checker like comparison operators
-    // boolean equals(@UnknownUnits Double this, @UnknownUnits Object arg0);
-    // int compareTo(@UnknownUnits Double this, @UnknownUnits Double arg0);
-    // static int compare(@UnknownUnits double arg0, @UnknownUnits double arg1);
+    @UnitsCompare(fst = 0, snd = 1)
+    boolean equals(@UnknownUnits Double this, @UnknownUnits Object arg0);
+
+    @UnitsCompare(fst = 0, snd = 1)
+    int compareTo(@UnknownUnits Double this, @UnknownUnits Double arg0);
+
+    @UnitsCompare(fst = 1, snd = 2)
+    static int compare(@UnknownUnits double arg0, @UnknownUnits double arg1);
+
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    static double sum(@UnknownUnits double a, @UnknownUnits double b);
 
     static @PolyUnit long doubleToLongBits(@PolyUnit double arg0);
     static @PolyUnit long doubleToRawLongBits(@PolyUnit double arg0);
     static @PolyUnit double longBitsToDouble(@PolyUnit long arg0);
-
-    // TODO: handle in units checker like plus operator
-    // static double sum(@UnknownUnits double a, @UnknownUnits double b);
 
     static @PolyUnit double max(@PolyUnit double arg0, @PolyUnit double arg1);
     static @PolyUnit double min(@PolyUnit double arg0, @PolyUnit double arg1);

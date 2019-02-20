@@ -426,4 +426,76 @@ public class BoxedNumberTypes {
         // :: error: (assignment.type.incompatible)
         mf = Float.min(mf, sf);
     }
+
+    void testDouble() {
+        // autobox
+        mD = md;
+        // autounbox
+        md = mD;
+
+        mD = Double.valueOf(md);
+        // mD = new Double(md);
+
+        mb = mD.byteValue();
+        ms = mD.shortValue();
+        mi = mD.intValue();
+        ml = mD.longValue();
+        mf = mD.floatValue();
+        md = mD.doubleValue();
+
+        // :: error: (assignment.type.incompatible)
+        sD = Double.valueOf(md);
+        // :: error: (assignment.type.incompatible)
+        sb = mD.byteValue();
+        // :: error: (assignment.type.incompatible)
+        ss = mD.shortValue();
+        // :: error: (assignment.type.incompatible)
+        si = mD.intValue();
+        // :: error: (assignment.type.incompatible)
+        sl = mD.longValue();
+        // :: error: (assignment.type.incompatible)
+        sf = mD.floatValue();
+        // :: error: (assignment.type.incompatible)
+        sd = mD.doubleValue();
+
+        System.out.println(mD.toString());
+        System.out.println(Double.toString(md));
+        System.out.println(Double.toHexString(md));
+        System.out.println(mD.hashCode());
+        System.out.println(Double.hashCode(md));
+
+        mD.isNaN();
+        Double.isNaN(md);
+        mD.isInfinite();
+        Double.isInfinite(md);
+        Double.isFinite(md);
+
+        mD.equals(mD);
+        // :: error: (comparison.unit.mismatch)
+        mD.equals(sD);
+
+        mD.compareTo(mD);
+        // :: error: (comparison.unit.mismatch)
+        mD.compareTo(sD);
+
+        Double.compare(md, md);
+        // :: error: (comparison.unit.mismatch)
+        Double.compare(md, sd);
+
+        md = Double.sum(md, md);
+        // :: error: (assignment.type.incompatible)
+        md = Double.sum(md, sd);
+
+        ml = Double.doubleToLongBits(md);
+        ml = Double.doubleToRawLongBits(md);
+        md = Double.longBitsToDouble(ml);
+
+        md = Double.max(md, md);
+        // :: error: (assignment.type.incompatible)
+        md = Double.max(md, sd);
+
+        md = Double.min(md, md);
+        // :: error: (assignment.type.incompatible)
+        md = Double.min(md, sd);
+    }
 }

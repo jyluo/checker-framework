@@ -46,7 +46,7 @@ class Byte {
 
 class Short {
     static @PolyUnit Short valueOf(@PolyUnit short arg0);
-    @PolyUnit Short(@PolyUnit short arg0);
+    // @PolyUnit Short(@PolyUnit short arg0);
 
     @PolyUnit byte byteValue(@PolyUnit Short this);
     @PolyUnit short shortValue(@PolyUnit Short this);
@@ -60,10 +60,14 @@ class Short {
     int hashCode(@UnknownUnits Short this);
     static int hashCode(@UnknownUnits short arg0);
 
-    // TODO: handle in units checker like comparison operators
-    // boolean equals(@UnknownUnits Short this, @UnknownUnits Object arg0);
-    // int compareTo(@UnknownUnits Short this, @UnknownUnits Short arg0);
-    // static int compare(@UnknownUnits short arg0, @UnknownUnits short arg1);
+    @UnitsCompare(fst = 0, snd = 1)
+    boolean equals(@UnknownUnits Short this, @UnknownUnits Object arg0);
+
+    @UnitsCompare(fst = 0, snd = 1)
+    int compareTo(@UnknownUnits Short this, @UnknownUnits Short arg0);
+
+    @UnitsCompare(fst = 1, snd = 2)
+    static int compare(@UnknownUnits short arg0, @UnknownUnits short arg1);
 
     static @PolyUnit short reverseBytes(@PolyUnit short arg0);
     static @PolyUnit int toUnsignedInt(@PolyUnit short arg0);

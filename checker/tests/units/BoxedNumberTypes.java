@@ -198,6 +198,14 @@ public class BoxedNumberTypes {
         System.out.println(mI.hashCode());
         System.out.println(Integer.hashCode(mi));
 
+        mI = Integer.getInteger("10", mi);
+        // :: error: (assignment.type.incompatible)
+        sI = Integer.getInteger("10", mi);
+
+        mI = Integer.getInteger("10", mI);
+        // :: error: (assignment.type.incompatible)
+        sI = Integer.getInteger("10", mI);
+
         mI.equals(mI);
         // :: error: (comparison.unit.mismatch)
         mI.equals(sI);
@@ -228,7 +236,6 @@ public class BoxedNumberTypes {
 
         mi = Integer.highestOneBit(mi);
         mi = Integer.lowestOneBit(mi);
-
         @Dimensionless int x = Integer.numberOfLeadingZeros(mi);
         x = Integer.numberOfTrailingZeros(mi);
         x = Integer.bitCount(mi);
@@ -247,5 +254,103 @@ public class BoxedNumberTypes {
         mi = Integer.min(mi, mi);
         // :: error: (assignment.type.incompatible)
         mi = Integer.min(mi, si);
+    }
+
+    void testLong() {
+        // autobox
+        mL = ml;
+        // autounbox
+        ml = mL;
+
+        mL = Long.valueOf(ml);
+        // mL = new Long(ml);
+
+        mb = mL.byteValue();
+        ms = mL.shortValue();
+        mi = mL.intValue();
+        ml = mL.longValue();
+        mf = mL.floatValue();
+        md = mL.doubleValue();
+
+        // :: error: (assignment.type.incompatible)
+        sL = Long.valueOf(ml);
+        // :: error: (assignment.type.incompatible)
+        sb = mL.byteValue();
+        // :: error: (assignment.type.incompatible)
+        ss = mL.shortValue();
+        // :: error: (assignment.type.incompatible)
+        si = mL.intValue();
+        // :: error: (assignment.type.incompatible)
+        sl = mL.longValue();
+        // :: error: (assignment.type.incompatible)
+        sf = mL.floatValue();
+        // :: error: (assignment.type.incompatible)
+        sd = mL.doubleValue();
+
+        System.out.println(mL.toString());
+        System.out.println(Long.toString(ml));
+        System.out.println(Long.toString(ml, 30));
+        System.out.println(Long.toUnsignedString(ml));
+        System.out.println(Long.toUnsignedString(ml, 40));
+        System.out.println(Long.toHexString(ml));
+        System.out.println(Long.toOctalString(ml));
+        System.out.println(Long.toBinaryString(ml));
+        System.out.println(mL.hashCode());
+        System.out.println(Long.hashCode(ml));
+
+        mL = Long.getLong("10", ml);
+        // :: error: (assignment.type.incompatible)
+        sL = Long.getLong("10", ml);
+
+        mL = Long.getLong("10", mL);
+        // :: error: (assignment.type.incompatible)
+        sL = Long.getLong("10", mL);
+
+        mL.equals(mL);
+        // :: error: (comparison.unit.mismatch)
+        mL.equals(sL);
+
+        mL.compareTo(mL);
+        // :: error: (comparison.unit.mismatch)
+        mL.compareTo(sL);
+
+        Long.compare(ml, ml);
+        // :: error: (comparison.unit.mismatch)
+        Long.compare(ml, sl);
+
+        Long.compareUnsigned(ml, ml);
+        // :: error: (comparison.unit.mismatch)
+        Long.compareUnsigned(ml, sl);
+
+        ml = Long.sum(ml, ml);
+        // :: error: (assignment.type.incompatible)
+        ml = Long.sum(ml, sl);
+        @Dimensionless long a = Long.divideUnsigned(ml, ml);
+        // :: error: (assignment.type.incompatible)
+        ml = Long.divideUnsigned(ml, ml);
+
+        ml = Long.remainderUnsigned(ml, sl);
+        // :: error: (assignment.type.incompatible)
+        sl = Long.remainderUnsigned(ml, ml);
+
+        ml = Long.highestOneBit(ml);
+        ml = Long.lowestOneBit(ml);
+        @Dimensionless int x = Long.numberOfLeadingZeros(ml);
+        x = Long.numberOfTrailingZeros(ml);
+        x = Long.bitCount(ml);
+        x = Long.signum(ml);
+
+        ml = Long.rotateLeft(ml, 10);
+        ml = Long.rotateRight(ml, 20);
+        ml = Long.reverse(ml);
+        ml = Long.reverseBytes(ml);
+
+        ml = Long.max(ml, ml);
+        // :: error: (assignment.type.incompatible)
+        ml = Long.max(ml, sl);
+
+        ml = Long.min(ml, ml);
+        // :: error: (assignment.type.incompatible)
+        ml = Long.min(ml, sl);
     }
 }

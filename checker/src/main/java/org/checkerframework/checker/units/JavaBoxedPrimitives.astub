@@ -157,37 +157,44 @@ class Long {
     static String toHexString(@UnknownUnits long arg0);
     static String toOctalString(@UnknownUnits long arg0);
     static String toBinaryString(@UnknownUnits long arg0);
-
     int hashCode(@UnknownUnits Long this);
     static int hashCode(@UnknownUnits long arg0);
 
     static @PolyUnit Long getLong(String arg0, @PolyUnit long arg1);
     static @PolyUnit Long getLong(String arg0, @PolyUnit Long arg1);
 
-    // TODO: handle in units checker like comparison operators
-    // boolean equals(@UnknownUnits Long this, @UnknownUnits Object arg0);
-    // int compareTo(@UnknownUnits Long this, @UnknownUnits Long arg0);
-    // static int compare(@UnknownUnits long arg0, @UnknownUnits long arg1);
-    // static int compareUnsigned(@UnknownUnits long arg0, @UnknownUnits long arg1);
+    @UnitsCompare(fst = 0, snd = 1)
+    boolean equals(@UnknownUnits Long this, @UnknownUnits Object arg0);
 
-    // TODO: handle in units checker like division and remainder operators
-    // static long divideUnsigned(@UnknownUnits long arg0, @UnknownUnits long arg1);
-    // static long remainderUnsigned(@UnknownUnits long arg0, @UnknownUnits long arg1);
+    @UnitsCompare(fst = 0, snd = 1)
+    int compareTo(@UnknownUnits Long this, @UnknownUnits Long arg0);
+
+    @UnitsCompare(fst = 1, snd = 2)
+    static int compare(@UnknownUnits long arg0, @UnknownUnits long arg1);
+
+    @UnitsCompare(fst = 1, snd = 2)
+    static int compareUnsigned(@UnknownUnits long arg0, @UnknownUnits long arg1);
+
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    static long sum(@UnknownUnits long a, @UnknownUnits long b);
+
+    @UnitsDivision(res = -1, larg = 1, rarg = 2)
+    static long divideUnsigned(@UnknownUnits long arg0, @UnknownUnits long arg1);
+
+    @UnitsSame(fst = -1, snd = 1)
+    static long remainderUnsigned(@UnknownUnits long arg0, @UnknownUnits long arg1);
 
     static @PolyUnit long highestOneBit(@PolyUnit long arg0);
     static @PolyUnit long lowestOneBit(@PolyUnit long arg0);
     static int numberOfLeadingZeros(@UnknownUnits long arg0);
     static int numberOfTrailingZeros(@UnknownUnits long arg0);
     static int bitCount(@UnknownUnits long arg0);
+    static int signum(@UnknownUnits long arg0);
 
     static @PolyUnit long rotateLeft(@PolyUnit long arg0, int arg1);
     static @PolyUnit long rotateRight(@PolyUnit long arg0, int arg1);
     static @PolyUnit long reverse(@PolyUnit long arg0);
-    static int signum(@UnknownUnits long arg0);
     static @PolyUnit long reverseBytes(@PolyUnit long arg0);
-
-    // TODO: handle in units checker like plus operator
-    // static long sum(@UnknownUnits long a, @UnknownUnits long b);
 
     static @PolyUnit long max(@PolyUnit long arg0, @PolyUnit long arg1);
     static @PolyUnit long min(@PolyUnit long arg0, @PolyUnit long arg1);

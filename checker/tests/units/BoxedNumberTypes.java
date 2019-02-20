@@ -353,4 +353,77 @@ public class BoxedNumberTypes {
         // :: error: (assignment.type.incompatible)
         ml = Long.min(ml, sl);
     }
+
+    void testFloat() {
+        // autobox
+        mF = mf;
+        // autounbox
+        mf = mF;
+
+        mF = Float.valueOf(mf);
+        // mF = new Float(mf);
+        // mF = new Float(md);
+
+        mb = mF.byteValue();
+        ms = mF.shortValue();
+        mi = mF.intValue();
+        ml = mF.longValue();
+        mf = mF.floatValue();
+        md = mF.doubleValue();
+
+        // :: error: (assignment.type.incompatible)
+        sF = Float.valueOf(mf);
+        // :: error: (assignment.type.incompatible)
+        sb = mF.byteValue();
+        // :: error: (assignment.type.incompatible)
+        ss = mF.shortValue();
+        // :: error: (assignment.type.incompatible)
+        si = mF.intValue();
+        // :: error: (assignment.type.incompatible)
+        sl = mF.longValue();
+        // :: error: (assignment.type.incompatible)
+        sf = mF.floatValue();
+        // :: error: (assignment.type.incompatible)
+        sd = mF.doubleValue();
+
+        System.out.println(mF.toString());
+        System.out.println(Float.toString(mf));
+        System.out.println(Float.toHexString(mf));
+        System.out.println(mF.hashCode());
+        System.out.println(Float.hashCode(mf));
+
+        mF.isNaN();
+        Float.isNaN(mf);
+        mF.isInfinite();
+        Float.isInfinite(mf);
+        Float.isFinite(mf);
+
+        mF.equals(mF);
+        // :: error: (comparison.unit.mismatch)
+        mF.equals(sF);
+
+        mF.compareTo(mF);
+        // :: error: (comparison.unit.mismatch)
+        mF.compareTo(sF);
+
+        Float.compare(mf, mf);
+        // :: error: (comparison.unit.mismatch)
+        Float.compare(mf, sf);
+
+        mf = Float.sum(mf, mf);
+        // :: error: (assignment.type.incompatible)
+        mf = Float.sum(mf, sf);
+
+        mi = Float.floatToIntBits(mf);
+        mi = Float.floatToRawIntBits(mf);
+        mf = Float.intBitsToFloat(mi);
+
+        mf = Float.max(mf, mf);
+        // :: error: (assignment.type.incompatible)
+        mf = Float.max(mf, sf);
+
+        mf = Float.min(mf, mf);
+        // :: error: (assignment.type.incompatible)
+        mf = Float.min(mf, sf);
+    }
 }

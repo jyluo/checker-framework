@@ -202,8 +202,8 @@ class Long {
 
 class Float {
     static @PolyUnit Float valueOf(@PolyUnit float arg0);
-    @PolyUnit Float(@PolyUnit float arg0);
-    @PolyUnit Float(@PolyUnit double arg0);
+    // @PolyUnit Float(@PolyUnit float arg0);
+    // @PolyUnit Float(@PolyUnit double arg0);
 
     @PolyUnit byte byteValue(@PolyUnit Float this);
     @PolyUnit short shortValue(@PolyUnit Float this);
@@ -225,17 +225,21 @@ class Float {
     static boolean isInfinite(@UnknownUnits float arg0);
     static boolean isFinite(@UnknownUnits float arg0);
 
-    // TODO: handle in units checker like comparison operators
-    // boolean equals(@UnknownUnits Float this, @UnknownUnits Object arg0);
-    // int compareTo(@UnknownUnits Float this, @UnknownUnits Float arg0);
-    // static int compare(@UnknownUnits float arg0, @UnknownUnits float arg1);
+    @UnitsCompare(fst = 0, snd = 1)
+    boolean equals(@UnknownUnits Float this, @UnknownUnits Object arg0);
+
+    @UnitsCompare(fst = 0, snd = 1)
+    int compareTo(@UnknownUnits Float this, @UnknownUnits Float arg0);
+
+    @UnitsCompare(fst = 1, snd = 2)
+    static int compare(@UnknownUnits float arg0, @UnknownUnits float arg1);
+
+    @UnitsAddition(res = -1, larg = 1, rarg = 2)
+    static float sum(@UnknownUnits float a, @UnknownUnits float b);
 
     static @PolyUnit int floatToIntBits(@PolyUnit float arg0);
     static @PolyUnit int floatToRawIntBits(@PolyUnit float arg0);
     static @PolyUnit float intBitsToFloat(@PolyUnit int arg0);
-
-    // TODO: handle in units checker like plus operator
-    // static float sum(@UnknownUnits float a, @UnknownUnits float b);
 
     static @PolyUnit float max(@PolyUnit float arg0, @PolyUnit float arg1);
     static @PolyUnit float min(@PolyUnit float arg0, @PolyUnit float arg1);

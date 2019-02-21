@@ -2,6 +2,12 @@ import org.checkerframework.checker.units.qual.*;
 
 package java.lang;
 
+class Object {
+    void wait(@ms long timeout) throws InterruptedException;
+    void wait(@ms long timeout, @ns int nanos) throws InterruptedException;
+    void wait() throws InterruptedException;
+}
+
 class System {
     static @ms long currentTimeMillis();
     static @ns long nanoTime();

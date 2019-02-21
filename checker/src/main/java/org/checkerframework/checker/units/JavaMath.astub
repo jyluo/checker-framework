@@ -106,12 +106,10 @@ class Math {
     @UnitsSame(fst = -1, snd = 1)
     static @UnknownUnits long floorMod(@UnknownUnits long x, @UnknownUnits long y);
 
-    // TODO: special support for these 2 methods, which will
-    // return the square root and cubic root of any supported units eg m2, km3
-    // if the user wants to take the square root of just the magnitude without
-    // affecting the unit, then they can surpress the warning
+    // TODO: special support for sqrt and cbrt?
     // static @UnitsBottom double sqrt(@UnknownUnits double a);
     // static @UnitsBottom double cbrt(@UnknownUnits double a);
+
     @UnitsSame(fst = -1, snd = 1)
     static @UnknownUnits double ceil(@UnknownUnits double a);
     @UnitsSame(fst = -1, snd = 1)
@@ -130,33 +128,27 @@ class Math {
     static @Dimensionless double signum(@UnknownUnits double d);
     static @Dimensionless float signum(@UnknownUnits float f);
 
-    // TODO: powers, exponents, and logarithms
-    // returns the value of a ^ b, for specific cases of a having the units of
-    // m, mm, and km we return m2, mm2, and km2, for everything else we return
-    // UnknownUnits
+    // TODO: returns the value of a ^ b, with a unit if b is a statically known constant
     // static @UnitsBottom double pow(@UnknownUnits double a, @UnknownUnits double b);
 
     // calculates e^a == e * e * e .... which is a unitless scalar
-    static @Dimensionless double exp(@UnknownUnits double a);
+    static @Dimensionless double exp(@Dimensionless double a);
     // calculates e^x - 1 ... which is also a unitless scalar
-    static @Dimensionless double expm1(@UnknownUnits double x);
+    static @Dimensionless double expm1(@Dimensionless double x);
 
     // returns unbiased exponent used in the representation of a double, ie the
     // exponent in base 2 arithmetic => unitless constant
     static @Dimensionless int getExponent(@UnknownUnits double d);
     static @Dimensionless int getExponent(@UnknownUnits float f);
 
-    // TODO: support logs?
-    // log[a] = y where e^y = a, unitless?, this is log with base e
-    // static double log(@UnknownUnits double a);
-    // log with base 10, log10[x] = y where 10^y = x
-    // static double log10(@UnknownUnits double a);
-    // returns log[1.0 + x]
-    // static double log1p(@UnknownUnits double x);
+    // log[a] = y where e^y = a, this is log with base e, a must be dimensionless
+    static @Dimensionless double log(@Dimensionless double a);
 
-    // Future TODO: support retainment of units in these identifies
-    // identity: exp(log(a)) == a
-    // identity: log(exp(x)) == x
+    // log with base 10, log10[x] = y where 10^y = x
+    static @Dimensionless double log10(@Dimensionless double a);
+
+    // returns log[1.0 + x]
+    static @Dimensionless double log1p(@Dimensionless double x);
 
     // min and max
     // both x & y should be the same unit, if so returns that unit, otherwise

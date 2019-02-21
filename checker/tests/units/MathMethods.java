@@ -217,13 +217,13 @@ class MathMethods {
         // :: error: (assignment.type.incompatible)
         m2 = (int) Math.signum(fg1);
 
-        @Dimensionless double d = Math.exp(dk1);
+        @Dimensionless double d = Math.exp(10);
         // :: error: (assignment.type.incompatible)
-        m2 = (int) Math.exp(dk1);
+        m2 = (int) Math.exp(10);
 
-        d = Math.expm1(dk1);
+        d = Math.expm1(10);
         // :: error: (assignment.type.incompatible)
-        m2 = (int) Math.expm1(dk1);
+        m2 = (int) Math.expm1(10);
 
         @Dimensionless int i = Math.getExponent(dk1);
         // :: error: (assignment.type.incompatible)
@@ -232,6 +232,18 @@ class MathMethods {
         i = Math.getExponent(fg1);
         // :: error: (assignment.type.incompatible)
         m2 = Math.getExponent(fg1);
+
+        d = Math.log(20);
+        // :: error: (assignment.type.incompatible)
+        m2 = (int) Math.log(10);
+
+        d = Math.log10(20);
+        // :: error: (assignment.type.incompatible)
+        m2 = (int) Math.log10(10);
+
+        d = Math.log1p(20);
+        // :: error: (assignment.type.incompatible)
+        m2 = (int) Math.log1p(10);
     }
 
     void testMinMax() {

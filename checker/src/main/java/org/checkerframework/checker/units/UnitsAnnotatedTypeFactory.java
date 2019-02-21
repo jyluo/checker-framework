@@ -3,6 +3,7 @@ package org.checkerframework.checker.units;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.Tree.Kind;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -511,8 +512,58 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         /** propagate units in specially tagged methods */
         @Override
+        public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror returnATM) {
+            super.visitNewClass(node, returnATM);
+
+            // System.err.println(" visit method invoke " + node);
+            // System.err.println(" returnATM " + returnATM);
+            // System.err.println(" args " + node.getArguments());
+            // System.err.println(" methodSelect " + node.getMethodSelect());
+
+            ParameterizedExecutableType mType = atypeFactory.constructorFromUse(node);
+            AnnotatedExecutableType invokedMethod = mType.executableType;
+            // TreeUtils.elementFromUse(node)
+            ExecutableElement methodElement = invokedMethod.getElement();
+            // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
+
+            // System.err.println(" invokedMethod " + invokedMethod.getErased());
+            // System.err.println(" methodElement " + methodElement);
+
+            // Build up a list of ATMs corresponding to the index convention used in the Units
+            // method meta-annotations. null values are inserted if there is no possible ATM for
+            // that index position.
+            List<AnnotatedTypeMirror> atms = new ArrayList<>();
+            atms.add(returnATM);
+
+            ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+            // System.err.println(" receiver " + receiver);
+
+            // ATM for argument to the formal "this" parameter
+            if (receiver != null) {
+                AnnotatedTypeMirror receiverATM = getAnnotatedType(receiver);
+                atms.add(receiverATM);
+            } else {
+                atms.add(null);
+            }
+
+            for (ExpressionTree arg : node.getArguments()) {
+                AnnotatedTypeMirror argATM = getAnnotatedType(arg);
+                // System.err.println(" arg " + arg + " type " + argATM);
+                atms.add(argATM);
+            }
+
+            propagateUnitsInMethodCall(invokedMethod, methodElement, atms);
+            // System.err.println();
+
+            return null;
+        }
+
+        /** propagate units in specially tagged methods */
+        @Override
         public Void visitMethodInvocation(
                 MethodInvocationTree node, AnnotatedTypeMirror returnATM) {
+            super.visitMethodInvocation(node, returnATM);
+
             // System.err.println(" visit method invoke " + node);
             // System.err.println(" returnATM " + returnATM);
             // System.err.println(" args " + node.getArguments());
@@ -553,6 +604,16 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 atms.add(argATM);
             }
 
+            propagateUnitsInMethodCall(invokedMethod, methodElement, atms);
+            // System.err.println();
+
+            return null;
+        }
+
+        protected void propagateUnitsInMethodCall(
+                AnnotatedExecutableType invokedMethod,
+                ExecutableElement methodElement,
+                List<AnnotatedTypeMirror> atms) {
             // multiple meta-annotations are allowed on each method
             for (AnnotationMirror anno : atypeFactory.getDeclAnnotations(methodElement)) {
                 if (AnnotationUtils.areSameByClass(anno, UnitsAddition.class)) {
@@ -573,10 +634,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     propagateUnitsAsSame(invokedMethod, anno, atms);
                 }
             }
-
-            // System.err.println();
-
-            return super.visitMethodInvocation(node, returnATM);
         }
 
         protected void propagateUnitsAsAddition(

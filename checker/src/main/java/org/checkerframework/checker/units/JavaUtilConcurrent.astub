@@ -9,36 +9,38 @@ enum TimeUnit {
     @s SECONDS,
     @min MINUTES,
     @h HOURS,
-    DAYS;
+    @day DAYS;
 
     // For example, to convert 10 minutes to milliseconds, use:
     // TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)
-    // TODO: enforce source value and unit are equal
+    // ensure source value and unit are equal
+    @UnitsSame(fst = 1, snd = 2)
     @PolyUnit long convert(@PolyUnit TimeUnit this, @UnknownUnits long sourceDuration,
             @UnknownUnits TimeUnit sourceUnit);
 
     // TODO: add dimensional bound on duration to be a time value
-    @ns long toNanos(@UnknownUnits long duration);
+    @ns long toNanos(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    @us long toMicros(@UnknownUnits long duration);
+    @us long toMicros(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    @ms long toMillis(@UnknownUnits long duration);
+    @ms long toMillis(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    @s long toSeconds(@UnknownUnits long duration);
+    @s long toSeconds(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    @min long toMinutes(@UnknownUnits long duration);
+    @min long toMinutes(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    @h long toHours(@UnknownUnits long duration);
+    @h long toHours(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    long toDays(@UnknownUnits long duration);
+    @day long toDays(@UnknownUnits TimeUnit this, @UnknownUnits long duration);
 
-    // TODO: enforce "this" has same unit as "timeout"
-    void timedWait(@UnknownUnits TimeUnit this, Object obj, @UnknownUnits long timeout);
+    // enforce "this" has same unit as "timeout"
+    @UnitsSame(fst = 0, snd = 2)
+    void timedWait(@UnknownUnits TimeUnit this, @UnknownUnits Object obj, @UnknownUnits long timeout);
 
-    // TODO: enforce "this" has same unit as "timeout"
+    @UnitsSame(fst = 0, snd = 2)
     void timedJoin(@UnknownUnits TimeUnit this, Thread thread, @UnknownUnits long timeout);
 
-    // TODO: enforce "this" has same unit as "timeout"
+    @UnitsSame(fst = 0, snd = 1)
     void sleep(@UnknownUnits TimeUnit this, @UnknownUnits long timeout);
 }
 

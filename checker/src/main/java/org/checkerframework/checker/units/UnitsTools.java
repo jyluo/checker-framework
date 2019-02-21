@@ -1,27 +1,6 @@
 package org.checkerframework.checker.units;
 
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
-import org.checkerframework.checker.units.qual.K;
-import org.checkerframework.checker.units.qual.cd;
-import org.checkerframework.checker.units.qual.deg;
-import org.checkerframework.checker.units.qual.g;
-import org.checkerframework.checker.units.qual.h;
-import org.checkerframework.checker.units.qual.kg;
-import org.checkerframework.checker.units.qual.km;
-import org.checkerframework.checker.units.qual.km2;
-import org.checkerframework.checker.units.qual.kmPERh;
-import org.checkerframework.checker.units.qual.m;
-import org.checkerframework.checker.units.qual.m2;
-import org.checkerframework.checker.units.qual.mPERs;
-import org.checkerframework.checker.units.qual.mPERs2;
-import org.checkerframework.checker.units.qual.min;
-import org.checkerframework.checker.units.qual.mm;
-import org.checkerframework.checker.units.qual.mm2;
-import org.checkerframework.checker.units.qual.mol;
-import org.checkerframework.checker.units.qual.ms;
-import org.checkerframework.checker.units.qual.rad;
-import org.checkerframework.checker.units.qual.s;
+import org.checkerframework.checker.units.qual.*;
 
 /** Utility methods to generate annotated types and to convert between them. */
 @SuppressWarnings({"units", "checkstyle:constantname"})
@@ -113,10 +92,13 @@ public class UnitsTools {
     }
 
     // Time
+    public static final @ns int ns = 1;
+    public static final @us int us = 1;
     public static final @ms int ms = 1;
     public static final @s int s = 1;
     public static final @min int min = 1;
     public static final @h int h = 1;
+    public static final @day int day = 1;
 
     public static @min int fromSecondToMinute(@s int s) {
         return s / 60;

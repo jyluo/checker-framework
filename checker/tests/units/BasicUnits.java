@@ -46,29 +46,9 @@ class BasicUnits {
         @rad double rad = 20.0d * UnitsTools.rad;
         @deg double deg = 30.0d * UnitsTools.deg;
 
-        @deg double rToD1 = UnitsTools.toDegrees(rad);
-        // :: error: (argument.type.incompatible)
-        @deg double rToD2 = UnitsTools.toDegrees(deg);
-        // :: error: (assignment.type.incompatible)
-        @rad double rToD3 = UnitsTools.toDegrees(rad);
-
-        @rad double dToR1 = UnitsTools.toRadians(deg);
-        // :: error: (argument.type.incompatible)
-        @rad double rToR2 = UnitsTools.toRadians(rad);
-        // :: error: (assignment.type.incompatible)
-        @deg double rToR3 = UnitsTools.toRadians(deg);
-
         // speed conversion
         @mPERs int mPs = 30 * UnitsTools.mPERs;
         @kmPERh int kmPhr = 20 * UnitsTools.kmPERh;
-
-        @kmPERh int kmPhrRes = (int) UnitsTools.fromMeterPerSecondToKiloMeterPerHour(mPs);
-        @mPERs int mPsRes = (int) UnitsTools.fromKiloMeterPerHourToMeterPerSecond(kmPhr);
-
-        // :: error: (assignment.type.incompatible)
-        @mPERs int mPsResBad = (int) UnitsTools.fromMeterPerSecondToKiloMeterPerHour(mPs);
-        // :: error: (assignment.type.incompatible)
-        @kmPERh int kmPhrResBad = (int) UnitsTools.fromKiloMeterPerHourToMeterPerSecond(kmPhr);
 
         // speeds
         @km int kilometers = 10 * UnitsTools.km;

@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Documented
 @Repeatable(UnitsSames.class)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface UnitsSame {
 
     /** Index of the first operand */

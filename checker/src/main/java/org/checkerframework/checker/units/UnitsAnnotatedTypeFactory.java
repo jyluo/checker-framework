@@ -619,7 +619,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // do nothing if position index is invalid, errors are issued in UnitsVisitor
             if (!isPositionIndexValid(invokedMethod, leftOperandPos)
                     || !isPositionIndexValid(invokedMethod, rightOperandPos)
-                    || !isPositionIndexValid(invokedMethod, resultPos)) {
+                    || !isPositionIndexValid(invokedMethod, resultPos)
+                    || resultPos == leftOperandPos
+                    || resultPos == rightOperandPos
+                    || leftOperandPos == rightOperandPos) {
                 return;
             }
 
@@ -668,7 +671,8 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // do nothing if position index is invalid, errors are issued in UnitsVisitor
             if (!isPositionIndexValid(invokedMethod, fstPos)
-                    || !isPositionIndexValid(invokedMethod, sndPos)) {
+                    || !isPositionIndexValid(invokedMethod, sndPos)
+                    || fstPos == sndPos) {
                 return;
             }
 

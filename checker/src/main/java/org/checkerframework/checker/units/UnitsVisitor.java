@@ -4,6 +4,7 @@ import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.UnaryTree;
@@ -156,10 +157,71 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     }
 
     @Override
+    public Void visitNewClass(NewClassTree node, Void p) {
+        super.visitNewClass(node, p);
+
+        ParameterizedExecutableType mType = atypeFactory.constructorFromUse(node);
+        AnnotatedExecutableType invokedMethod = mType.executableType;
+        ExecutableElement methodElement = invokedMethod.getElement();
+        // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
+
+        // System.err.println(" methodElement " + methodElement);
+
+        // Build up a list of ATMs corresponding to the index convention used in the Units
+        // method meta-annotations. null values are inserted if there is no possible ATM for
+        // that index position.
+        List<AnnotatedTypeMirror> atms = new ArrayList<>();
+        atms.add(atypeFactory.getAnnotatedType(node));
+
+        ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+        // System.err.println(" receiver " + receiver);
+
+        // ATM for argument to the formal "this" parameter
+        if (receiver != null) {
+            AnnotatedTypeMirror receiverATM = atypeFactory.getAnnotatedType(receiver);
+            atms.add(receiverATM);
+        } else {
+            atms.add(null);
+        }
+
+        for (ExpressionTree arg : node.getArguments()) {
+            AnnotatedTypeMirror argATM = atypeFactory.getAnnotatedType(arg);
+            // System.err.println(" arg " + arg + " type " + argATM);
+            atms.add(argATM);
+        }
+
+        // multiple meta-annotations are allowed on each method
+        for (AnnotationMirror anno : atypeFactory.getDeclAnnotations(methodElement)) {
+            if (AnnotationUtils.areSameByClass(anno, UnitsAddition.class)) {
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsSubtraction.class)) {
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsMultiplication.class)) {
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsDivision.class)) {
+                checkMethodUnitsArithmetic(node, invokedMethod, anno, atms);
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsSames.class)) {
+                for (AnnotationMirror same :
+                        AnnotationUtils.getElementValueArray(
+                                anno, "value", AnnotationMirror.class, false)) {
+                    checkMethodUnitsSame(node, invokedMethod, same, atms);
+                }
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsSame.class)) {
+                checkMethodUnitsSame(node, invokedMethod, anno, atms);
+            } else if (AnnotationUtils.areSameByClass(anno, UnitsCompare.class)) {
+                checkMethodUnitsCompare(node, invokedMethod, anno, atms);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public Void visitMethodInvocation(MethodInvocationTree node, Void p) {
+        super.visitMethodInvocation(node, p);
+
         ParameterizedExecutableType mType = atypeFactory.methodFromUse(node);
         AnnotatedExecutableType invokedMethod = mType.executableType;
-        // TreeUtils.elementFromUse(node)
         ExecutableElement methodElement = invokedMethod.getElement();
         // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
 
@@ -215,11 +277,11 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             }
         }
 
-        return super.visitMethodInvocation(node, p);
+        return null;
     }
 
     protected void checkMethodUnitsArithmetic(
-            MethodInvocationTree node,
+            Tree node,
             AnnotatedExecutableType invokedMethod,
             AnnotationMirror anno,
             List<AnnotatedTypeMirror> atms) {
@@ -233,6 +295,22 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         validatePositionIndex(invokedMethod, anno, rightOperandPos);
         validatePositionIndex(invokedMethod, anno, resultPos);
 
+        if (resultPos == leftOperandPos) {
+            throw new UserError(
+                    "The indices res and larg cannot be the same for meta-annotation "
+                            + anno
+                            + " declared on method "
+                            + invokedMethod);
+        }
+
+        if (resultPos == rightOperandPos) {
+            throw new UserError(
+                    "The indices res and rarg cannot be the same for meta-annotation "
+                            + anno
+                            + " declared on method "
+                            + invokedMethod);
+        }
+
         if (leftOperandPos == rightOperandPos) {
             throw new UserError(
                     "The indices larg and rarg cannot be the same for meta-annotation "
@@ -243,7 +321,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     }
 
     protected void checkMethodUnitsSame(
-            MethodInvocationTree node,
+            Tree node,
             AnnotatedExecutableType invokedMethod,
             AnnotationMirror same,
             List<AnnotatedTypeMirror> atms) {
@@ -275,7 +353,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
     }
 
     protected void checkMethodUnitsCompare(
-            MethodInvocationTree node,
+            Tree node,
             AnnotatedExecutableType invokedMethod,
             AnnotationMirror same,
             List<AnnotatedTypeMirror> atms) {

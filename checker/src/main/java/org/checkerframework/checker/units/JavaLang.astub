@@ -5,7 +5,6 @@ package java.lang;
 class Object {
     void wait(@ms long timeout) throws InterruptedException;
     void wait(@ms long timeout, @ns int nanos) throws InterruptedException;
-    void wait() throws InterruptedException;
 }
 
 class System {

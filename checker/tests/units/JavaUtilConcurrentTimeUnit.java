@@ -1,5 +1,8 @@
 import static java.util.concurrent.TimeUnit.*;
 
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
@@ -75,5 +78,36 @@ class JavaUtilConcurrentTimeUnit {
         s.sleep(100 * UnitsTools.s);
         // :: error: (units.differ)
         s.sleep(100 * UnitsTools.m);
+    }
+
+    ThreadPoolExecutor tpe;
+    ThreadFactory tf;
+    RejectedExecutionHandler reh;
+
+    void testThreadPoolExecutor() throws InterruptedException {
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.SECONDS, null);
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.SECONDS, null, tf);
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.SECONDS, null, reh);
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.SECONDS, null, tf, reh);
+
+        // :: error: (units.differ)
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.DAYS, null);
+        // :: error: (units.differ)
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.DAYS, null, tf);
+        // :: error: (units.differ)
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.DAYS, null, reh);
+        // :: error: (units.differ)
+        tpe = new ThreadPoolExecutor(0, 0, 10L * UnitsTools.s, TimeUnit.DAYS, null, tf, reh);
+
+        tpe.awaitTermination(10L * UnitsTools.s, TimeUnit.SECONDS);
+        // :: error: (units.differ)
+        tpe.awaitTermination(10L * UnitsTools.s, TimeUnit.DAYS);
+
+        tpe.setKeepAliveTime(10L * UnitsTools.s, TimeUnit.SECONDS);
+        // :: error: (units.differ)
+        tpe.setKeepAliveTime(10L * UnitsTools.s, TimeUnit.DAYS);
+
+        @s long s = tpe.getKeepAliveTime(TimeUnit.SECONDS);
+        @ms long ms = tpe.getKeepAliveTime(TimeUnit.MILLISECONDS);
     }
 }

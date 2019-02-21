@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 
-public class BoxedNumberTypes {
+class BoxedNumberTypes {
     @m Number mN;
     @s Number sN;
 

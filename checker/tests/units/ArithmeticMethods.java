@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 
-public class ArithmeticMethods {
+class ArithmeticMethods {
 
     // The parameters and returns need to be declared @UnknownUnits to permit the passing of values
     // with units into the method, and to ensure the body type checks

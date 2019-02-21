@@ -1,6 +1,6 @@
 import org.checkerframework.checker.units.qual.*;
 
-public class MathMethods {
+class MathMethods {
 
     @m int m1, m2;
     @km int km1, km2;

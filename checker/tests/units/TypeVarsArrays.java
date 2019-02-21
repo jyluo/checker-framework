@@ -1,4 +1,4 @@
-public class TypeVarsArrays<T> {
+class TypeVarsArrays<T> {
     private T[] array;
 
     public void triggerBug(int index, T val) {

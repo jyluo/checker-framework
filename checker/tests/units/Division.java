@@ -1,7 +1,7 @@
 import org.checkerframework.checker.units.*;
 import org.checkerframework.checker.units.qual.*;
 
-public class Division {
+class Division {
     void division() {
         // Basic division of same units, no units constraint on x
         @m int am = 6 * UnitsTools.m, bm = 3 * UnitsTools.m;

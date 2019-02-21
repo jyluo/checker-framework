@@ -3,7 +3,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.checkerframework.checker.units.qual.*;
 
-public class JavaUtil {
+class JavaUtil {
     @m Double mD;
     @s Double sD;
 

@@ -3,7 +3,7 @@ import static org.checkerframework.checker.units.UnitsTools.s;
 import org.checkerframework.checker.units.*;
 import org.checkerframework.checker.units.qual.*;
 
-public class Units {
+class Units {
     @m int m1 = 5 * UnitsTools.m;
 
     // The advantage of using the multiplication with a unit is that

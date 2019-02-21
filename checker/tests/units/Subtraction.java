@@ -1,7 +1,7 @@
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
-public class Subtraction {
+class Subtraction {
     // Subtraction is legal when the operands have the same units.
     void good() {
         // Units

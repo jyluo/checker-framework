@@ -1,7 +1,7 @@
 import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 
-public class Multiplication {
+class Multiplication {
     void multiply() {
         // kg
         @kg int kg = 5 * UnitsTools.kg;

@@ -26,6 +26,7 @@ import org.checkerframework.checker.units.qual.UnitsRep;
 import org.checkerframework.checker.units.qual.UnknownUnits;
 import org.checkerframework.framework.qual.PolyAll;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
+import org.checkerframework.framework.util.AnnotationMirrorMap;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.BugInCF;
@@ -64,23 +65,23 @@ public class UnitsRepresentationUtils {
      * A 1 to 1 mapping between a (possibly incomplete) {@link UnitsRep} annotation mirror and its
      * corresponding {@link UnitsRep} annotation mirror with all base units filled in and set to 0
      */
-    private final Map<AnnotationMirror, AnnotationMirror> unitsRepToCompleteUnitsRepMap =
-            AnnotationUtils.createAnnotationMap();
+    private final AnnotationMirrorMap<AnnotationMirror> unitsRepToCompleteUnitsRepMap =
+            new AnnotationMirrorMap<>();
 
     /**
      * A 1 to 1 mapping between a {@link UnitsRep} annotation mirror and its corresponding typecheck
      * unit.
      */
-    private final Map<AnnotationMirror, TypecheckUnit> unitsRepAnnoToTypecheckUnitMap =
-            AnnotationUtils.createAnnotationMap();
+    private final AnnotationMirrorMap<TypecheckUnit> unitsRepAnnoToTypecheckUnitMap =
+            new AnnotationMirrorMap<>();
 
     /**
      * A 1 to 1 mapping between a {@link UnitsRep} annotation mirror and its corresponding typecheck
      * unit for pretty printing: the {@link UnitsRep} annotation mirror omits default annotation
      * values.
      */
-    private final Map<AnnotationMirror, TypecheckUnit> prettyPrintUnitsRepAnnoToTypecheckUnitMap =
-            AnnotationUtils.createAnnotationMap();
+    private final AnnotationMirrorMap<TypecheckUnit> prettyPrintUnitsRepAnnoToTypecheckUnitMap =
+            new AnnotationMirrorMap<>();
 
     /** The set of base units */
     private final Map<String, Class<? extends Annotation>> baseUnits = new TreeMap<>();
@@ -101,8 +102,8 @@ public class UnitsRepresentationUtils {
     private final Set<Class<? extends Annotation>> aliasUnits = createSortedBaseUnitSet();
 
     /** A map from surface units annotation mirrors to their {@link UnitsRep}s representation. */
-    private final Map<AnnotationMirror, AnnotationMirror> unitsAnnotationMirrorMap =
-            AnnotationUtils.createAnnotationMap();
+    private final AnnotationMirrorMap<AnnotationMirror> unitsAnnotationMirrorMap =
+            new AnnotationMirrorMap<>();
 
     /**
      * A set of the surface units annotation classes added to the {@link #unitsAnnotationMirrorMap}.

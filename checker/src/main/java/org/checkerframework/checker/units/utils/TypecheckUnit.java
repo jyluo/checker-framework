@@ -1,7 +1,7 @@
 package org.checkerframework.checker.units.utils;
 
 import java.util.Map;
-import org.checkerframework.dataflow.util.HashCodeUtils;
+import java.util.Objects;
 import org.checkerframework.javacutil.BugInCF;
 
 /**
@@ -95,8 +95,7 @@ public class TypecheckUnit {
 
     @Override
     public int hashCode() {
-        return HashCodeUtils.hash(
-                this.getClass().getCanonicalName(), uu, ub, prefixExponent, exponents);
+        return Objects.hash(this.getClass().getCanonicalName(), uu, ub, prefixExponent, exponents);
     }
 
     @Override
@@ -108,10 +107,9 @@ public class TypecheckUnit {
             return false;
         }
         TypecheckUnit other = (TypecheckUnit) obj;
-        return uu =
-                other.uu
-                        && ub == other.ub
-                        && prefixExponent == other.prefixExponent
-                        && exponents.equals(other.exponents);
+        return uu == other.uu
+                && ub == other.ub
+                && prefixExponent == other.prefixExponent
+                && exponents.equals(other.exponents);
     }
 }

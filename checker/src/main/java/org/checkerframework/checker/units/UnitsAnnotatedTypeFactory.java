@@ -146,7 +146,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
 
     @Override
-    public AnnotationMirror aliasedAnnotation(AnnotationMirror anno) {
+    public AnnotationMirror canonicalAnnotation(AnnotationMirror anno) {
         // check to see if it is an internal units annotation
         if (AnnotationUtils.areSameByClass(anno, UnitsRep.class)) {
             // fill in missing base units
@@ -170,7 +170,7 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             }
         }
 
-        return super.aliasedAnnotation(anno);
+        return super.canonicalAnnotation(anno);
     }
 
     // for use in AnnotatedTypeMirror.toString()

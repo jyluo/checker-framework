@@ -2,7 +2,7 @@ import org.checkerframework.checker.units.UnitsTools;
 import org.checkerframework.checker.units.qual.*;
 import org.checkerframework.framework.qual.PolyAll;
 
-@UnknownUnits class PolyAllClass {
+class PolyAllClass {
     @PolyAll PolyAllClass(@PolyAll int x) {}
 }
 
@@ -10,7 +10,7 @@ class PolyUnitClass {
     @PolyUnit PolyUnitClass(@PolyUnit int x) {}
 }
 
-class MeterClass {
+@m class MeterClass {
     @m MeterClass(@m int x) {}
 }
 

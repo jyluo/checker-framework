@@ -4,10 +4,12 @@ import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.UnaryTree;
+import com.sun.source.util.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -214,6 +216,27 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         }
 
         return null;
+    }
+
+    // Because units permits subclasses to return objects with units, giving a
+    // super.invocation.invalid warning at every declaration of a subclass constructor is annoying
+    // to user of units, we override the check here to always permit the invocation of a super
+    // constructor returning dimensionless values
+    @Override
+    protected void checkSuperConstructorCall(MethodInvocationTree node) {
+        if (!TreeUtils.isSuperCall(node)) {
+            return;
+        }
+        TreePath path = atypeFactory.getPath(node);
+        MethodTree enclosingMethod = TreeUtils.enclosingMethod(path);
+        if (TreeUtils.isConstructor(enclosingMethod)) {
+            AnnotatedTypeMirror superType = atypeFactory.getAnnotatedType(node);
+            AnnotationMirror superTypeMirror =
+                    superType.getAnnotationInHierarchy(unitsRepUtils.TOP);
+            if (!AnnotationUtils.areSame(superTypeMirror, unitsRepUtils.DIMENSIONLESS)) {
+                super.checkSuperConstructorCall(node);
+            }
+        }
     }
 
     @Override

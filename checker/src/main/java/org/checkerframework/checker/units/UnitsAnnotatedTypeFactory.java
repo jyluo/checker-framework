@@ -8,10 +8,12 @@ import com.sun.source.tree.Tree.Kind;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
@@ -288,13 +290,18 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // polyQualifiers {null=@PolyAll, @UnitsRep=@PolyUnit}
             // replace RAWUNITSREP -> @PolyUnit with TOP -> @PolyUnit
-            // Must loop through polyQualifiers as it is a simple hash map
-            for (AnnotationMirror am : polyQualifiers.keySet()) {
-                if (AnnotationUtils.areSame(am, unitsRepUtils.RAWUNITSREP)) {
-                    polyQualifiers.put(unitsRepUtils.TOP, polyQualifiers.get(am));
-                    polyQualifiers.remove(am);
+            // Build up a replacement map by looping through polyQualifiers as it is a simple hash
+            // map. The null key causes crashes if not handled correctly.
+            Map<AnnotationMirror, AnnotationMirror> updatedPolyQualifiers = new HashMap<>();
+            for (Entry<AnnotationMirror, AnnotationMirror> e : polyQualifiers.entrySet()) {
+                if (AnnotationUtils.areSame(e.getKey(), unitsRepUtils.RAWUNITSREP)) {
+                    updatedPolyQualifiers.put(unitsRepUtils.TOP, e.getValue());
+                } else {
+                    updatedPolyQualifiers.put(e.getKey(), e.getValue());
                 }
             }
+            polyQualifiers.clear();
+            polyQualifiers.putAll(updatedPolyQualifiers);
 
             // add @PolyAll -> TOP to supertypes
             Set<AnnotationMirror> polyAllSupers = AnnotationUtils.createAnnotationSet();

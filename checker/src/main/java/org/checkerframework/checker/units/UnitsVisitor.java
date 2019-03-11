@@ -35,6 +35,7 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclared
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
+import org.checkerframework.javacutil.TypesUtils;
 import org.checkerframework.javacutil.UserError;
 
 /**
@@ -218,8 +219,39 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
         return null;
     }
 
+    // Override to not issue "cast.unsafe.constructor.invocation" warnings for classes declared
+    // as @UnknownUnits as it is a common use case in Units checker.
+    @Override
+    protected boolean checkConstructorInvocation(
+            AnnotatedDeclaredType invocation,
+            AnnotatedExecutableType constructor,
+            NewClassTree newClassTree) {
+
+        // copied from super implementation
+        AnnotatedDeclaredType returnType = (AnnotatedDeclaredType) constructor.getReturnType();
+        // When an interface is used as the identifier in an anonymous class (e.g. new Comparable()
+        // {}) the constructor method will be Object.init() {} which has an Object return type When
+        // TypeHierarchy attempts to convert it to the supertype (e.g. Comparable) it will return
+        // null from asSuper and return false for the check. Instead, copy the primary annotations
+        // to the declared type and then do a subtyping check.
+        if (invocation.getUnderlyingType().asElement().getKind().isInterface()
+                && TypesUtils.isObject(returnType.getUnderlyingType())) {
+            final AnnotatedDeclaredType retAsDt = invocation.deepCopy();
+            retAsDt.replaceAnnotations(returnType.getAnnotations());
+            returnType = retAsDt;
+        }
+
+        if (AnnotationUtils.areSame(
+                returnType.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP),
+                unitsRepUtils.TOP)) {
+            return true;
+        } else {
+            return super.checkConstructorInvocation(invocation, constructor, newClassTree);
+        }
+    }
+
     // Because units permits subclasses to return objects with units, giving a
-    // super.invocation.invalid warning at every declaration of a subclass constructor is annoying
+    // "super.invocation.invalid" warning at every declaration of a subclass constructor is annoying
     // to user of units, we override the check here to always permit the invocation of a super
     // constructor returning dimensionless values
     @Override

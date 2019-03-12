@@ -107,6 +107,7 @@ public class UnitsRepresentationUtils {
 
     /**
      * A set of the surface units annotation classes added to the {@link #unitsAnnotationMirrorMap}.
+     * This is used in Units Inference.
      */
     private final Set<Class<? extends Annotation>> surfaceUnitsSet = new HashSet<>();
 
@@ -188,6 +189,7 @@ public class UnitsRepresentationUtils {
         return baseUnitNames;
     }
 
+    // used in Units Inference
     public Set<Class<? extends Annotation>> surfaceUnitsSet() {
         return surfaceUnitsSet;
     }

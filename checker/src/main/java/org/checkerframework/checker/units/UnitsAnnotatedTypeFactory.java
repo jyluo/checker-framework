@@ -77,12 +77,16 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     public UnitsAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker, true);
 
-        unitsRepUtils = new UnitsRepresentationUtils(processingEnv, elements);
+        unitsRepUtils = createUnitsRepresentationUtils();
         unitsAnnotationFormatter.postInit(unitsRepUtils);
 
         postInit();
 
         unitsTypecheckUtils = new UnitsTypecheckUtils(unitsRepUtils);
+    }
+
+    protected UnitsRepresentationUtils createUnitsRepresentationUtils() {
+        return new UnitsRepresentationUtils(processingEnv, elements);
     }
 
     public UnitsRepresentationUtils getUnitsRepresentationUtils() {

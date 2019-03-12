@@ -19,22 +19,23 @@ class DimensionlessClass {}
     }
 }
 
-@PolyAll class PolyAllClass {
-    @PolyAll PolyAllClass(@PolyAll int x) {}
+@PolyAll class PAClass {
+    @PolyAll PAClass(@PolyAll int x) {}
 }
 
-@PolyUnit class PolyUnitClass {
-    @PolyUnit PolyUnitClass(@PolyUnit int x) {}
+@PolyUnit class PUClass {
+    @PolyUnit PUClass(@PolyUnit int x) {}
 }
 
 @m class MeterClass {
-    @m MeterClass(@m int x) {}
+    @m MeterClass() {}
 }
 
 class Constructors {
     void nonPolyConstructorTest() {
         @Dimensionless NoAnnotClass na1 = new NoAnnotClass();
         NoAnnotClass na2 = new NoAnnotClass();
+        // can't use units annotation on a class with default type of Dimensionless
         // :: error: (constructor.invocation.invalid)
         @m NoAnnotClass na3 = new @m NoAnnotClass();
         // :: error: (assignment.type.incompatible)
@@ -44,6 +45,7 @@ class Constructors {
 
         @Dimensionless DimensionlessClass d1 = new DimensionlessClass();
         DimensionlessClass d2 = new DimensionlessClass();
+        // can't use units annotation on a class with declared type of Dimensionless
         // :: error: (constructor.invocation.invalid)
         @m DimensionlessClass d3 = new @m DimensionlessClass();
         // :: error: (assignment.type.incompatible)
@@ -57,35 +59,35 @@ class Constructors {
         // :: error: (assignment.type.incompatible)
         @s UUClass uu3 = new @m UUClass();
 
-        // :: error: (argument.type.incompatible)
-        @m MeterClass mc1 = new MeterClass(5);
-        // :: error: (argument.type.incompatible)
-        @m MeterClass mc2 = new @m MeterClass(5);
+        @m MeterClass mc1 = new MeterClass();
+        @m MeterClass mc2 = new @m MeterClass();
+        // can't use a non-meter unit on a class with declared type of meters
+        // :: error: (type.invalid.annotations.on.use)
+        @m MeterClass mc3 = new @s MeterClass();
     }
 
-    @SuppressWarnings("cast.unsafe")
     void polyAllConstructorTest() {
         // explicitly create a meter object
-        @m PolyAllClass pac1 = new @m PolyAllClass(5 * UnitsTools.m);
-
-        pac1 = (@m PolyAllClass) new PolyAllClass(5 * UnitsTools.m);
+        @m PAClass pac1 = new @m PAClass(5 * UnitsTools.m);
+        // also check the equivalent cast semantics
+        pac1 = (@m PAClass) new PAClass(5 * UnitsTools.m);
 
         // create a meter object via @PolyAll
-        @m PolyAllClass pac2 = new PolyAllClass(5 * UnitsTools.m);
+        @m PAClass pac2 = new PAClass(5 * UnitsTools.m);
 
-        // creates a dimensionless object via @PolyAll
+        // creates a Dimensionless object via @PolyAll
         // :: error: (assignment.type.incompatible)
-        @m PolyAllClass pac3 = new PolyAllClass(5);
+        @m PAClass pac3 = new PAClass(5);
 
-        // :: error: (constructor.invocation.invalid)
-        // :: error: (assignment.type.incompatible)
-        @m PolyAllClass pac4 = new @s PolyAllClass(5);
+        // warning issued for casting the Dimensionless object to seconds
+        // :: warning: (cast.unsafe.constructor.invocation)
+        @s PAClass pac4 = new @s PAClass(5);
+        // :: warning: (cast.unsafe)
+        pac4 = (@s PAClass) new PAClass(5);
 
-        // :: error: (assignment.type.incompatible)
-        pac4 = (@s PolyAllClass) new PolyAllClass(5);
-
-        // :: error: (constructor.invocation.invalid)
-        PolyAllClass pac5 = new @m PolyAllClass(5 * UnitsTools.s);
+        // warning issued for casting the seconds object to meters
+        // :: warning: (cast.unsafe.constructor.invocation)
+        @m PAClass pac5 = new @m PAClass(5 * UnitsTools.s);
     }
 
     void polyAllReceiverTest() {
@@ -100,28 +102,27 @@ class Constructors {
         @m int parc4 = (new @s UUClass()).polyAllMethod2();
     }
 
-    @SuppressWarnings("cast.unsafe")
     void polyUnitConstructorTest() {
         // explicitly create a meter object
-        @m PolyUnitClass puc1 = new @m PolyUnitClass(5 * UnitsTools.m);
+        @m PUClass puc1 = new @m PUClass(5 * UnitsTools.m);
+        // also check the equivalent cast semantics
+        puc1 = (@m PUClass) new PUClass(5 * UnitsTools.m);
 
-        puc1 = (@m PolyUnitClass) new PolyUnitClass(5 * UnitsTools.m);
+        // create a meter object via @PolyUnit
+        @m PUClass puc2 = new PUClass(5 * UnitsTools.m);
 
-        // create a meter object via @PolyAll
-        @m PolyUnitClass puc2 = new PolyUnitClass(5 * UnitsTools.m);
-
-        // creates a dimensionless object via @PolyAll
+        // creates a Dimensionless object via @PolyUnit
         // :: error: (assignment.type.incompatible)
-        @m PolyUnitClass puc3 = new PolyUnitClass(5);
+        @m PUClass puc3 = new PUClass(5);
 
-        // :: error: (constructor.invocation.invalid)
-        // :: error: (assignment.type.incompatible)
-        @m PolyUnitClass puc4 = new @s PolyUnitClass(5);
+        // warning issued for casting the Dimensionless object to seconds
+        // :: warning: (cast.unsafe.constructor.invocation)
+        @s PUClass puc4 = new @s PUClass(5);
+        // :: warning: (cast.unsafe)
+        puc4 = (@s PUClass) new PUClass(5);
 
-        // :: error: (assignment.type.incompatible)
-        puc4 = (@s PolyUnitClass) new PolyUnitClass(5);
-
-        // :: error: (constructor.invocation.invalid)
-        PolyUnitClass puc5 = new @m PolyUnitClass(5 * UnitsTools.s);
+        // warning issued for casting the seconds object to meters
+        // :: warning: (cast.unsafe.constructor.invocation)
+        @m PUClass puc5 = new @m PUClass(5 * UnitsTools.s);
     }
 }

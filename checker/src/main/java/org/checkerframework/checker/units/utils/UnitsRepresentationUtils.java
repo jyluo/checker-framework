@@ -544,4 +544,14 @@ public class UnitsRepresentationUtils {
         if (!bu.isEmpty()) builder.setValue("bu", bu);
         return builder.build();
     }
+
+    /**
+     * Checks to see if the given anno is {@link PolyAll} or {@link PolyUnit}
+     *
+     * @param anno
+     * @return true if the anno is either of the polymorphic annotations
+     */
+    public boolean isPolymorphic(AnnotationMirror anno) {
+        return AnnotationUtils.areSame(anno, POLYALL) || AnnotationUtils.areSame(anno, POLYUNIT);
+    }
 }

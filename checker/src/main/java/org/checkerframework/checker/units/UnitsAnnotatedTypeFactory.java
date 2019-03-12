@@ -347,10 +347,10 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
             // When type checking body of polymorphic methods, check the types by replacing poly
             // with TOP
-            if (isPolymorphic(subAnno)) {
+            if (unitsRepUtils.isPolymorphic(subAnno)) {
                 subAnno = unitsRepUtils.TOP;
             }
-            if (isPolymorphic(superAnno)) {
+            if (unitsRepUtils.isPolymorphic(superAnno)) {
                 // super is replaced by TOP, hence always true
                 return true;
             }
@@ -386,11 +386,6 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                             + getAnnotationFormatter().formatAnnotationMirror(subAnno)
                             + "\n    supertype: "
                             + getAnnotationFormatter().formatAnnotationMirror(superAnno));
-        }
-
-        protected boolean isPolymorphic(AnnotationMirror anno) {
-            return AnnotationUtils.areSame(anno, unitsRepUtils.POLYALL)
-                    || AnnotationUtils.areSame(anno, unitsRepUtils.POLYUNIT);
         }
     }
 

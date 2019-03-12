@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,14 +64,14 @@ public class UnitsRepresentationUtils {
      * A 1 to 1 mapping between a (possibly incomplete) {@link UnitsRep} annotation mirror and its
      * corresponding {@link UnitsRep} annotation mirror with all base units filled in and set to 0
      */
-    private final AnnotationMirrorMap<AnnotationMirror> unitsRepToCompleteUnitsRepMap =
+    protected final AnnotationMirrorMap<AnnotationMirror> unitsRepToCompleteUnitsRepMap =
             new AnnotationMirrorMap<>();
 
     /**
      * A 1 to 1 mapping between a {@link UnitsRep} annotation mirror and its corresponding typecheck
      * unit.
      */
-    private final AnnotationMirrorMap<TypecheckUnit> unitsRepAnnoToTypecheckUnitMap =
+    protected final AnnotationMirrorMap<TypecheckUnit> unitsRepAnnoToTypecheckUnitMap =
             new AnnotationMirrorMap<>();
 
     /**
@@ -80,17 +79,17 @@ public class UnitsRepresentationUtils {
      * unit for pretty printing: the {@link UnitsRep} annotation mirror omits default annotation
      * values.
      */
-    private final AnnotationMirrorMap<TypecheckUnit> prettyPrintUnitsRepAnnoToTypecheckUnitMap =
+    protected final AnnotationMirrorMap<TypecheckUnit> prettyPrintUnitsRepAnnoToTypecheckUnitMap =
             new AnnotationMirrorMap<>();
 
     /** The set of base units */
-    private final Map<String, Class<? extends Annotation>> baseUnits = new TreeMap<>();
+    protected final Map<String, Class<? extends Annotation>> baseUnits = new TreeMap<>();
 
     /** All base units provided by the checker or user */
-    private Set<String> baseUnitNames;
+    protected Set<String> baseUnitNames;
 
     /** Comparator used to sort annotation classes by their simple class name. */
-    private static Comparator<Class<? extends Annotation>> annoClassComparator =
+    protected static Comparator<Class<? extends Annotation>> annoClassComparator =
             new Comparator<Class<? extends Annotation>>() {
                 @Override
                 public int compare(Class<? extends Annotation> a1, Class<? extends Annotation> a2) {
@@ -99,17 +98,11 @@ public class UnitsRepresentationUtils {
             };
 
     /** The set of alias units, sorted by their simple class name. */
-    private final Set<Class<? extends Annotation>> aliasUnits = createSortedBaseUnitSet();
+    protected final Set<Class<? extends Annotation>> aliasUnits = createSortedBaseUnitSet();
 
     /** A map from surface units annotation mirrors to their {@link UnitsRep}s representation. */
-    private final AnnotationMirrorMap<AnnotationMirror> unitsAnnotationMirrorMap =
+    protected final AnnotationMirrorMap<AnnotationMirror> unitsAnnotationMirrorMap =
             new AnnotationMirrorMap<>();
-
-    /**
-     * A set of the surface units annotation classes added to the {@link #unitsAnnotationMirrorMap}.
-     * This is used in Units Inference.
-     */
-    private final Set<Class<? extends Annotation>> surfaceUnitsSet = new HashSet<>();
 
     public UnitsRepresentationUtils(ProcessingEnvironment processingEnv, Elements elements) {
         this.processingEnv = processingEnv;
@@ -135,13 +128,11 @@ public class UnitsRepresentationUtils {
         for (Class<? extends Annotation> baseUnit : loadedBaseUnits) {
             createInternalBaseUnit(baseUnit);
         }
-        surfaceUnitsSet.addAll(loadedBaseUnits);
         // Finally add and create {@link UnitsRep} annotation mirrors for each alias unit
         for (Class<? extends Annotation> aliasUnit : loadedAliasUnits) {
             addAliasUnit(aliasUnit);
             createInternalAliasUnit(aliasUnit);
         }
-        surfaceUnitsSet.addAll(loadedAliasUnits);
 
         POLYALL = AnnotationBuilder.fromClass(elements, PolyAll.class);
         POLYUNIT = AnnotationBuilder.fromClass(elements, PolyUnit.class);
@@ -160,14 +151,6 @@ public class UnitsRepresentationUtils {
                 AnnotationBuilder.fromClass(elements, UnitsBottom.class), BOTTOM);
         unitsAnnotationMirrorMap.put(
                 AnnotationBuilder.fromClass(elements, Dimensionless.class), DIMENSIONLESS);
-
-        surfaceUnitsSet.add(UnknownUnits.class);
-        surfaceUnitsSet.add(UnitsBottom.class);
-        surfaceUnitsSet.add(Dimensionless.class);
-
-        // for (Entry<?, ?> entry : unitsAnnotationMirrorMap.entrySet()) {
-        // System.err.println(" == built map " + entry.getKey() + " --> " + entry.getValue());
-        // }
     }
 
     public Set<Class<? extends Annotation>> createSortedBaseUnitSet() {
@@ -187,11 +170,6 @@ public class UnitsRepresentationUtils {
             baseUnitNames = Collections.unmodifiableSet(baseUnits.keySet());
         }
         return baseUnitNames;
-    }
-
-    // used in Units Inference
-    public Set<Class<? extends Annotation>> surfaceUnitsSet() {
-        return surfaceUnitsSet;
     }
 
     public void addAliasUnit(Class<? extends Annotation> aliasUnit) {
@@ -214,7 +192,7 @@ public class UnitsRepresentationUtils {
      * Creates an {@link UnitsRep} representation for the given base unit and adds it to the alias
      * map.
      */
-    private void createInternalBaseUnit(Class<? extends Annotation> baseUnitClass) {
+    protected void createInternalBaseUnit(Class<? extends Annotation> baseUnitClass) {
         // check to see if the annotation has already been mapped before
         AnnotationMirror baseUnitAM = AnnotationBuilder.fromClass(elements, baseUnitClass);
         if (unitsAnnotationMirrorMap.containsKey(baseUnitAM)) {
@@ -233,7 +211,7 @@ public class UnitsRepresentationUtils {
      * Creates an {@link UnitsRep} representation for the given alias unit and adds it to the alias
      * map.
      */
-    private void createInternalAliasUnit(Class<? extends Annotation> aliasUnitClass) {
+    protected void createInternalAliasUnit(Class<? extends Annotation> aliasUnitClass) {
         // check to see if the annotation has already been mapped before
         AnnotationMirror aliasUnitAM = AnnotationBuilder.fromClass(elements, aliasUnitClass);
         if (unitsAnnotationMirrorMap.containsKey(aliasUnitAM)) {
@@ -470,9 +448,9 @@ public class UnitsRepresentationUtils {
 
     /** Create a {@link UnitsRep} annotation for the given normalized representation values. */
     public AnnotationMirror createUnitsRepAnno(
-            boolean top, boolean bot, int e, Map<String, Integer> buc) {
+            boolean t, boolean b, int e, Map<String, Integer> buc) {
         // not allowed to set both a UU and UB to true on the same annotation
-        if (top && bot) {
+        if (t && b) {
             throw new BugInCF("Cannot set top and bottom both to true at the same time");
         }
 
@@ -488,8 +466,8 @@ public class UnitsRepresentationUtils {
         }
 
         // See {@link UnitsRep}
-        builder.setValue("top", top);
-        builder.setValue("bot", bot);
+        builder.setValue("top", t);
+        builder.setValue("bot", b);
         builder.setValue("p", e);
         builder.setValue("bu", bu);
         return builder.build();
@@ -519,9 +497,9 @@ public class UnitsRepresentationUtils {
 
     /** Create a {@link UnitsRep} annotation for the given normalized representation values. */
     public AnnotationMirror createPrettyPrintUnitsRepAnno(
-            boolean top, boolean bot, int e, Map<String, Integer> buc) {
+            boolean t, boolean b, int e, Map<String, Integer> buc) {
         // not allowed to set both a UU and UB to true on the same annotation
-        if (top && bot) {
+        if (t && b) {
             throw new BugInCF("Cannot set top and bottom both to true at the same time");
         }
 
@@ -540,8 +518,8 @@ public class UnitsRepresentationUtils {
         }
 
         // See {@link UnitsRep}
-        if (top) builder.setValue("top", top);
-        if (bot) builder.setValue("bot", bot);
+        if (t) builder.setValue("top", t);
+        if (b) builder.setValue("bot", b);
         if (e != 0) builder.setValue("p", e);
         if (!bu.isEmpty()) builder.setValue("bu", bu);
         return builder.build();

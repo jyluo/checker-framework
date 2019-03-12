@@ -84,7 +84,7 @@ public class TypecheckUnit {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(" UU = " + uu);
+        sb.append("UU = " + uu);
         sb.append(" UB = " + ub);
         sb.append(" Base-10-Prefix = " + prefixExponent);
         for (String baseUnit : unitsRepUtils.baseUnits()) {

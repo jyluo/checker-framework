@@ -36,7 +36,6 @@ import org.checkerframework.checker.index.qual.LengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.Positive;
 import org.checkerframework.checker.index.qual.SameLen;
-import org.checkerframework.checker.units.qual.Length;
 import org.checkerframework.common.value.qual.PolyValue;
 import sun.java2d.cmm.CMSManager;
 import sun.java2d.cmm.ColorTransform;

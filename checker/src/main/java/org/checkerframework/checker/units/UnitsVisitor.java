@@ -36,7 +36,6 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclared
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
-import org.checkerframework.javacutil.TypesUtils;
 import org.checkerframework.javacutil.UserError;
 
 /**
@@ -222,51 +221,17 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
 
     /**
      * Override to not issue "cast.unsafe.constructor.invocation" warnings for classes declared as
-     * {@link UnknownUnits} as it is a common use case in Units checker. However, issue
-     * "cast.unsafe.constructor.invocation" if the computed polymorphic return type of a polymorphic
-     * constructor is being cast to an incomparable unit.
+     * {@link UnknownUnits} as it is a common use case in Units checker to instantiate such classes
+     * with units.
      */
     @Override
     protected void checkConstructorInvocation(
             AnnotatedDeclaredType invocation,
             AnnotatedExecutableType constructor,
             NewClassTree newClassTree) {
-
-        // copied from super implementation
-        AnnotatedDeclaredType computedReturnType =
-                (AnnotatedDeclaredType) constructor.getReturnType();
-        // When an interface is used as the identifier in an anonymous class (e.g. new Comparable()
-        // {}) the constructor method will be Object.init() {} which has an Object return type When
-        // TypeHierarchy attempts to convert it to the supertype (e.g. Comparable) it will return
-        // null from asSuper and return false for the check. Instead, copy the primary annotations
-        // to the declared type and then do a subtyping check.
-        if (invocation.getUnderlyingType().asElement().getKind().isInterface()
-                && TypesUtils.isObject(computedReturnType.getUnderlyingType())) {
-            final AnnotatedDeclaredType retAsDt = invocation.deepCopy();
-            retAsDt.replaceAnnotations(computedReturnType.getAnnotations());
-            computedReturnType = retAsDt;
-        }
-
-        // issue "cast.unsafe.constructor.invocation" if the computed polymorphic return type of a
-        // polymorphic constructor is being cast to an incomparable unit
-        AnnotatedDeclaredType declaredReturnType =
-                (AnnotatedDeclaredType)
-                        atypeFactory.getAnnotatedType(constructor.getElement()).getReturnType();
-        AnnotationMirror declaredReturnAnno =
-                declaredReturnType.getAnnotationInHierarchy(unitsRepUtils.TOP);
-        if (unitsRepUtils.isPolymorphic(declaredReturnAnno)
-                && !atypeFactory.getTypeHierarchy().isSubtype(computedReturnType, invocation)) {
-            checker.report(
-                    Result.warning(
-                            "cast.unsafe.constructor.invocation",
-                            computedReturnType.toString(true),
-                            invocation.toString(true)),
-                    newClassTree);
-        }
-
         // do not issue warnings if the computed return type is top
         if (!AnnotationUtils.areSame(
-                computedReturnType.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP),
+                constructor.getReturnType().getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP),
                 unitsRepUtils.TOP)) {
             super.checkConstructorInvocation(invocation, constructor, newClassTree);
         }

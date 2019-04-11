@@ -520,46 +520,48 @@ public class UnitsAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         @Override
         public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror returnATM) {
             super.visitNewClass(node, returnATM);
-
-            // System.err.println(" visit method invoke " + node);
-            // System.err.println(" returnATM " + returnATM);
-            // System.err.println(" args " + node.getArguments());
-            // System.err.println(" methodSelect " + node.getMethodSelect());
-
-            ParameterizedExecutableType mType = atypeFactory.constructorFromUse(node);
-            AnnotatedExecutableType invokedMethod = mType.executableType;
-            // TreeUtils.elementFromUse(node)
-            ExecutableElement methodElement = invokedMethod.getElement();
-            // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
-
-            // System.err.println(" invokedMethod " + invokedMethod.getErased());
-            // System.err.println(" methodElement " + methodElement);
-
-            // Build up a list of ATMs corresponding to the index convention used in the Units
-            // method meta-annotations. null values are inserted if there is no possible ATM for
-            // that index position.
-            List<AnnotatedTypeMirror> atms = new ArrayList<>();
-            atms.add(returnATM);
-
-            ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-            // System.err.println(" receiver " + receiver);
-
-            // ATM for argument to the formal "this" parameter
-            if (receiver != null) {
-                AnnotatedTypeMirror receiverATM = getAnnotatedType(receiver);
-                atms.add(receiverATM);
-            } else {
-                atms.add(null);
-            }
-
-            for (ExpressionTree arg : node.getArguments()) {
-                AnnotatedTypeMirror argATM = getAnnotatedType(arg);
-                // System.err.println(" arg " + arg + " type " + argATM);
-                atms.add(argATM);
-            }
-
-            propagateUnitsInMethodCall(invokedMethod, methodElement, atms);
-            // System.err.println();
+            //
+            //            // System.err.println(" visit method invoke " + node);
+            //            // System.err.println(" returnATM " + returnATM);
+            //            // System.err.println(" args " + node.getArguments());
+            //            // System.err.println(" methodSelect " + node.getMethodSelect());
+            //
+            //            ParameterizedExecutableType mType = atypeFactory.constructorFromUse(node);
+            //            AnnotatedExecutableType invokedMethod = mType.executableType;
+            //            // TreeUtils.elementFromUse(node)
+            //            ExecutableElement methodElement = invokedMethod.getElement();
+            //            // List<AnnotatedTypeMirror> typeargs = mType.typeArgs;
+            //
+            //            // System.err.println(" invokedMethod " + invokedMethod.getErased());
+            //            // System.err.println(" methodElement " + methodElement);
+            //
+            //            // Build up a list of ATMs corresponding to the index convention used in
+            // the Units
+            //            // method meta-annotations. null values are inserted if there is no
+            // possible ATM for
+            //            // that index position.
+            //            List<AnnotatedTypeMirror> atms = new ArrayList<>();
+            //            atms.add(returnATM);
+            //
+            //            ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+            //            // System.err.println(" receiver " + receiver);
+            //
+            //            // ATM for argument to the formal "this" parameter
+            //            if (receiver != null) {
+            //                AnnotatedTypeMirror receiverATM = getAnnotatedType(receiver);
+            //                atms.add(receiverATM);
+            //            } else {
+            //                atms.add(null);
+            //            }
+            //
+            //            for (ExpressionTree arg : node.getArguments()) {
+            //                AnnotatedTypeMirror argATM = getAnnotatedType(arg);
+            //                // System.err.println(" arg " + arg + " type " + argATM);
+            //                atms.add(argATM);
+            //            }
+            //
+            //            propagateUnitsInMethodCall(invokedMethod, methodElement, atms);
+            //            // System.err.println();
 
             return null;
         }

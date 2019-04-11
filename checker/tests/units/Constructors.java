@@ -10,6 +10,12 @@ class DimensionlessClass {}
 
 // a class that can be instantiated with units
 @UnknownUnits class UUClass {
+
+    // defaulted to @UnknownUnits as return type
+    UUClass() {}
+
+    UUClass(int x) {}
+
     @PolyAll int polyAllMethod(@PolyAll UUClass this, @PolyAll int x) {
         return x;
     }
@@ -85,13 +91,13 @@ class Constructors {
         @m PAClass pac3 = new PAClass(5);
 
         // warning issued for casting the Dimensionless object to seconds
-        // :: warning: (cast.unsafe.constructor.invocation)
+        // :: error: (constructor.invocation.invalid)
         @s PAClass pac4 = new @s PAClass(5);
         // :: warning: (cast.unsafe)
         pac4 = (@s PAClass) new PAClass(5);
 
         // warning issued for casting the seconds object to meters
-        // :: warning: (cast.unsafe.constructor.invocation)
+        // :: error: (constructor.invocation.invalid)
         @m PAClass pac5 = new @m PAClass(5 * UnitsTools.s);
     }
 
@@ -121,13 +127,13 @@ class Constructors {
         @m PUClass puc3 = new PUClass(5);
 
         // warning issued for casting the Dimensionless object to seconds
-        // :: warning: (cast.unsafe.constructor.invocation)
+        // :: error: (constructor.invocation.invalid)
         @s PUClass puc4 = new @s PUClass(5);
         // :: warning: (cast.unsafe)
         puc4 = (@s PUClass) new PUClass(5);
 
         // warning issued for casting the seconds object to meters
-        // :: warning: (cast.unsafe.constructor.invocation)
+        // :: error: (constructor.invocation.invalid)
         @m PUClass puc5 = new @m PUClass(5 * UnitsTools.s);
     }
 }

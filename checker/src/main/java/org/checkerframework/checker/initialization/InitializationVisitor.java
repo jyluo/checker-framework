@@ -88,12 +88,11 @@ public class InitializationVisitor<
     }
 
     @Override
-    protected boolean checkConstructorInvocation(
+    protected void checkConstructorInvocation(
             AnnotatedDeclaredType dt, AnnotatedExecutableType constructor, NewClassTree src) {
         // receiver annotations for constructors are forbidden, therefore no
         // check is necessary
         // TODO: nested constructors can have receivers!
-        return true;
     }
 
     @Override
@@ -103,7 +102,8 @@ public class InitializationVisitor<
     }
 
     @Override
-    protected void checkSuperConstructorCall(MethodInvocationTree superCall) {
+    protected void checkThisOrSuperConstructorCall(
+            MethodInvocationTree superCall, @CompilerMessageKey String errorKey) {
         // Nothing to check
     }
 

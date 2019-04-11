@@ -227,7 +227,7 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
      * constructor is being cast to an incomparable unit.
      */
     @Override
-    protected boolean checkConstructorInvocation(
+    protected void checkConstructorInvocation(
             AnnotatedDeclaredType invocation,
             AnnotatedExecutableType constructor,
             NewClassTree newClassTree) {
@@ -262,17 +262,14 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
                             computedReturnType.toString(true),
                             invocation.toString(true)),
                     newClassTree);
-            return false;
         }
 
         // do not issue warnings if the computed return type is top
-        if (AnnotationUtils.areSame(
+        if (!AnnotationUtils.areSame(
                 computedReturnType.getEffectiveAnnotationInHierarchy(unitsRepUtils.TOP),
                 unitsRepUtils.TOP)) {
-            return true;
+            super.checkConstructorInvocation(invocation, constructor, newClassTree);
         }
-
-        return super.checkConstructorInvocation(invocation, constructor, newClassTree);
     }
 
     // Because units permits subclasses to return objects with units, giving a
@@ -295,6 +292,16 @@ public class UnitsVisitor extends BaseTypeVisitor<UnitsAnnotatedTypeFactory> {
             }
         }
     }
+
+    /**
+     * Override to not issue a "inconsistent.constructor.type" warning. Units has a class type
+     * default of Dimensionless, so most constructors will trigger this warning. If a constructor
+     * has a return type that is not a subtype of the declared type of the class, then {@link
+     * #isValidUse(AnnotatedDeclaredType, AnnotatedDeclaredType, Tree)} issues a warning.
+     */
+    @Override
+    protected void checkConstructorResult(
+            AnnotatedExecutableType constructorType, ExecutableElement constructorElement) {}
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree node, Void p) {

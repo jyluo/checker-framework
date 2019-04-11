@@ -31,6 +31,11 @@ class DimensionlessClass {}
     @m MeterClass() {}
 }
 
+@s class SecondClass {
+    // :: error: (type.invalid.annotations.on.use)
+    @m SecondClass() {}
+}
+
 class Constructors {
     void nonPolyConstructorTest() {
         @Dimensionless NoAnnotClass na1 = new NoAnnotClass();

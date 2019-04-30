@@ -35,13 +35,13 @@ public class UnitsTypecheckUtils {
 
         // if either lhs or rhs is UnknownUnits, then result is UnknownUnits
         if (lhs.isTop() || rhs.isTop()) {
-            result.setUnknownUnits(true);
+            result.setTop(true);
             return result;
         }
 
         // if either lhs or rhs is UnitsBottom, then result is UnitsBottom
         if (lhs.isBottom() || rhs.isBottom()) {
-            result.setUnitsBottom(true);
+            result.setBottom(true);
             return result;
         }
 
@@ -65,13 +65,13 @@ public class UnitsTypecheckUtils {
 
         // if either lhs or rhs is UnknownUnits, then result is UnknownUnits
         if (lhs.isTop() || rhs.isTop()) {
-            result.setUnknownUnits(true);
+            result.setTop(true);
             return result;
         }
 
         // if either lhs or rhs is UnitsBottom, then result is UnitsBottom
         if (lhs.isBottom() || rhs.isBottom()) {
-            result.setUnitsBottom(true);
+            result.setBottom(true);
             return result;
         }
 
